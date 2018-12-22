@@ -9,6 +9,10 @@ var container, stats;
 
 var camera, controls, scene, renderer;
 
+var tick = 0.6;
+var translateState = -1;
+var translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
+
 var worldWidth = 64, worldDepth = 64;
 var worldHalfWidth = worldWidth / 2;
 var worldHalfDepth = worldDepth / 2;
@@ -48,9 +52,11 @@ function init() {
       MIDDLE: THREE.MOUSE.MIDDLE,
       RIGHT: THREE.MOUSE.RIGHT
    }
-   controls.target.set( 0, 0, 0 )
+   controls.target.set( 0, 0, 0 );
    //controls.target = player
-   controls.enablePan = false
+   controls.enablePan = false;
+   controls.minPolarAngle = 0.0001;
+   controls.maxPolarAngle = Math.PI / 2.0 - 0.1;
    //controls.target = target
    controls.movementSpeed = 1000;
    controls.lookSpeed = 0.125;
@@ -213,13 +219,44 @@ function animate() {
 }
 
 function render() {
+   /*
+    * TODO: fix what happens when another square is clicked before the current
+    * animation is finished, or when the camera is rotated/zoomed before it's
+    * finished
+    * TODO: sometimes the camera rotates itself?
+    */
+   var delta = clock.getDelta();
 
-   controls.update( clock.getDelta() );
+   if (translateState != -1) {
+      var movement = translateDir.clone();
+      movement.multiplyScalar(delta / tick);
+      player.position.add(movement);
+      // this *should* be equivalent
+      // controls.object.position.add(movement);
+      camera.position.add(movement);
+      controls.target.copy(player.position);
+
+      translateState += delta;
+
+      var eps = 0.0000001;
+      if (player.position.distanceToSquared(controls.target0) <= eps ||
+              translateState >= tick) {
+         // Finish animating, reset
+         translateState = -1;
+         player.position.copy(controls.target0);
+         controls.target.copy(player.position);
+         translateDir.set(0.0, 0.0, 0.0);
+      }
+   }
+   controls.update( delta );
    renderer.render( scene, camera );
-
 }
 
 function onMouseDown( event ) {
+   /*
+    * Sets the translation direction based on the clicked square and toggles
+    * state to translate.
+    */
 
    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
@@ -236,21 +273,13 @@ function onMouseDown( event ) {
       x = Math.floor(x/sz);
       z = Math.floor(z/sz);
 
-      player.position.x = x*sz;
-      player.position.z = z*sz;
-      player.position.y = sz/2;
+      var clickedSquare = new THREE.Vector3(x*sz, sz/2+0.1, z*sz);
+      translateDir = clickedSquare.clone();
 
-      //controls.target.copy(player)
-      //camera.target.position.copy(player)
-      //controls.update()
-      //controls = new THREE.OrbitControls(camera, container);
-      controls.target.copy(player.position)
-      //controls.target0(player.position)
-      //controls.target.set( player.position.x, player.position.y, player.position.z)
-      //controls.target0.set( player.position.x, player.position.y, player.position.z)
-      //controls.target.position.copy( player);
-      //camera.target.position.copy( player);
+      translateState = 0.0;
+      translateDir.sub(controls.target0);
+      //controls.saveState();
+      controls.target0.copy(clickedSquare);
    }
-
 }
 
