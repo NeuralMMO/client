@@ -14,19 +14,7 @@
             <script src="three.js/examples/js/ImprovedNoise.js"></script>
             <script src="three.js/examples/js/WebGL.js"></script>
             <script src="three.js/examples/js/libs/stats.min.js"></script>
+            <script src="comms.js"></script>
             <script src="client.js"></script>
-        <script>
-            var ws = new WebSocket("ws://localhost:8001/"),
-                messages = document.createElement('ul');
-            ws.onmessage = function (event) {
-                var messages = document.getElementsByTagName('ul')[0],
-                    message = document.createElement('li'),
-                    content = document.createTextNode(event.data);
-                message.appendChild(content);
-                messages.appendChild(message);
-            };
-            document.body.appendChild(messages);
-        </script>
- 
     </body>
 </html>
