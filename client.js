@@ -27,6 +27,7 @@ animate();
 function init() {
    container = document.getElementById( 'container' );
 
+   //camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 20000 );
    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
    camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
 
@@ -37,7 +38,7 @@ function init() {
    var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
    player = new THREE.Mesh(geometry, material);
    scene.add(player);
-   player.add(camera)
+   //player.add(camera)
 
    //var target = new THREE.Object3D();
 
@@ -241,7 +242,12 @@ function onMouseDown( event ) {
 
       //controls.target.copy(player)
       //camera.target.position.copy(player)
-      controls.target.set( player.position.x, player.position.y, player.position.z)
+      //controls.update()
+      //controls = new THREE.OrbitControls(camera, container);
+      controls.target.copy(player.position)
+      //controls.target0(player.position)
+      //controls.target.set( player.position.x, player.position.y, player.position.z)
+      //controls.target0.set( player.position.x, player.position.y, player.position.z)
       //controls.target.position.copy( player);
       //camera.target.position.copy( player);
    }
