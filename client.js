@@ -20,6 +20,7 @@ var player, mesh, target;
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 var sz = 100;
+var frame = 0;
 
 init();
 animate();
@@ -209,6 +210,24 @@ function animate() {
 
    render();
    stats.update();
+
+   while (inbox.length > 0) {
+      var packet = inbox.shift();
+      packet = JSON.parse(packet);
+      var pos = packet.pos;
+      console.log(pos);
+
+      var xx = player.position.x;
+      var zz = player.position.z;
+
+      xx = Math.floor(xx/sz);
+      zz = Math.floor(zz/sz);
+
+      var pos = [xx, zz];
+      var packet = JSON.stringify({'pos': pos});
+      console.log(packet);
+      ws.send(packet);
+   }
 
 }
 
