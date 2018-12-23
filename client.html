@@ -2,11 +2,15 @@
 <html>
     <head>
         <meta charset=utf-8>
-        <title>WebSocket demo</title>
+        <title>Godsword demo</title>
     </head>
     <body>
-           <div id="container"><br /><br /><br /><br /><br />Generating world...</div>
-            <div id="info"><a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - <a href="http://www.minecraft.net/" target="_blank" rel="noopener">minecraft</a> demo. featuring <a href="http://painterlypack.net/" target="_blank" rel="noopener">painterly pack</a><br />(left click: forward, right click: backward)</div>
+            <div id="container"><br /><br /><br /><br /><br />Generating world...</div>
+            <div id="info">
+               <a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> -
+               <a href="http://www.minecraft.net/" target="_blank" rel="noopener">minecraft</a> demo. featuring
+               <a href="http://painterlypack.net/" target="_blank" rel="noopener">painterly pack</a>
+               <br />(left click: move, middle click: rotate, mouse wheel: zoom)</div>
 
             <script src="three.js/build/three.js"></script>
             <script src="OrbitControls.js"></script>
@@ -16,7 +20,7 @@
             <script src="three.js/examples/js/libs/stats.min.js"></script>
             <script src="comms.js"></script>
             <script src="consts.js"></script>
-            <script src="utils.js"></script>
+            <script src="mesh.js"></script>
             <script src="client.js"></script>
     </body>
 </html>

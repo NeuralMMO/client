@@ -137,19 +137,21 @@ class Engine {
 
 
 function init() {
+
    container = document.getElementById( 'container' );
    engine = new Engine();
 
-   var geometry = new THREE.CubeGeometry(sz, 1, sz);
+   // initialize player
+   var geometry = new THREE.CubeGeometry(sz, sz, sz);
    var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
    player = new THREE.Mesh(geometry, material);
    engine.scene.add(player);
-   //player.add(camera)
 
-   // sides
-   mesh = getSideMesh();
+   // initialize map
+   mesh = getMapMesh();
    engine.scene.add( mesh );
 
+   // initialize lights
    var ambientLight = new THREE.AmbientLight( 0xcccccc );
    engine.scene.add( ambientLight );
 
@@ -157,6 +159,7 @@ function init() {
    directionalLight.position.set( 1, 1, 0.5 ).normalize();
    engine.scene.add( directionalLight );
 
+   // hook up signals
    container.innerHTML = "";
    container.appendChild( engine.renderer.domElement );
 
@@ -186,7 +189,7 @@ function animate() {
 
       var x = pos[0];
       var z = pos[1];
-      var clickedSquare = new THREE.Vector3(x*sz, sz/2+0.1, z*sz);
+      var clickedSquare = new THREE.Vector3(x*sz, sz+0.1, z*sz);
       engine.translateDir = clickedSquare.clone();
       engine.translateDir.sub(engine.controls.target0);
 
