@@ -25,6 +25,7 @@ var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 var sz = 100;
 var frame = 0;
+var moveTarg = [0, 0];
 
 init();
 animate();
@@ -221,31 +222,44 @@ function animate() {
       var packet = inbox.shift();
       packet = JSON.parse(packet);
       var pos = packet.pos;
-      console.log(pos);
+      console.log('Inbox: ', pos);
 
-      var xx = player.position.x;
-      var zz = player.position.z;
+      //var x = player.position.x;
+      //var z = player.position.z;
 
-      xx = Math.floor(xx/sz);
-      zz = Math.floor(zz/sz);
+      //x = Math.floor(x/sz);
+      //z = Math.floor(z/sz);
+      var x = pos[0];
+      var z = pos[1];
+      var clickedSquare = new THREE.Vector3(x*sz, sz/2+0.1, z*sz);
+      translateDir = clickedSquare.clone();
 
-      var pos = [xx, zz];
+      translateState = 0.0;
+      translateDir.sub(controls.target0);
+      //controls.saveState();
+      controls.target0.copy(clickedSquare);
+
+      var x = moveTarg[0];
+      var z = moveTarg[1];
+      setMove(x, z);
+
+      /*
+      var pos = [x, z];
       var packet = JSON.stringify({'pos': pos});
-      console.log(packet);
+      console.log('Outbox: ', packet);
       ws.send(packet);
+      */
    }
-
 }
 
-function render() {
-   /*
-    * TODO: fix what happens when another square is clicked before the current
-    * animation is finished, or when the camera is rotated/zoomed before it's
-    * finished
-    * TODO: sometimes the camera rotates itself?
-    */
-   var delta = clock.getDelta();
+function setMove(x, z) {
+   moveTarg = [x, z];
+   var packet = JSON.stringify({'pos': moveTarg});
+   console.log("Set Move:", packet);
+   ws.send(packet);
+}
 
+function translate(delta) {
    if (translateState != -1) {
       var movement = translateDir.clone();
       movement.multiplyScalar(delta / tick);
@@ -267,6 +281,17 @@ function render() {
          translateDir.set(0.0, 0.0, 0.0);
       }
    }
+}
+
+function render() {
+   /*
+    * TODO: fix what happens when another square is clicked before the current
+    * animation is finished, or when the camera is rotated/zoomed before it's
+    * finished
+    * TODO: sometimes the camera rotates itself?
+    */
+   var delta = clock.getDelta();
+   translate(delta)
    controls.update( delta );
    renderer.render( scene, camera );
 }
@@ -292,13 +317,7 @@ function onMouseDown( event ) {
       x = Math.floor(x/sz);
       z = Math.floor(z/sz);
 
-      var clickedSquare = new THREE.Vector3(x*sz, sz/2+0.1, z*sz);
-      translateDir = clickedSquare.clone();
-
-      translateState = 0.0;
-      translateDir.sub(controls.target0);
-      //controls.saveState();
-      controls.target0.copy(clickedSquare);
+      setMove(x, z, controls);
    }
 }
 
