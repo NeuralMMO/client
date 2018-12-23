@@ -26,29 +26,49 @@ var mouse = new THREE.Vector2();
 var sz = 100;
 var frame = 0;
 var moveTarg = [0, 0];
+var engine;
+
+class Engine {
+   constructor() {
+      this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
+      this.camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
+      this.camera.position.z = 5;
+
+      this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+      this.renderer.setPixelRatio( window.devicePixelRatio );
+      this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+      this.scene = new THREE.Scene();
+      this.scene.background = new THREE.Color( 0x006666 );
+
+      document.body.appendChild( this.renderer.domElement );
+   }
+
+   onWindowResize() {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+
+      this.renderer.setSize( window.innerWidth, window.innerHeight );
+   }
+}
 
 init();
 animate();
 
+
 function init() {
    container = document.getElementById( 'container' );
-
-   //camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 20000 );
-   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
-   camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
-
-   scene = new THREE.Scene();
-   scene.background = new THREE.Color( 0x006666 );
+   engine = new Engine();
 
    var geometry = new THREE.CubeGeometry(sz, 1, sz);
    var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
    player = new THREE.Mesh(geometry, material);
-   scene.add(player);
+   engine.scene.add(player);
    //player.add(camera)
 
    //var target = new THREE.Object3D();
 
-   controls = new THREE.OrbitControls(camera, container);
+   controls = new THREE.OrbitControls(engine.camera, container);
    controls.mouseButtons = {
       LEFT: THREE.MOUSE.RIGHT,
       MIDDLE: THREE.MOUSE.MIDDLE,
@@ -156,22 +176,18 @@ function init() {
    texture.magFilter = THREE.NearestFilter;
 
    mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } ) );
-   scene.add( mesh );
+   engine.scene.add( mesh );
 
    var ambientLight = new THREE.AmbientLight( 0xcccccc );
-   scene.add( ambientLight );
+   engine.scene.add( ambientLight );
 
    var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
    directionalLight.position.set( 1, 1, 0.5 ).normalize();
-   scene.add( directionalLight );
-
-   renderer = new THREE.WebGLRenderer( { antialias: true } );
-   renderer.setPixelRatio( window.devicePixelRatio );
-   renderer.setSize( window.innerWidth, window.innerHeight );
+   engine.scene.add( directionalLight );
 
    container.innerHTML = "";
 
-   container.appendChild( renderer.domElement );
+   container.appendChild( engine.renderer.domElement );
 
    stats = new Stats();
    container.appendChild( stats.dom );
@@ -181,14 +197,7 @@ function init() {
 
 }
 
-function onWindowResize() {
 
-   camera.aspect = window.innerWidth / window.innerHeight;
-   camera.updateProjectionMatrix();
-
-   renderer.setSize( window.innerWidth, window.innerHeight );
-
-}
 
 function generateHeight( width, height ) {
 
@@ -266,7 +275,7 @@ function translate(delta) {
       player.position.add(movement);
       // this *should* be equivalent
       // controls.object.position.add(movement);
-      camera.position.add(movement);
+      engine.camera.position.add(movement);
       controls.target.copy(player.position);
 
       translateState += delta;
@@ -293,7 +302,7 @@ function render() {
    var delta = clock.getDelta();
    translate(delta)
    controls.update( delta );
-   renderer.render( scene, camera );
+   engine.renderer.render( engine.scene, engine.camera );
 }
 
 function onMouseDown( event ) {
@@ -302,9 +311,9 @@ function onMouseDown( event ) {
     * state to translate.
     */
 
-   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-   mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-   raycaster.setFromCamera( mouse, camera );
+   mouse.x = ( event.clientX / engine.renderer.domElement.clientWidth ) * 2 - 1;
+   mouse.y = - ( event.clientY / engine.renderer.domElement.clientHeight ) * 2 + 1;
+   raycaster.setFromCamera( mouse, engine.camera );
 
    // See if the ray from the camera into the world hits one of our meshes
    var intersects = raycaster.intersectObject( mesh );
@@ -320,4 +329,8 @@ function onMouseDown( event ) {
       setMove(x, z, controls);
    }
 }
+
+function onWindowResize() {
+   engine.onWindowResize()
+  }
 
