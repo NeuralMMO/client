@@ -6,8 +6,7 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 }
 
 var container, stats;
-var player, mesh;
-var engine;
+var player, mesh, engine, handler;
 
 
 class Engine {
@@ -35,25 +34,18 @@ class Engine {
          RIGHT: THREE.MOUSE.LEFT // pan
       }
       controls.target.set( 0, 0, 0 );
-      //controls.target = player
       controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
       controls.maxPolarAngle = Math.PI / 2.0 - 0.1;
-      //controls.target = target
       controls.movementSpeed = 1000;
       controls.lookSpeed = 0.125;
       controls.lookVertical = true;
       this.controls = controls;
 
-      this.translateState = -1;
-      this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
-      this.moveTarg = [0, 0];
-
       document.body.appendChild( this.renderer.domElement );
    }
 
    onWindowResize() {
-
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -70,6 +62,10 @@ class Engine {
       this.translate(delta)
       this.controls.update( delta );
       this.renderer.render( this.scene, this.camera );
+   }
+
+   translate( delta ) {
+      handler.translate(delta);
    }
 
    onMouseDown( event ) {
@@ -90,66 +86,174 @@ class Engine {
          var x = intersects[ 0 ].point.x;
          var z = intersects[ 0 ].point.z;
 
-         x = Math.floor(x/sz);
-         z = Math.floor(z/sz);
+         x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
+         z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
 
-         this.setMove(x, z);
+         player.translateState = true;
+         player.moveTarg = [x, z];
+         player.sendMove();
+      }
+   }
+}
+
+
+class PlayerHandler {
+   /*
+    * The PlayerHandler receives packets from the server containing player
+    * information (other players' movements, interactions with our player)
+    * and disperses the signals appropriately.
+    */
+   constructor() {
+      this.players = [];
+      this.numPlayers = 0;
+   }
+
+   addPlayer( player ) {
+      this.players.push(player);
+      this.numPlayers += 1;
+   }
+
+   removePlayer( playerIndex ) {
+      this.players.splice(playerIndex, 1);
+      this.numPlayers -= 1;
+   }
+
+   receiveMoves( moves ) {
+      for (var key in moves) {
+         var i = parseInt(key);
+         this.players[i].onReceive(moves[i]);
+      }
+      for (var i = 1; i < this.numPlayers; i++) {
+         this.players[i].onReceive([Math.random() * worldWidth,
+               Math.random() * worldDepth]);
       }
    }
 
+   translate( delta ) {
+      for (var i = 0; i < this.numPlayers; i++) {
+         this.players[i].translate( delta );
+      }
+   }
+}
+
+
+class Player extends THREE.Mesh {
+
+   constructor( geometry, material, index )  {
+      super(geometry, material);
+      this.translateState = false;
+      this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
+      this.moveTarg = [0, 0];
+
+      this.target = this.position.clone();
+      this.index = index;
+   }
+
+
+   onReceive( pos ) {
+      /*
+       * Initialize a translation for the main player and send current pos to
+       * engine
+       */
+      console.log(this.index, pos);
+      var x = pos[0];
+      var z = pos[1];
+
+      //console.log("Received move to ", x, z);
+      this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      this.translateState = true;
+      this.translateDir = this.target.clone();
+      this.translateDir.sub(this.position);
+
+      // Signal for begin translation
+      if (this.index == 0) {
+         this.sendMove();
+      }
+   }
+
+
+   sendMove() {
+      var packet = JSON.stringify({
+         "pos" : {[this.index] : this.moveTarg}
+      });
+      ws.send(packet);
+   }
+
+
    translate(delta) {
 
-      if (this.translateState != -1) {
+      if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
-
-         // Move player, then camera
-         player.position.add(movement);
-         this.camera.position.add(movement);
-         // this *should* be equivalent
-         // controls.object.position.add(movement);
-
-         // Turn the target into the new position of the player
-         this.controls.target.copy(player.position);
-
-         this.translateState += delta;
+         this.position.add(movement);
 
          var eps = 0.0000001;
-         if (player.position.distanceToSquared( this.controls.target0 ) <= eps
-                 || this.translateState >= tick) {
+         if (this.position.distanceToSquared(this.target) <= eps) {
             // Finish animating, reset
-            this.translateState = -1;
-            player.position.copy(this.controls.target0);
-            this.controls.target.copy(player.position);
+            this.translateState = false;
+            this.position.copy(this.target);
             this.translateDir.set(0.0, 0.0, 0.0);
          }
       }
    }
+}
 
-   setMove(x, z) {
 
-      this.moveTarg = [x, z];
-      var packet = JSON.stringify({'pos': this.moveTarg});
-      // console.log("Set Move:", packet);
-      ws.send(packet);
+class TargetPlayer extends Player {
+   translate(delta) {
+
+      if (this.translateState) {
+         var movement = this.translateDir.clone();
+         movement.multiplyScalar(delta / tick);
+
+         // Move player, then camera
+         this.position.add(movement);
+         engine.camera.position.add(movement);
+
+         // Turn the target into the new position of the player
+         engine.controls.target.copy(this.position);
+
+         var eps = 0.0000001;
+         if (this.position.distanceToSquared(this.target) <= eps) {
+            // Finish animating, reset
+            this.translateState = false;
+            this.position.copy(this.target);
+            engine.controls.target.copy(this.position);
+            this.translateDir.set(0.0, 0.0, 0.0);
+         }
+      }
    }
 }
 
 
 function init() {
+
    container = document.getElementById( 'container' );
    engine = new Engine();
 
-   var geometry = new THREE.CubeGeometry(sz, 1, sz);
-   var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
-   player = new THREE.Mesh(geometry, material);
-   engine.scene.add(player);
-   //player.add(camera)
+   handler = new PlayerHandler();
 
-   // sides
-   mesh = getSideMesh();
+   // initialize player
+   var geometry = new THREE.CubeGeometry(sz, sz, sz);
+   var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+   player = new TargetPlayer(geometry, material, 0);
+   engine.scene.add(player);
+   handler.addPlayer(player);
+
+   const maxPlayers = 10;
+   for (var i = 1; i < maxPlayers; i++) {
+      var geometry = new THREE.CubeGeometry(sz, sz, sz);
+      var material = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
+      var newPlayer = new Player(geometry, material, i);
+      engine.scene.add(newPlayer);
+      handler.addPlayer(newPlayer);
+   }
+
+   // initialize map
+   mesh = getMapMesh();
    engine.scene.add( mesh );
 
+   // initialize lights
    var ambientLight = new THREE.AmbientLight( 0xcccccc );
    engine.scene.add( ambientLight );
 
@@ -157,6 +261,7 @@ function init() {
    directionalLight.position.set( 1, 1, 0.5 ).normalize();
    engine.scene.add( directionalLight );
 
+   // hook up signals
    container.innerHTML = "";
    container.appendChild( engine.renderer.domElement );
 
@@ -179,6 +284,7 @@ function animate() {
    requestAnimationFrame( animate );
 
    while (inbox.length > 0) {
+      // Receive packet, begin translating based on the received position
       var packet = inbox.shift();
       console.log(packet);
       packet = JSON.parse(packet);
@@ -200,6 +306,8 @@ function animate() {
       var x = engine.moveTarg[0];
       var z = engine.moveTarg[1];
       //engine.setMove(x, z);
+      //console.log(pos);
+      handler.receiveMoves( pos );
    }
 
    engine.render();
