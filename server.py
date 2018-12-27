@@ -10,7 +10,6 @@ import random
 import websockets
 import json
 
-
 def sign(x):
     return int(np.sign(x))
 
@@ -25,15 +24,6 @@ def move(orig, targ):
         return ro, co + sign(dc)
     else:
         return ro + sign(dr), co + sign(dc)
-
-async def time(websocket, path):
-    socket = SerialSocket(websocket)
-    while True:
-        print(data)
-        await socket.send(data)
-        targ = await socket.recv()
-        data['pos'] = move(data['pos'], targ['pos'])
-        await asyncio.sleep(0.6)
 
 class SerialSocket:
     def __init__(self, socket):
@@ -53,5 +43,41 @@ class WebSocketServer:
         asyncio.get_event_loop().run_until_complete(socket)
         asyncio.get_event_loop().run_forever()
 
+class Tick:
+    def __init__(self, realm):
+        self.realm = realm
+        self.frame = 0
+        self.socket = None
+ 
+    async def __call__(self, websocket, path):
+        self.frame += 1
+        print('Here')
+        if self.socket is None:
+           self.socket = SerialSocket(websocket)
+
+        env = self.realm.envs[0]
+        data = {'pos': (0, 0)}
+        if len(env.desciples) > 0:
+            idx = min(int(e) for e in env.desciples.keys())
+            ent = env.desciples[str(idx)]
+            pos = ent.client.pos
+            data = {'pos': pos}
+
+        socket = self.socket
+        await socket.send(data)
+        #targ = await socket.recv()
+        #data['pos'] = move(data['pos'], targ['pos'])
+        await asyncio.sleep(0.6)
+
+class Application:
+    def __init__(self, realm):
+        #app = server.Application((2048+256, 1024+256),
+        #        self, step, self.config)
+        self.socket = WebSocketServer(Tick(realm), 'localhost', 8001)
+        #        Tick.__call__, 'localhost', 8001)
+
 data = {'pos':(0, 0)}
-socket = WebSocketServer(time, 'localhost', 8001)
+#socket = WebSocketServer(
+#        Tick(None, None, None, None), 'localhost', 8001)
+
+

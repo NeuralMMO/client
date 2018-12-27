@@ -180,12 +180,15 @@ function animate() {
 
    while (inbox.length > 0) {
       var packet = inbox.shift();
+      console.log(packet);
       packet = JSON.parse(packet);
       var pos = packet.pos;
-      // console.log('Inbox: ', pos);
+      console.log('Inbox: ', pos);
 
       var x = pos[0];
       var z = pos[1];
+      engine.setMove(x, z);
+
       var clickedSquare = new THREE.Vector3(x*sz, sz/2+0.1, z*sz);
       engine.translateDir = clickedSquare.clone();
       engine.translateDir.sub(engine.controls.target0);
@@ -196,7 +199,7 @@ function animate() {
 
       var x = engine.moveTarg[0];
       var z = engine.moveTarg[1];
-      engine.setMove(x, z);
+      //engine.setMove(x, z);
    }
 
    engine.render();
