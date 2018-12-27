@@ -35,7 +35,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
         super().__init__()
         print("CREATED A SERVER")
         self.frame = 0
-        self.packet = {'pos': (5, 0)}
+        self.packet = {'pos': {'0': (5, 0)} }
 
     def onOpen(self):
         print("Opened connection to server")
@@ -68,8 +68,13 @@ class EchoServerProtocol(WebSocketServerProtocol):
         payload = json.loads(payload)
         #self.sendMessage(payload, isBinary)
         pos = payload['pos']
-        pos = move(self.packet['pos'], pos)
-        data = {'pos': pos}
+
+        data = self.packet
+        for playerI in pos.keys():
+            if playerI not in data["pos"]:
+                data["pos"][playerI] = (0, 0)
+            data["pos"][playerI] = move(data["pos"][playerI], pos[playerI])
+
         self.packet = data
         packet = json.dumps(data).encode('utf8')
         self.sendMessage(packet, False)
