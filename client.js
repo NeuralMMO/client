@@ -7,7 +7,6 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 
 var container, stats;
 var player, mesh, engine, handler;
-const numPlayers = 10;
 
 
 class Engine {
@@ -65,6 +64,10 @@ class Engine {
       this.renderer.render( this.scene, this.camera );
    }
 
+   translate( delta ) {
+      handler.translate(delta);
+   }
+
    onMouseDown( event ) {
       /*
        * Sets the translation direction based on the clicked square and toggles
@@ -83,40 +86,14 @@ class Engine {
          var x = intersects[ 0 ].point.x;
          var z = intersects[ 0 ].point.z;
 
-         x = Math.floor(x/sz);
-         z = Math.floor(z/sz);
+         x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
+         z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
 
          player.translateState = true;
          player.moveTarg = [x, z];
          player.sendMove();
       }
    }
-
-   translate(delta) {
-
-      if (player.translateState) {
-         var movement = player.translateDir.clone();
-         movement.multiplyScalar(delta / tick);
-
-         // Move player, then camera
-         player.position.add(movement);
-         this.camera.position.add(movement);
-
-         // Turn the target into the new position of the player
-         this.controls.target.copy(player.position);
-
-         var eps = 0.0000001;
-         if (player.position.distanceToSquared(player.target) <= eps) {
-            // Finish animating, reset
-            player.translateState = false;
-            player.position.copy(player.target);
-            this.controls.target.copy(player.position);
-            player.translateDir.set(0.0, 0.0, 0.0);
-         }
-         console.log("translate");
-      }
-   }
-
 }
 
 
@@ -142,14 +119,21 @@ class PlayerHandler {
    }
 
    receiveMoves( moves ) {
-      /*
-       * moves is a list of "{i}, [x, y]"
-       */
-      for (var i = 0; i < moves.length; i++) {
+      for (var key in moves) {
+         var i = parseInt(key);
          this.players[i].onReceive(moves[i]);
+      }
+      for (var i = 1; i < this.numPlayers; i++) {
+         this.players[i].onReceive([Math.random() * worldWidth,
+               Math.random() * worldDepth]);
       }
    }
 
+   translate( delta ) {
+      for (var i = 0; i < this.numPlayers; i++) {
+         this.players[i].translate( delta );
+      }
+   }
 }
 
 
@@ -171,16 +155,20 @@ class Player extends THREE.Mesh {
        * Initialize a translation for the main player and send current pos to
        * engine
        */
+      console.log(this.index, pos);
       var x = pos[0];
       var z = pos[1];
-      //var x = this.moveTarg[0];
-      //var z = this.moveTarg[1];
+
+      //console.log("Received move to ", x, z);
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      this.translateState = true;
       this.translateDir = this.target.clone();
       this.translateDir.sub(this.position);
 
       // Signal for begin translation
-      this.sendMove();
+      if (this.index == 0) {
+         this.sendMove();
+      }
    }
 
 
@@ -190,10 +178,52 @@ class Player extends THREE.Mesh {
       });
       ws.send(packet);
    }
+
+
+   translate(delta) {
+
+      if (this.translateState) {
+         var movement = this.translateDir.clone();
+         movement.multiplyScalar(delta / tick);
+         this.position.add(movement);
+
+         var eps = 0.0000001;
+         if (this.position.distanceToSquared(this.target) <= eps) {
+            // Finish animating, reset
+            this.translateState = false;
+            this.position.copy(this.target);
+            this.translateDir.set(0.0, 0.0, 0.0);
+         }
+      }
+   }
 }
 
 
-class TargetPlayer extends Player {}
+class TargetPlayer extends Player {
+   translate(delta) {
+
+      if (this.translateState) {
+         var movement = this.translateDir.clone();
+         movement.multiplyScalar(delta / tick);
+
+         // Move player, then camera
+         this.position.add(movement);
+         engine.camera.position.add(movement);
+
+         // Turn the target into the new position of the player
+         engine.controls.target.copy(this.position);
+
+         var eps = 0.0000001;
+         if (this.position.distanceToSquared(this.target) <= eps) {
+            // Finish animating, reset
+            this.translateState = false;
+            this.position.copy(this.target);
+            engine.controls.target.copy(this.position);
+            this.translateDir.set(0.0, 0.0, 0.0);
+         }
+      }
+   }
+}
 
 
 function init() {
@@ -209,6 +239,15 @@ function init() {
    player = new TargetPlayer(geometry, material, 0);
    engine.scene.add(player);
    handler.addPlayer(player);
+
+   const maxPlayers = 10;
+   for (var i = 1; i < maxPlayers; i++) {
+      var geometry = new THREE.CubeGeometry(sz, sz, sz);
+      var material = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
+      var newPlayer = new Player(geometry, material, i);
+      engine.scene.add(newPlayer);
+      handler.addPlayer(newPlayer);
+   }
 
    // initialize map
    mesh = getMapMesh();
@@ -240,16 +279,6 @@ function init() {
 }
 
 
-function animatePlayers( packet ) {
-   packet = JSON.parse(packet);
-   // players is Array of positions
-   var players = packet.players;
-   for (var i = 0; i < numPLayers; i++) {
-      animatePlayer( i, players[i] );
-   }
-}
-
-
 function animate() {
 
    requestAnimationFrame( animate );
@@ -259,7 +288,7 @@ function animate() {
       var packet = inbox.shift();
       packet = JSON.parse(packet);
       var pos = packet.pos;
-      console.log(pos);
+      //console.log(pos);
       handler.receiveMoves( pos );
    }
 

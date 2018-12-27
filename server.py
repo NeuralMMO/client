@@ -29,12 +29,12 @@ def move(orig, targ):
 async def time(websocket, path):
     socket = SerialSocket(websocket)
     while True:
-        print(data)
+        print(data["pos"])
         await socket.send(data)
         targ = await socket.recv()
         pos = targ["pos"]
         for playerI in pos.keys():
-            if playerI not in data:
+            if playerI not in data["pos"]:
                 data["pos"][playerI] = (0, 0)
             data["pos"][playerI] = move(data["pos"][playerI], pos[playerI])
         await asyncio.sleep(0.6)
