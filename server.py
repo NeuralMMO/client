@@ -32,7 +32,11 @@ async def time(websocket, path):
         print(data)
         await socket.send(data)
         targ = await socket.recv()
-        data['pos'] = move(data['pos'], targ['pos'])
+        pos = targ["pos"]
+        for playerI in pos.keys():
+            if playerI not in data:
+                data["pos"][playerI] = (0, 0)
+            data["pos"][playerI] = move(data["pos"][playerI], pos[playerI])
         await asyncio.sleep(0.6)
 
 class SerialSocket:
@@ -53,5 +57,5 @@ class WebSocketServer:
         asyncio.get_event_loop().run_until_complete(socket)
         asyncio.get_event_loop().run_forever()
 
-data = {'pos':(0, 0)}
+data = {'pos': {'0': (0, 0)} }
 socket = WebSocketServer(time, 'localhost', 8001)

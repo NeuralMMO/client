@@ -6,8 +6,8 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 }
 
 var container, stats;
-var player, mesh;
-var engine;
+var player, mesh, engine, handler;
+const numPlayers = 10;
 
 
 class Engine {
@@ -35,25 +35,18 @@ class Engine {
          RIGHT: THREE.MOUSE.LEFT // pan
       }
       controls.target.set( 0, 0, 0 );
-      //controls.target = player
       controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
       controls.maxPolarAngle = Math.PI / 2.0 - 0.1;
-      //controls.target = target
       controls.movementSpeed = 1000;
       controls.lookSpeed = 0.125;
       controls.lookVertical = true;
       this.controls = controls;
 
-      this.translateState = -1;
-      this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
-      this.moveTarg = [0, 0];
-
       document.body.appendChild( this.renderer.domElement );
    }
 
    onWindowResize() {
-
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -93,47 +86,114 @@ class Engine {
          x = Math.floor(x/sz);
          z = Math.floor(z/sz);
 
-         this.setMove(x, z);
+         player.translateState = true;
+         player.moveTarg = [x, z];
+         player.sendMove();
       }
    }
 
    translate(delta) {
 
-      if (this.translateState != -1) {
-         var movement = this.translateDir.clone();
+      if (player.translateState) {
+         var movement = player.translateDir.clone();
          movement.multiplyScalar(delta / tick);
 
          // Move player, then camera
          player.position.add(movement);
          this.camera.position.add(movement);
-         // this *should* be equivalent
-         // controls.object.position.add(movement);
 
          // Turn the target into the new position of the player
          this.controls.target.copy(player.position);
 
-         this.translateState += delta;
-
          var eps = 0.0000001;
-         if (player.position.distanceToSquared( this.controls.target0 ) <= eps
-                 || this.translateState >= tick) {
+         if (player.position.distanceToSquared(player.target) <= eps) {
             // Finish animating, reset
-            this.translateState = -1;
-            player.position.copy(this.controls.target0);
+            player.translateState = false;
+            player.position.copy(player.target);
             this.controls.target.copy(player.position);
-            this.translateDir.set(0.0, 0.0, 0.0);
+            player.translateDir.set(0.0, 0.0, 0.0);
          }
+         console.log("translate");
       }
    }
 
-   setMove(x, z) {
+}
 
-      this.moveTarg = [x, z];
-      var packet = JSON.stringify({'pos': this.moveTarg});
-      // console.log("Set Move:", packet);
+
+class PlayerHandler {
+   /*
+    * The PlayerHandler receives packets from the server containing player
+    * information (other players' movements, interactions with our player)
+    * and disperses the signals appropriately.
+    */
+   constructor() {
+      this.players = [];
+      this.numPlayers = 0;
+   }
+
+   addPlayer( player ) {
+      this.players.push(player);
+      this.numPlayers += 1;
+   }
+
+   removePlayer( playerIndex ) {
+      this.players.splice(playerIndex, 1);
+      this.numPlayers -= 1;
+   }
+
+   receiveMoves( moves ) {
+      /*
+       * moves is a list of "{i}, [x, y]"
+       */
+      for (var i = 0; i < moves.length; i++) {
+         this.players[i].onReceive(moves[i]);
+      }
+   }
+
+}
+
+
+class Player extends THREE.Mesh {
+
+   constructor( geometry, material, index )  {
+      super(geometry, material);
+      this.translateState = false;
+      this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
+      this.moveTarg = [0, 0];
+
+      this.target = this.position.clone();
+      this.index = index;
+   }
+
+
+   onReceive( pos ) {
+      /*
+       * Initialize a translation for the main player and send current pos to
+       * engine
+       */
+      var x = pos[0];
+      var z = pos[1];
+      //var x = this.moveTarg[0];
+      //var z = this.moveTarg[1];
+      this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      this.translateDir = this.target.clone();
+      this.translateDir.sub(this.position);
+
+      // Signal for begin translation
+      this.sendMove();
+   }
+
+
+   sendMove() {
+      var packet = JSON.stringify({
+         "pos" : {[this.index] : this.moveTarg}
+      });
       ws.send(packet);
    }
 }
+
+
+class TargetPlayer extends Player {}
 
 
 function init() {
@@ -141,11 +201,14 @@ function init() {
    container = document.getElementById( 'container' );
    engine = new Engine();
 
+   handler = new PlayerHandler();
+
    // initialize player
    var geometry = new THREE.CubeGeometry(sz, sz, sz);
    var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
-   player = new THREE.Mesh(geometry, material);
+   player = new TargetPlayer(geometry, material, 0);
    engine.scene.add(player);
+   handler.addPlayer(player);
 
    // initialize map
    mesh = getMapMesh();
@@ -177,29 +240,27 @@ function init() {
 }
 
 
+function animatePlayers( packet ) {
+   packet = JSON.parse(packet);
+   // players is Array of positions
+   var players = packet.players;
+   for (var i = 0; i < numPLayers; i++) {
+      animatePlayer( i, players[i] );
+   }
+}
+
+
 function animate() {
 
    requestAnimationFrame( animate );
 
    while (inbox.length > 0) {
+      // Receive packet, begin translating based on the received position
       var packet = inbox.shift();
       packet = JSON.parse(packet);
       var pos = packet.pos;
-      // console.log('Inbox: ', pos);
-
-      var x = pos[0];
-      var z = pos[1];
-      var clickedSquare = new THREE.Vector3(x*sz, sz+0.1, z*sz);
-      engine.translateDir = clickedSquare.clone();
-      engine.translateDir.sub(engine.controls.target0);
-
-      engine.translateState = 0.0;
-      //engine.controls.saveState();
-      engine.controls.target0.copy(clickedSquare);
-
-      var x = engine.moveTarg[0];
-      var z = engine.moveTarg[1];
-      engine.setMove(x, z);
+      console.log(pos);
+      handler.receiveMoves( pos );
    }
 
    engine.render();
