@@ -37,7 +37,8 @@ async def time(websocket, path):
             if playerI not in data["pos"]:
                 data["pos"][playerI] = (0, 0)
             data["pos"][playerI] = move(data["pos"][playerI], pos[playerI])
-        await asyncio.sleep(0.6)
+        #await asyncio.sleep(0.6)
+        await asyncio.sleep(0.1)
 
 class SerialSocket:
     def __init__(self, socket):

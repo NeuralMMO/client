@@ -6,33 +6,54 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 }
 
 var container, stats;
-var player, mesh, engine, handler;
+var player, engine, handler;
 
 
 class Engine {
 
    constructor() {
+      this.scene = new THREE.Scene();
+      this.scene.background = new THREE.Color( 0x006666 );
+
+      // initialize map
+      var map = new Map( false ); // flat = False
+      this.mesh = map.getMapMesh();
+      this.scene.add( this.mesh );
+
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
-      this.camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
+      this.camera.position.y = map.getY(
+            worldHalfWidth, worldHalfDepth ) * 100 + 100;
       this.camera.position.z = 5;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
       this.renderer.setSize( window.innerWidth, window.innerHeight );
 
-      this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color( 0x006666 );
+      this.initializeControls();
 
       this.mouse = new THREE.Vector2();
       this.raycaster = new THREE.Raycaster();
       this.clock = new THREE.Clock();
 
+      // initialize lights
+      var ambientLight = new THREE.AmbientLight( 0xcccccc );
+      this.scene.add( ambientLight );
+
+      var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+      directionalLight.position.set( 1, 1, 0.5 ).normalize();
+      this.scene.add( directionalLight );
+
+      document.body.appendChild( this.renderer.domElement );
+   }
+
+   initializeControls() {
       var controls = new THREE.OrbitControls(this.camera, container);
       controls.mouseButtons = {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan
       }
+
       controls.target.set( 0, 0, 0 );
       controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
@@ -41,8 +62,6 @@ class Engine {
       controls.lookSpeed = 0.125;
       controls.lookVertical = true;
       this.controls = controls;
-
-      document.body.appendChild( this.renderer.domElement );
    }
 
    onWindowResize() {
@@ -53,9 +72,6 @@ class Engine {
 
    render() {
       /*
-       * TODO: fix what happens when another square is clicked before the current
-       * animation is finished, or when the camera is rotated/zoomed before it's
-       * finished
        * TODO: sometimes the camera rotates itself?
        */
       var delta = this.clock.getDelta();
@@ -74,12 +90,14 @@ class Engine {
        * state to translate.
        */
 
-      this.mouse.x = ( event.clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
-      this.mouse.y = - ( event.clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
+      this.mouse.x = (
+            event.clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
+      this.mouse.y = - (
+            event.clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
       this.raycaster.setFromCamera( this.mouse, this.camera );
 
       // See if the ray from the camera into the world hits one of our meshes
-      var intersects = this.raycaster.intersectObject( mesh );
+      var intersects = this.raycaster.intersectObject( this.mesh );
 
       // Toggle rotation bool for meshes that we clicked
       if ( intersects.length > 0 ) {
@@ -97,12 +115,14 @@ class Engine {
 }
 
 
+
 class PlayerHandler {
    /*
     * The PlayerHandler receives packets from the server containing player
     * information (other players' movements, interactions with our player)
     * and disperses the signals appropriately.
     */
+
    constructor() {
       this.players = [];
       this.numPlayers = 0;
@@ -137,6 +157,7 @@ class PlayerHandler {
 }
 
 
+
 class Player extends THREE.Mesh {
 
    constructor( geometry, material, index )  {
@@ -149,13 +170,11 @@ class Player extends THREE.Mesh {
       this.index = index;
    }
 
-
    onReceive( pos ) {
       /*
-       * Initialize a translation for the main player and send current pos to
-       * engine
+       * Initialize a translation for the player, send current pos to server
        */
-      console.log(this.index, pos);
+      //console.log(this.index, pos);
       var x = pos[0];
       var z = pos[1];
 
@@ -171,7 +190,6 @@ class Player extends THREE.Mesh {
       }
    }
 
-
    sendMove() {
       var packet = JSON.stringify({
          "pos" : {[this.index] : this.moveTarg}
@@ -179,9 +197,7 @@ class Player extends THREE.Mesh {
       ws.send(packet);
    }
 
-
    translate(delta) {
-
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
@@ -200,8 +216,11 @@ class Player extends THREE.Mesh {
 
 
 class TargetPlayer extends Player {
-   translate(delta) {
 
+   translate(delta) {
+      /*
+       * Translate, but also move the camera at the same time.
+       */
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
@@ -227,12 +246,26 @@ class TargetPlayer extends Player {
 
 
 function init() {
-
    container = document.getElementById( 'container' );
    engine = new Engine();
-
    handler = new PlayerHandler();
+   initializePlayers();
 
+   // hook up signals
+   container.innerHTML = "";
+   container.appendChild( engine.renderer.domElement );
+
+   function onMouseDown( event ) { engine.onMouseDown( event ); }
+   function onWindowResize() { engine.onWindowResize(); }
+
+   stats = new Stats();
+   container.appendChild( stats.dom );
+   container.addEventListener( 'click', onMouseDown, false );
+   window.addEventListener( 'resize', onWindowResize, false );
+}
+
+
+function initializePlayers() {
    // initialize player
    var geometry = new THREE.CubeGeometry(sz, sz, sz);
    var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
@@ -248,53 +281,21 @@ function init() {
       engine.scene.add(newPlayer);
       handler.addPlayer(newPlayer);
    }
-
-   // initialize map
-   mesh = getMapMesh();
-   engine.scene.add( mesh );
-
-   // initialize lights
-   var ambientLight = new THREE.AmbientLight( 0xcccccc );
-   engine.scene.add( ambientLight );
-
-   var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-   directionalLight.position.set( 1, 1, 0.5 ).normalize();
-   engine.scene.add( directionalLight );
-
-   // hook up signals
-   container.innerHTML = "";
-   container.appendChild( engine.renderer.domElement );
-
-   function onMouseDown( event ) {
-      engine.onMouseDown( event );
-   }
-   function onWindowResize() {
-      engine.onWindowResize()
-   }
-
-   stats = new Stats();
-   container.appendChild( stats.dom );
-   container.addEventListener( 'click', onMouseDown, false );
-   window.addEventListener( 'resize', onWindowResize, false );
 }
 
 
 function animate() {
-
    requestAnimationFrame( animate );
-
    while (inbox.length > 0) {
       // Receive packet, begin translating based on the received position
       var packet = inbox.shift();
       packet = JSON.parse(packet);
-      var pos = packet.pos;
-      //console.log(pos);
-      handler.receiveMoves( pos );
+      handler.receiveMoves( packet.pos );
    }
-
    engine.render();
    stats.update();
 }
+
 
 // Main
 init();

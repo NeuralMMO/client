@@ -1,9 +1,7 @@
-var map;
-
-
 class Map {
 
-   constructor () {
+   constructor ( flat ) {
+      this.flat = flat;
       this.texture = new THREE.TextureLoader().load(
             'three.js/examples/textures/minecraft/atlas.png' );
       this.texture.magFilter = THREE.NearestFilter;
@@ -121,8 +119,6 @@ class Map {
 
 
    generateHeights( width, height ) {
-      var flat = true;
-
       var perlin = new ImprovedNoise();
 
       var data = [];
@@ -132,7 +128,7 @@ class Map {
       for ( var i = 0; i < height; i ++ ) {
          var row = [];
          for ( var j = 0; j < width; j++ ) {
-            if (flat) {
+            if (this.flat) {
                row[j] = 0;
             } else {
                row[j] = Math.max(0, Math.ceil(perlin.noise(i, j, z) * 10));
@@ -151,26 +147,10 @@ class Map {
       x = Math.min(Math.max(0, x), worldWidth-1);
       z = Math.min(Math.max(0, z), worldDepth-1);
       return this.data[x][z] * 0.2;
-
    }
 }
 
 
-function getY( x, z ) {
-   return map.getY( x, z );
-}
-
 function isBelowHeight( x, h ) {
    return x !== h && x !== h + 1;
 }
-
-function getMapMesh() {
-  return map.getMapMesh();
-}
-
-function init() {
-   map = new Map();
-}
-
-init();
-
