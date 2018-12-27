@@ -289,6 +289,7 @@ function animate() {
    while (inbox.length > 0) {
       // Receive packet, begin translating based on the received position
       var packet = inbox.shift();
+      console.log(packet);
       packet = JSON.parse(packet);
       handler.receiveMoves( packet.pos );
    }

@@ -1,4 +1,5 @@
-var ws = new WebSocket("ws://localhost:8001/");
+var ws = new WebSocket("ws://127.0.0.1:8080/ws");
+//ws://127.0.0.1:8080
 var inbox = [], outbox = [];
 
 /*
