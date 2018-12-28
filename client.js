@@ -177,7 +177,6 @@ class Player extends THREE.Mesh {
       /*
        * Initialize a translation for the player, send current pos to server
        */
-      //console.log(this.index, pos);
       var x = pos[0];
       var z = pos[1];
 
