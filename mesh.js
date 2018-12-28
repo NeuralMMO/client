@@ -1,4 +1,4 @@
-class Map {
+class Terrain {
 
    constructor ( flat ) {
       this.flat = flat;

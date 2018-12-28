@@ -16,7 +16,7 @@ class Engine {
       this.scene.background = new THREE.Color( 0x006666 );
 
       // initialize map
-      var map = new Map( false ); // flat = False
+      var map = new Terrain( false ); // flat = False
       this.mesh = map.getMapMesh();
       this.scene.add( this.mesh );
 
@@ -75,7 +75,7 @@ class Engine {
        * TODO: sometimes the camera rotates itself?
        */
       var delta = this.clock.getDelta();
-      this.translate(delta)
+      //this.translate(delta)
       this.controls.update( delta );
       this.renderer.render( this.scene, this.camera );
    }
@@ -138,13 +138,15 @@ class PlayerHandler {
       this.numPlayers -= 1;
    }
 
-   receiveMoves( moves ) {
-      for (var key in moves) {
-         var i = parseInt(key);
-         this.players[i].onReceive(moves[i]);
-      }
+   update(packet) {
+      //Orig
+      var id = 0;
+      var move = packet[id]['pos'];
+      console.log(move)
+      this.players[id].moveTo(move);
+
       for (var i = 1; i < this.numPlayers; i++) {
-         this.players[i].onReceive([Math.random() * worldWidth,
+         this.players[i].moveTo([Math.random() * worldWidth,
                Math.random() * worldDepth]);
       }
    }
@@ -157,7 +159,6 @@ class PlayerHandler {
 }
 
 
-
 class Player extends THREE.Mesh {
 
    constructor( geometry, material, index )  {
@@ -165,18 +166,23 @@ class Player extends THREE.Mesh {
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
+      this.pos = [0, 0];
 
       this.target = this.position.clone();
       this.index = index;
    }
 
-   onReceive( pos ) {
+   moveTo( pos ) {
+
       /*
        * Initialize a translation for the player, send current pos to server
        */
       //console.log(this.index, pos);
       var x = pos[0];
       var z = pos[1];
+
+      //Instant move hack
+      this.position.copy(new THREE.Vector3(x*sz, sz+0.1, z*sz));
 
       //console.log("Received move to ", x, z);
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
@@ -192,7 +198,7 @@ class Player extends THREE.Mesh {
 
    sendMove() {
       var packet = JSON.stringify({
-         "pos" : {[this.index] : this.moveTarg}
+         "pos" : this.moveTarg
       });
       ws.send(packet);
    }
@@ -291,7 +297,7 @@ function animate() {
       var packet = inbox.shift();
       console.log(packet);
       packet = JSON.parse(packet);
-      handler.receiveMoves( packet.pos );
+      handler.update(packet)
    }
    engine.render();
    stats.update();

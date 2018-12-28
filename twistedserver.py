@@ -35,19 +35,25 @@ class EchoServerProtocol(WebSocketServerProtocol):
         super().__init__()
         print("CREATED A SERVER")
         self.frame = 0
-        self.packet = {'pos': {'0': (5, 0)} }
+        self.packet = {
+                '0':{
+                    'pos': (5, 0) 
+                    }
+                }
 
     def onOpen(self):
         print("Opened connection to server")
         self.realm = self.factory.realm
         self.frame += 1
 
+        '''
         env = self.realm.envs[0]
         if len(env.desciples) > 0:
             idx = min(int(e) for e in env.desciples.keys())
             ent = env.desciples[str(idx)]
             pos = ent.client.pos
             data = {'pos': pos}
+        '''
 
         data = self.packet
         packet = json.dumps(data).encode('utf8')
@@ -62,27 +68,46 @@ class EchoServerProtocol(WebSocketServerProtocol):
     def onConnect(self, request):
         print("WebSocket connection request: {}".format(request))
 
-    def onMessage(self, payload, isBinary):
-        print("Message", payload)
+    def onMessage(self, packet, isBinary):
+        print("Message", packet)
 
-        payload = json.loads(payload)
+        packet = json.loads(packet)
         #self.sendMessage(payload, isBinary)
-        pos = payload['pos']
+        #packet = packet['0']
+        pos = packet['pos']
+        self.packet['0']['pos'] = move(self.packet['0']['pos'], pos)
 
-        data = self.packet
-        for playerI in pos.keys():
-            if playerI not in data["pos"]:
-                data["pos"][playerI] = (0, 0)
-            data["pos"][playerI] = move(data["pos"][playerI], pos[playerI])
-
-        self.packet = data
-        packet = json.dumps(data).encode('utf8')
+    def sendUpdate(self):
+        packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)
 
+    def connectionMade(self):
+        super().connectionMade()
+        self.factory.clientConnectionMade(self)
+
+    def connectionLost(self, reason):
+        super().connectionLost(reason)
+        self.factory.clientConnectionLost(self)
+
 class WSServerFactory(WebSocketServerFactory):
-    def __init__(self, ip, realm):
+    def __init__(self, ip, realm, step):
         super().__init__(ip)
-        self.realm = realm
+        self.realm, self.step = realm, step
+        self.clients = []
+
+        lc = LoopingCall(self.announce)
+        lc.start(0.6)
+
+    def announce(self):
+        self.step()
+        for client in self.clients:
+            client.sendUpdate()
+
+    def clientConnectionMade(self, client):
+        self.clients.append(client)
+
+    def clientConnectionLost(self, client):
+        self.clients.remove(client)
 
 class Application:
     def __init__(self, realm, step):
@@ -92,7 +117,7 @@ class Application:
         port = 8080
 
         #factory = WSServerFactory(u'ws://localhost:'+str(port), realm)
-        factory = WSServerFactory(u"ws://127.0.0.1:8080", realm)
+        factory = WSServerFactory(u"ws://127.0.0.1:8080", realm, step)
         #factory = WebSocketServerFactory(u"ws://127.0.0.1:8080")
         factory.protocol = EchoServerProtocol
 
@@ -108,11 +133,7 @@ class Application:
         # both under one Twisted Web Site
         site = Site(root)
 
-        lc = LoopingCall(step)
-        lc.start(0.6)
-
         reactor.listenTCP(port, site)
-
         reactor.run()
 
 
