@@ -75,7 +75,7 @@ class Engine {
        * TODO: sometimes the camera rotates itself?
        */
       var delta = this.clock.getDelta();
-      //this.translate(delta)
+      this.translate(delta)
       this.controls.update( delta );
       this.renderer.render( this.scene, this.camera );
    }
@@ -142,7 +142,7 @@ class PlayerHandler {
       //Orig
       var id = 0;
       var move = packet[id]['pos'];
-      console.log(move)
+      console.log("Move: ", move)
       this.players[id].moveTo(move);
 
       for (var i = 1; i < this.numPlayers; i++) {
@@ -181,12 +181,12 @@ class Player extends THREE.Mesh {
       var z = pos[1];
 
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
-      // Instant move hack
-      this.position.copy(this.target.clone());
-
       this.translateState = true;
       this.translateDir = this.target.clone();
       this.translateDir.sub(this.position);
+
+      // Instant move hack
+      // this.position.copy(this.target.clone());
 
       // Signal for begin translation
       if (this.index == 0) {
@@ -222,23 +222,8 @@ class Player extends THREE.Mesh {
 class TargetPlayer extends Player {
 
    moveTo( pos ) {
-      var x = pos[0];
-      var z = pos[1];
-
-      this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
-      // Instant move hack
-      this.translateState = true;
-      this.translateDir = this.target.clone();
-      this.translateDir.sub(this.position);
-
-      this.position.copy(this.target.clone());
-
+      super.moveTo(pos);
       this.focus();
-
-      // Signal for begin translation
-      if (this.index == 0) {
-         this.sendMove();
-      }
    }
 
    focus() {
