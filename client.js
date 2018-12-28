@@ -174,11 +174,9 @@ class Player extends THREE.Mesh {
       /*
        * Initialize a translation for the player, send current pos to server
        */
-      //console.log(this.index, pos);
       var x = pos[0];
       var z = pos[1];
 
-      //console.log("Received move to ", x, z);
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
       this.translateState = true;
       this.translateDir = this.target.clone();
