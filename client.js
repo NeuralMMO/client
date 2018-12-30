@@ -189,6 +189,9 @@ class Player {
 
       //console.log("Received move to ", x, z);
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      // Instant move hack
+      this.container.position.copy(this.target.clone());
+
       this.translateState = true;
       this.translateDir = this.target.clone();
       this.translateDir.sub(this.container.position);
@@ -225,6 +228,32 @@ class Player {
 
 
 class TargetPlayer extends Player {
+
+   moveTo( pos ) {
+      var x = pos[0];
+      var z = pos[1];
+
+      this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      // Instant move hack
+      this.translateState = true;
+      this.translateDir = this.target.clone();
+      this.translateDir.sub(this.position);
+
+      this.position.copy(this.target.clone());
+
+      this.focus();
+
+      // Signal for begin translation
+      if (this.index == 0) {
+         this.sendMove();
+      }
+   }
+
+   focus() {
+      /* Resets the camera on me. */
+      engine.camera.position.add(this.translateDir);
+      engine.controls.target.copy(this.position.clone());
+   }
 
    translate(delta) {
       /*
@@ -387,7 +416,7 @@ function animate() {
    while (inbox.length > 0) {
       // Receive packet, begin translating based on the received position
       var packet = inbox.shift();
-      console.log(packet);
+      //console.log(packet);
       packet = JSON.parse(packet);
       handler.update(packet)
    }
