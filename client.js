@@ -159,17 +159,21 @@ class PlayerHandler {
 }
 
 
-class Player extends THREE.Mesh {
+class Player {
 
-   constructor( geometry, material, index )  {
-      super(geometry, material);
+   constructor( container, index )  {
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.pos = [0, 0];
 
-      this.target = this.position.clone();
+      this.container = container
+      this.target = container.position.clone();
       this.index = index;
+   }
+
+   setPos(x, y, z) {
+      this.container.position.copy(new THREE.Vector3(x*sz, sz+0.1, z*sz));
    }
 
    moveTo( pos ) {
@@ -181,13 +185,13 @@ class Player extends THREE.Mesh {
       var z = pos[1];
 
       //Instant move hack
-      this.position.copy(new THREE.Vector3(x*sz, sz+0.1, z*sz));
+      this.setPos(x*sz, sz+0.1, z*sz);
 
       //console.log("Received move to ", x, z);
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
       this.translateState = true;
       this.translateDir = this.target.clone();
-      this.translateDir.sub(this.position);
+      this.translateDir.sub(this.container.position);
 
       // Signal for begin translation
       if (this.index == 0) {
@@ -206,13 +210,13 @@ class Player extends THREE.Mesh {
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
-         this.position.add(movement);
+         this.container.position.add(movement);
 
          var eps = 0.0000001;
-         if (this.position.distanceToSquared(this.target) <= eps) {
+         if (this.container.position.distanceToSquared(this.target) <= eps) {
             // Finish animating, reset
             this.translateState = false;
-            this.position.copy(this.target);
+            this.container.position.copy(this.target);
             this.translateDir.set(0.0, 0.0, 0.0);
          }
       }
@@ -269,22 +273,111 @@ function init() {
    window.addEventListener( 'resize', onWindowResize, false );
 }
 
+var onProgress = function ( xhr ) {
 
+   if ( xhr.lengthComputable ) {
+
+      var percentComplete = xhr.loaded / xhr.total * 100;
+      console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
+
+   }
+
+};
+
+var onError = function () { };
+
+function loadObj(objf, mtlf) {
+    var container = new THREE.Object3D();
+    var obj;
+
+    function onMTLLoad( materials ) {
+        materials.preload();
+
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials( materials );
+        //objLoader.setPath( path );
+
+        function onOBJLoad(object) {
+           obj = object;
+           obj.scale.x = 100;
+           obj.scale.y = 100;
+           obj.scale.z = 100;
+           container.add(obj)
+        }
+        objLoader.load( objf, onOBJLoad);
+    }
+
+    var mtlLoader = new THREE.MTLLoader();
+    //mtlLoader.setPath( path );
+    mtlLoader.load( mtlf, onMTLLoad);
+    return container
+}
+
+function loadObjPromise( path, name ){
+
+  var progress = console.log;
+
+  return new Promise(function( resolve, reject ){
+
+    var obj;
+    var mtlLoader = new THREE.MTLLoader();
+
+    mtlLoader.setPath( path );
+    mtlLoader.load( name + ".mtl", function( materials ){
+
+        materials.preload();
+
+        var objLoader = new THREE.OBJLoader();
+
+        objLoader.setMaterials( materials );
+        objLoader.setPath( path );
+        objLoader.load( name + ".obj", resolve, progress, reject );
+
+    }, progress, reject );
+
+  });
+   /*
+   var myObjPromise = loadObj( "./", "nn" );
+
+   myObjPromise.then(myObj => {
+
+     engine.scene.add( myObj );
+     myObj.scale.x = 100;
+     myObj.scale.y = 100;
+     myObj.scale.z = 100;
+
+
+   });
+   */
+
+}
+
+//@Clare todo: fix handler. Object dissapear upon add to handler.
 function initializePlayers() {
    // initialize player
-   var geometry = new THREE.CubeGeometry(sz, sz, sz);
-   var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
-   player = new TargetPlayer(geometry, material, 0);
-   engine.scene.add(player);
-   handler.addPlayer(player);
+   // This way you can use as many .then as you want
+   var obj = loadObj( "nn.obj", "nn.mtl" );
+   var targetPlayer = new TargetPlayer(obj, 0);
+   engine.scene.add(obj)
+   //handler.addPlayer(targetPlayer)
 
+   //var geometry = new THREE.CubeGeometry(sz, sz, sz);
+   //var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
    const maxPlayers = 10;
    for (var i = 1; i < maxPlayers; i++) {
-      var geometry = new THREE.CubeGeometry(sz, sz, sz);
-      var material = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
-      var newPlayer = new Player(geometry, material, i);
-      engine.scene.add(newPlayer);
-      handler.addPlayer(newPlayer);
+      var obj = loadObj( "nn.obj", "nn.mtl" );
+      var targetPlayer = new TargetPlayer(obj, i);
+      obj.position.y = 100*i
+      engine.scene.add(obj)
+      //handler.addPlayer(targetPlayer)
+
+      //var geometry = new THREE.CubeGeometry(sz, sz, sz);
+      //var material = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
+      //var mesh = new THREE.Mesh(geometry, material);
+      
+      //var newPlayer = new Player(mesh, i);
+      //engine.scene.add(mesh);
+      //handler.addPlayer(newPlayer);
    }
 }
 
