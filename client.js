@@ -75,7 +75,7 @@ class Engine {
        * TODO: sometimes the camera rotates itself?
        */
       var delta = this.clock.getDelta();
-      //this.translate(delta)
+      this.translate(delta)
       this.controls.update( delta );
       this.renderer.render( this.scene, this.camera );
    }
@@ -142,7 +142,7 @@ class PlayerHandler {
       //Orig
       var id = 0;
       var move = packet[id]['pos'];
-      console.log(move)
+      console.log("Move: ", move)
       this.players[id].moveTo(move);
 
       for (var i = 1; i < this.numPlayers; i++) {
@@ -235,29 +235,14 @@ class Player {
 class TargetPlayer extends Player {
 
    moveTo( pos ) {
-      var x = pos[0];
-      var z = pos[1];
-
-      this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
-      // Instant move hack
-      this.translateState = true;
-      this.translateDir = this.target.clone();
-      this.translateDir.sub(this.position);
-
-      this.position.copy(this.target.clone());
-
+      super.moveTo(pos);
       this.focus();
-
-      // Signal for begin translation
-      if (this.index == 0) {
-         this.sendMove();
-      }
    }
 
    focus() {
       /* Resets the camera on me. */
       engine.camera.position.add(this.translateDir);
-      engine.controls.target.copy(this.position.clone());
+      engine.controls.target.copy(this.container.position.clone());
    }
 
    translate(delta) {
@@ -269,18 +254,18 @@ class TargetPlayer extends Player {
          movement.multiplyScalar(delta / tick);
 
          // Move player, then camera
-         this.position.add(movement);
+         this.container.position.add(movement);
          engine.camera.position.add(movement);
 
          // Turn the target into the new position of the player
-         engine.controls.target.copy(this.position);
+         engine.controls.target.copy(this.container.position);
 
          var eps = 0.0000001;
-         if (this.position.distanceToSquared(this.target) <= eps) {
+         if (this.container.position.distanceToSquared(this.target) <= eps) {
             // Finish animating, reset
             this.translateState = false;
-            this.position.copy(this.target);
-            engine.controls.target.copy(this.position);
+            this.container.position.copy(this.target);
+            engine.controls.target.copy(this.container.position);
             this.translateDir.set(0.0, 0.0, 0.0);
          }
       }
@@ -391,24 +376,23 @@ function initializePlayers() {
    // initialize player
    // This way you can use as many .then as you want
    var obj = loadObj( "nn.obj", "nn.mtl" );
-   var targetPlayer = new TargetPlayer(obj, 0);
+   player = new TargetPlayer(obj, 0);
    engine.scene.add(obj)
-   //handler.addPlayer(targetPlayer)
+   handler.addPlayer(player)
 
    //var geometry = new THREE.CubeGeometry(sz, sz, sz);
    //var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
    const maxPlayers = 10;
    for (var i = 1; i < maxPlayers; i++) {
       var obj = loadObj( "nn.obj", "nn.mtl" );
-      var targetPlayer = new TargetPlayer(obj, i);
-      obj.position.y = 100*i
-      engine.scene.add(obj)
-      //handler.addPlayer(targetPlayer)
+      var otherPlayer = new Player(obj, i);
+      obj.position.y = 100*i;
+      engine.scene.add(obj);
+      handler.addPlayer(otherPlayer);
 
       //var geometry = new THREE.CubeGeometry(sz, sz, sz);
       //var material = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
       //var mesh = new THREE.Mesh(geometry, material);
-      
       //var newPlayer = new Player(mesh, i);
       //engine.scene.add(mesh);
       //handler.addPlayer(newPlayer);
