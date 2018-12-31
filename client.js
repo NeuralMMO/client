@@ -89,7 +89,6 @@ class Engine {
        * Sets the translation direction based on the clicked square and toggles
        * state to translate.
        */
-
       this.mouse.x = (
             event.clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
       this.mouse.y = - (
@@ -169,20 +168,25 @@ class Player {
 
       this.initObj(obj)
       this.index = index;
-
-      var spriteMap = new THREE.TextureLoader().load( "hpbar.png" );
-      var spriteMaterial = new THREE.SpriteMaterial(
-              { map: spriteMap, color: 0xffffff } );
-      this.overhead = new THREE.Sprite( spriteMaterial );
-      this.overhead.position.x = this.obj.position.x;
-      this.overhead.position.y = this.obj.position.y + 1.0;
-      this.overhead.position.z = this.obj.position.z;
-      engine.scene.add( this.overhead );
+      this.initOverhead();
    }
 
    initObj(obj) {
       this.obj = obj;
       this.target = obj.position.clone();
+   }
+
+   initOverhead() {
+      var spriteMap = new THREE.TextureLoader().load( "resources/hpbar.png" );
+      var spriteMaterial = new THREE.SpriteMaterial({
+         map: spriteMap,
+         color: 0xffffff
+      } );
+      this.overhead = new THREE.Sprite( spriteMaterial );
+      this.overhead.scale.set(256, 64, 1);
+      this.overhead.position.copy(this.obj.position.clone());
+      this.overhead.position.y += 1.5 * sz;
+      engine.scene.add( this.overhead );
    }
 
    setPos(x, y, z) {
@@ -199,15 +203,11 @@ class Player {
 
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
 
+      // Signal for begin translation
       this.translateState = true;
       this.translateDir = this.target.clone();
       this.translateDir.sub(this.obj.position);
 
-      // Instant move hack
-      //this.obj.position.copy(this.target.clone());
-      //this.setPos(x, 0, z);
-
-      // Signal for begin translation
       if (this.index == 0) {
          this.sendMove();
       }
@@ -225,6 +225,7 @@ class Player {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
          this.obj.position.add(movement);
+         this.overhead.position.add(movement);
 
          var eps = 0.0000001;
          if (this.obj.position.distanceToSquared(this.target) <= eps) {
@@ -258,10 +259,10 @@ class TargetPlayer extends Player {
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
-         console.log(movement);
 
          // Move player, then camera
          this.obj.position.add(movement);
+         this.overhead.position.add(movement);
          engine.camera.position.add(movement);
 
          // Turn the target into the new position of the player
