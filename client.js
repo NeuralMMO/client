@@ -169,6 +169,15 @@ class Player {
 
       this.initObj(obj)
       this.index = index;
+
+      var spriteMap = new THREE.TextureLoader().load( "hpbar.png" );
+      var spriteMaterial = new THREE.SpriteMaterial(
+              { map: spriteMap, color: 0xffffff } );
+      this.overhead = new THREE.Sprite( spriteMaterial );
+      this.overhead.position.x = this.obj.position.x;
+      this.overhead.position.y = this.obj.position.y + 1.0;
+      this.overhead.position.z = this.obj.position.z;
+      engine.scene.add( this.overhead );
    }
 
    initObj(obj) {
@@ -182,7 +191,6 @@ class Player {
    }
 
    moveTo( pos ) {
-
       /*
        * Initialize a translation for the player, send current pos to server
        */
@@ -196,8 +204,8 @@ class Player {
       this.translateDir.sub(this.obj.position);
 
       // Instant move hack
-      this.obj.position.copy(this.target.clone());
-      this.setPos(x*sz, sz+0.1, z*sz);
+      //this.obj.position.copy(this.target.clone());
+      this.setPos(x, 0, z);
 
       // Signal for begin translation
       if (this.index == 0) {
@@ -234,7 +242,7 @@ class TargetPlayer extends Player {
 
    moveTo( pos ) {
       super.moveTo(pos);
-      this.focus();
+      //this.focus();
    }
 
    focus() {
@@ -250,6 +258,7 @@ class TargetPlayer extends Player {
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
+         console.log(movement);
 
          // Move player, then camera
          this.obj.position.add(movement);
