@@ -22,8 +22,8 @@ class Engine {
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
       this.camera.position.y = map.getY(
-            worldHalfWidth, worldHalfDepth ) * 100 + 100;
-      this.camera.position.z = 5;
+            worldHalfWidth, worldHalfDepth ) * sz + 2 * sz;
+      this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -52,7 +52,6 @@ class Engine {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan
       }
-
       controls.target.set( 0, 0, 0 );
       controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
@@ -178,29 +177,69 @@ class PlayerHandler {
 }
 
 
+class Overhead {
+   constructor( pos ) {
+      this.position = pos.clone();
+      // Health: red
+      this.health = this.initSprite(0xff0000, pos.y + 1.5 * sz);
+      // Food: green
+      this.food = this.initSprite(0x00ff00, pos.y + 1.75 * sz);
+      // Water: blue
+      this.water = this.initSprite(0x0000ff, pos.y + 2 * sz);
+
+      engine.scene.add(this.health);
+      engine.scene.add(this.food);
+      engine.scene.add(this.water);
+   }
+
+   initSprite( colorRGB, height) {
+      var sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
+         color: colorRGB
+      } ) );
+      sprite.scale.set( 128, 16, 1 );
+      sprite.position.copy(this.position.clone());
+      sprite.position.y = height;
+      return sprite;
+   }
+
+   move( movement ) {
+      this.position.add(movement);
+      this.health.position.add(movement);
+      this.food.position.add(movement);
+      this.water.position.add(movement);
+   }
+}
+
 class Player {
    constructor( obj, index )  {
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
-      this.pos = [0, 0];
-
-      this.initObj(obj)
       this.index = index;
 
-      var spriteMap = new THREE.TextureLoader().load( "hpbar.png" );
-      var spriteMaterial = new THREE.SpriteMaterial(
-              { map: spriteMap, color: 0xffffff } );
-      this.overhead = new THREE.Sprite( spriteMaterial );
-      this.overhead.position.x = this.obj.position.x;
-      this.overhead.position.y = this.obj.position.y + 1.0;
-      this.overhead.position.z = this.obj.position.z;
-      engine.scene.add( this.overhead );
+      this.initObj(obj);
+      this.overhead = new Overhead( this.obj.position );
+      this.initOverhead();
    }
 
    initObj(obj) {
       this.obj = obj;
       this.target = obj.position.clone();
+   }
+
+   initOverhead() {
+      /*
+      var spriteMap = new THREE.TextureLoader().load( "resources/hpbar.png" );
+      var spriteMaterial = new THREE.SpriteMaterial({
+         map: spriteMap,
+         color: 0xffffff
+      } );
+      this.overhead = new THREE.Sprite( spriteMaterial );
+      this.overhead.scale.set(256, 64, 1);
+      this.overhead.position.copy(this.obj.position.clone());
+      this.overhead.position.y += 1.5 * sz;
+      engine.scene.add( this.overhead );
+      */
    }
 
    setPos(x, y, z) {
@@ -233,15 +272,11 @@ class Player {
 
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
 
+      // Signal for begin translation
       this.translateState = true;
       this.translateDir = this.target.clone();
       this.translateDir.sub(this.obj.position);
 
-      // Instant move hack
-      //this.obj.position.copy(this.target.clone());
-      //this.setPos(x, 0, z);
-
-      // Signal for begin translation
       if (this.index == 0) {
          this.sendMove();
       }
@@ -259,6 +294,7 @@ class Player {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
          this.obj.position.add(movement);
+         this.overhead.move(movement);
 
          var eps = 0.0000001;
          if (this.obj.position.distanceToSquared(this.target) <= eps) {
@@ -285,10 +321,10 @@ class TargetPlayer extends Player {
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
-         console.log(movement);
 
          // Move player, then camera
          this.obj.position.add(movement);
+         this.overhead.move(movement);
          engine.camera.position.add(movement);
 
          // Turn the target into the new position of the player
