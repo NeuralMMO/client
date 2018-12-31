@@ -161,19 +161,24 @@ class PlayerHandler {
 
 class Player {
 
-   constructor( container, index )  {
+   constructor( obj, index )  {
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.pos = [0, 0];
 
-      this.container = container
-      this.target = container.position.clone();
+      this.initObj()
       this.index = index;
    }
 
+   initObj(obj) {
+      this.obj = obj
+      this.target = obj.position.clone();
+   }
+
    setPos(x, y, z) {
-      this.container.position.copy(new THREE.Vector3(x*sz, sz+0.1, z*sz));
+      pos = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      this.obj.position.copy(pos);
    }
 
    moveTo( pos ) {
