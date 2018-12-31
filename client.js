@@ -184,17 +184,15 @@ class Player {
       var x = pos[0];
       var z = pos[1];
 
-      //Instant move hack
-      this.setPos(x*sz, sz+0.1, z*sz);
-
-      //console.log("Received move to ", x, z);
       this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
-      // Instant move hack
-      this.container.position.copy(this.target.clone());
 
       this.translateState = true;
       this.translateDir = this.target.clone();
       this.translateDir.sub(this.container.position);
+
+      // Instant move hack
+      this.container.position.copy(this.target.clone());
+      this.setPos(x*sz, sz+0.1, z*sz);
 
       // Signal for begin translation
       if (this.index == 0) {
@@ -268,6 +266,7 @@ class TargetPlayer extends Player {
 }
 
 
+
 function init() {
    container = document.getElementById( 'container' );
    engine = new Engine();
@@ -287,6 +286,7 @@ function init() {
    window.addEventListener( 'resize', onWindowResize, false );
 }
 
+
 var onProgress = function ( xhr ) {
 
    if ( xhr.lengthComputable ) {
@@ -298,7 +298,9 @@ var onProgress = function ( xhr ) {
 
 };
 
+
 var onError = function () { };
+
 
 function loadObj(objf, mtlf) {
     var container = new THREE.Object3D();
@@ -326,6 +328,7 @@ function loadObj(objf, mtlf) {
     mtlLoader.load( mtlf, onMTLLoad);
     return container
 }
+
 
 function loadObjPromise( path, name ){
 
@@ -366,31 +369,19 @@ function loadObjPromise( path, name ){
 
 }
 
-//@Clare todo: fix handler. Object dissapear upon add to handler.
 function initializePlayers() {
-   // initialize player
-   // This way you can use as many .then as you want
    var obj = loadObj( "nn.obj", "nn.mtl" );
    player = new TargetPlayer(obj, 0);
    engine.scene.add(obj)
    handler.addPlayer(player)
 
-   //var geometry = new THREE.CubeGeometry(sz, sz, sz);
-   //var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
    const maxPlayers = 10;
    for (var i = 1; i < maxPlayers; i++) {
       var obj = loadObj( "nn.obj", "nn.mtl" );
       var otherPlayer = new Player(obj, i);
-      obj.position.y = 100*i;
+      obj.position.y = 100*i; // silly seal
       engine.scene.add(obj);
       handler.addPlayer(otherPlayer);
-
-      //var geometry = new THREE.CubeGeometry(sz, sz, sz);
-      //var material = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
-      //var mesh = new THREE.Mesh(geometry, material);
-      //var newPlayer = new Player(mesh, i);
-      //engine.scene.add(mesh);
-      //handler.addPlayer(newPlayer);
    }
 }
 
