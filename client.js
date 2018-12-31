@@ -23,8 +23,8 @@ class Engine {
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
       this.camera.position.y = map.getY(
-            worldHalfWidth, worldHalfDepth ) * 100 + 100;
-      this.camera.position.z = 5;
+            worldHalfWidth, worldHalfDepth ) * sz + 2 * sz;
+      this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -53,7 +53,6 @@ class Engine {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan
       }
-
       controls.target.set( 0, 0, 0 );
       controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
@@ -71,9 +70,7 @@ class Engine {
    }
 
    render() {
-      /*
-       * TODO: sometimes the camera rotates itself?
-       */
+      /* TODO: sometimes the camera rotates itself? */
       var delta = this.clock.getDelta();
       this.translate(delta)
       this.controls.update( delta );
