@@ -6,8 +6,7 @@ if ( WEBGL.isWebGLAvailable() === false ) {
 }
 
 var container, stats;
-var player, engine, handler;
-
+var player, engine, client;
 
 class Engine {
 
@@ -70,30 +69,11 @@ class Engine {
       this.renderer.setSize( window.innerWidth, window.innerHeight );
    }
 
-   render() {
-      /*
-       * TODO: sometimes the camera rotates itself?
-       */
-      var delta = this.clock.getDelta();
-      this.translate(delta)
-      this.controls.update( delta );
-      this.renderer.render( this.scene, this.camera );
-   }
-
-   translate( delta ) {
-      handler.translate(delta);
-   }
-
-   onMouseDown( event ) {
-      /*
-       * Sets the translation direction based on the clicked square and toggles
-       * state to translate.
-       */
-
+   raycast(clientX, clientY) {
       this.mouse.x = (
-            event.clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
+            clientX / engine.renderer.domElement.clientWidth ) * 2 - 1;
       this.mouse.y = - (
-            event.clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
+            clientY / engine.renderer.domElement.clientHeight ) * 2 + 1;
       this.raycaster.setFromCamera( this.mouse, this.camera );
 
       // See if the ray from the camera into the world hits one of our meshes
@@ -106,15 +86,64 @@ class Engine {
 
          x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
          z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
-
-         player.translateState = true;
-         player.moveTarg = [x, z];
-         player.sendMove();
       }
+
+      return [x, z]
+  }
+
+
+   //TODO: sometimes the camera rotates itself?
+   update(delta) {
+      this.controls.update( delta );
+      this.renderer.render( this.scene, this.camera );
    }
 }
 
+class Client {
+   constructor () {
+      this.handler = new PlayerHandler();
+      engine = new Engine();
+      this.initializePlayers();
+   }
 
+   update() {
+      var delta = engine.clock.getDelta();
+      while (inbox.length > 0) {
+         // Receive packet, begin translating based on the received position
+         var packet = inbox.shift();
+         //console.log(packet);
+         packet = JSON.parse(packet);
+         this.handler.updateData(packet);
+      }
+      this.handler.update(delta);
+      engine.update(delta);
+   }
+
+   onMouseDown(event) {
+      player.translateState = true;
+      player.moveTarg = engine.raycast(event.clientX, event.clientY);
+      player.sendMove();
+   }
+ 
+   initializePlayers() {
+      var obj = loadObj( "nn.obj", "nn.mtl" );
+      player = new TargetPlayer(obj, 0);
+      engine.scene.add(obj)
+      this.handler.addPlayer(player)
+
+      const maxPlayers = 10;
+      for (var i = 1; i < maxPlayers; i++) {
+         var obj = loadObj( "nn.obj", "nn.mtl" );
+         var otherPlayer = new Player(obj, i);
+         obj.position.y = 100*i; // silly seal
+         engine.scene.add(obj);
+         this.handler.addPlayer(otherPlayer);
+      }
+   }
+
+   //Sets the translation direction based on the clicked 
+   //square and toggles state to translate.
+}
 
 class PlayerHandler {
    /*
@@ -125,42 +154,31 @@ class PlayerHandler {
 
    constructor() {
       this.players = [];
-      this.numPlayers = 0;
    }
 
    addPlayer( player ) {
       this.players.push(player);
-      this.numPlayers += 1;
    }
 
    removePlayer( playerIndex ) {
       this.players.splice(playerIndex, 1);
-      this.numPlayers -= 1;
    }
 
-   update(packet) {
-      //Orig
-      var id = 0;
-      var move = packet[id]['pos'];
-      console.log("Move: ", move)
-      this.players[id].moveTo(move);
-
-      for (var i = 1; i < this.numPlayers; i++) {
-         this.players[i].moveTo([Math.random() * worldWidth,
-               Math.random() * worldDepth]);
+   updateData(packets) {
+      for (var id in packets) {
+         this.players[id].updateData(packets[id])
       }
    }
 
-   translate( delta ) {
-      for (var i = 0; i < this.numPlayers; i++) {
-         this.players[i].translate( delta );
+   update( delta ) {
+      for (var id in this.players) {
+         this.players[id].update(delta)
       }
    }
 }
 
 
 class Player {
-
    constructor( obj, index )  {
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
@@ -190,9 +208,25 @@ class Player {
       this.obj.position.copy(pos);
    }
 
+   updateData (packet) {
+      var move = packet['pos'];
+      console.log("Move: ", move)
+      this.moveTo(move);
+      /*
+      for (var i = 1; i < this.numPlayers; i++) {
+         this.players[i].moveTo([Math.random() * worldWidth,
+               Math.random() * worldDepth]);
+      }
+      */
+   }
+ 
+   update(delta) {
+      this.translate( delta );
+   }
+
+   //Initialize a translation for the player, send current pos to server
    moveTo( pos ) {
       /*
-       * Initialize a translation for the player, send current pos to server
        */
       var x = pos[0];
       var z = pos[1];
@@ -237,24 +271,17 @@ class Player {
    }
 }
 
-
 class TargetPlayer extends Player {
 
-   moveTo( pos ) {
-      super.moveTo(pos);
-      //this.focus();
-   }
-
+   //Deprecated
+   //Resets the camera on me.
    focus() {
-      /* Resets the camera on me. */
       engine.camera.position.add(this.translateDir);
       engine.controls.target.copy(this.obj.position.clone());
    }
 
+   //Translate, but also move the camera at the same time.
    translate(delta) {
-      /*
-       * Translate, but also move the camera at the same time.
-       */
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
@@ -279,19 +306,15 @@ class TargetPlayer extends Player {
    }
 }
 
-
-
 function init() {
    container = document.getElementById( 'container' );
-   engine = new Engine();
-   handler = new PlayerHandler();
-   initializePlayers();
+   client = new Client();
 
    // hook up signals
    container.innerHTML = "";
    container.appendChild( engine.renderer.domElement );
 
-   function onMouseDown( event ) { engine.onMouseDown( event ); }
+   function onMouseDown( event ) { client.onMouseDown( event ); }
    function onWindowResize() { engine.onWindowResize(); }
 
    stats = new Stats();
@@ -299,22 +322,6 @@ function init() {
    container.addEventListener( 'click', onMouseDown, false );
    window.addEventListener( 'resize', onWindowResize, false );
 }
-
-
-var onProgress = function ( xhr ) {
-
-   if ( xhr.lengthComputable ) {
-
-      var percentComplete = xhr.loaded / xhr.total * 100;
-      console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
-
-   }
-
-};
-
-
-var onError = function () { };
-
 
 function loadObj(objf, mtlf) {
     var container = new THREE.Object3D();
@@ -344,72 +351,9 @@ function loadObj(objf, mtlf) {
 }
 
 
-function loadObjPromise( path, name ){
-
-  var progress = console.log;
-
-  return new Promise(function( resolve, reject ){
-
-    var obj;
-    var mtlLoader = new THREE.MTLLoader();
-
-    mtlLoader.setPath( path );
-    mtlLoader.load( name + ".mtl", function( materials ){
-
-        materials.preload();
-
-        var objLoader = new THREE.OBJLoader();
-
-        objLoader.setMaterials( materials );
-        objLoader.setPath( path );
-        objLoader.load( name + ".obj", resolve, progress, reject );
-
-    }, progress, reject );
-
-  });
-   /*
-   var myObjPromise = loadObj( "./", "nn" );
-
-   myObjPromise.then(myObj => {
-
-     engine.scene.add( myObj );
-     myObj.scale.x = 100;
-     myObj.scale.y = 100;
-     myObj.scale.z = 100;
-
-
-   });
-   */
-
-}
-
-function initializePlayers() {
-   var obj = loadObj( "nn.obj", "nn.mtl" );
-   player = new TargetPlayer(obj, 0);
-   engine.scene.add(obj)
-   handler.addPlayer(player)
-
-   const maxPlayers = 10;
-   for (var i = 1; i < maxPlayers; i++) {
-      var obj = loadObj( "nn.obj", "nn.mtl" );
-      var otherPlayer = new Player(obj, i);
-      obj.position.y = 100*i; // silly seal
-      engine.scene.add(obj);
-      handler.addPlayer(otherPlayer);
-   }
-}
-
-
 function animate() {
    requestAnimationFrame( animate );
-   while (inbox.length > 0) {
-      // Receive packet, begin translating based on the received position
-      var packet = inbox.shift();
-      //console.log(packet);
-      packet = JSON.parse(packet);
-      handler.update(packet)
-   }
-   engine.render();
+   client.update();
    stats.update();
 }
 
