@@ -205,7 +205,7 @@ class Player {
 
       // Instant move hack
       //this.obj.position.copy(this.target.clone());
-      this.setPos(x, 0, z);
+      //this.setPos(x, 0, z);
 
       // Signal for begin translation
       if (this.index == 0) {
