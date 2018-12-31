@@ -158,16 +158,49 @@ class PlayerHandler {
 }
 
 
+class Overhead {
+   constructor( pos ) {
+      this.position = pos.clone();
+      // Health: red
+      this.health = this.initSprite(0xff0000, pos.y + 1.5 * sz);
+      // Food: green
+      this.food = this.initSprite(0x00ff00, pos.y + 1.75 * sz);
+      // Water: blue
+      this.water = this.initSprite(0x0000ff, pos.y + 2 * sz);
+
+      engine.scene.add(this.health);
+      engine.scene.add(this.food);
+      engine.scene.add(this.water);
+   }
+
+   initSprite( colorRGB, height) {
+      var sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
+         color: colorRGB
+      } ) );
+      sprite.scale.set( 128, 16, 1 );
+      sprite.position.copy(this.position.clone());
+      sprite.position.y = height;
+      return sprite;
+   }
+
+   move( movement ) {
+      this.position.add(movement);
+      this.health.position.add(movement);
+      this.food.position.add(movement);
+      this.water.position.add(movement);
+   }
+}
+
 class Player {
 
    constructor( obj, index )  {
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
-      this.pos = [0, 0];
-
-      this.initObj(obj)
       this.index = index;
+
+      this.initObj(obj);
+      this.overhead = new Overhead( this.obj.position );
       this.initOverhead();
    }
 
@@ -177,6 +210,7 @@ class Player {
    }
 
    initOverhead() {
+      /*
       var spriteMap = new THREE.TextureLoader().load( "resources/hpbar.png" );
       var spriteMaterial = new THREE.SpriteMaterial({
          map: spriteMap,
@@ -187,6 +221,7 @@ class Player {
       this.overhead.position.copy(this.obj.position.clone());
       this.overhead.position.y += 1.5 * sz;
       engine.scene.add( this.overhead );
+      */
    }
 
    setPos(x, y, z) {
@@ -225,7 +260,7 @@ class Player {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
          this.obj.position.add(movement);
-         this.overhead.position.add(movement);
+         this.overhead.move(movement);
 
          var eps = 0.0000001;
          if (this.obj.position.distanceToSquared(this.target) <= eps) {
@@ -262,7 +297,7 @@ class TargetPlayer extends Player {
 
          // Move player, then camera
          this.obj.position.add(movement);
-         this.overhead.position.add(movement);
+         this.overhead.move(movement);
          engine.camera.position.add(movement);
 
          // Turn the target into the new position of the player
