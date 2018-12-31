@@ -167,17 +167,17 @@ class Player {
       this.moveTarg = [0, 0];
       this.pos = [0, 0];
 
-      this.initObj()
+      this.initObj(obj)
       this.index = index;
    }
 
    initObj(obj) {
-      this.obj = obj
+      this.obj = obj;
       this.target = obj.position.clone();
    }
 
    setPos(x, y, z) {
-      pos = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      var pos = new THREE.Vector3(x*sz, sz+0.1, z*sz);
       this.obj.position.copy(pos);
    }
 
@@ -193,10 +193,10 @@ class Player {
 
       this.translateState = true;
       this.translateDir = this.target.clone();
-      this.translateDir.sub(this.container.position);
+      this.translateDir.sub(this.obj.position);
 
       // Instant move hack
-      this.container.position.copy(this.target.clone());
+      this.obj.position.copy(this.target.clone());
       this.setPos(x*sz, sz+0.1, z*sz);
 
       // Signal for begin translation
@@ -216,13 +216,13 @@ class Player {
       if (this.translateState) {
          var movement = this.translateDir.clone();
          movement.multiplyScalar(delta / tick);
-         this.container.position.add(movement);
+         this.obj.position.add(movement);
 
          var eps = 0.0000001;
-         if (this.container.position.distanceToSquared(this.target) <= eps) {
+         if (this.obj.position.distanceToSquared(this.target) <= eps) {
             // Finish animating, reset
             this.translateState = false;
-            this.container.position.copy(this.target);
+            this.obj.position.copy(this.target);
             this.translateDir.set(0.0, 0.0, 0.0);
          }
       }
@@ -240,7 +240,7 @@ class TargetPlayer extends Player {
    focus() {
       /* Resets the camera on me. */
       engine.camera.position.add(this.translateDir);
-      engine.controls.target.copy(this.container.position.clone());
+      engine.controls.target.copy(this.obj.position.clone());
    }
 
    translate(delta) {
@@ -252,18 +252,18 @@ class TargetPlayer extends Player {
          movement.multiplyScalar(delta / tick);
 
          // Move player, then camera
-         this.container.position.add(movement);
+         this.obj.position.add(movement);
          engine.camera.position.add(movement);
 
          // Turn the target into the new position of the player
-         engine.controls.target.copy(this.container.position);
+         engine.controls.target.copy(this.obj.position);
 
          var eps = 0.0000001;
-         if (this.container.position.distanceToSquared(this.target) <= eps) {
+         if (this.obj.position.distanceToSquared(this.target) <= eps) {
             // Finish animating, reset
             this.translateState = false;
-            this.container.position.copy(this.target);
-            engine.controls.target.copy(this.container.position);
+            this.obj.position.copy(this.target);
+            engine.controls.target.copy(this.obj.position);
             this.translateDir.set(0.0, 0.0, 0.0);
          }
       }
