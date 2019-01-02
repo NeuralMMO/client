@@ -33,7 +33,7 @@ class Client {
       player.moveTarg = engine.raycast(event.clientX, event.clientY);
       player.sendMove();
    }
- 
+
    initializePlayers() {
       var obj = loadObj( "nn.obj", "nn.mtl" );
       player = new TargetPlayer(obj, 0);
