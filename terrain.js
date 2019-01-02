@@ -4,7 +4,8 @@
 function terrain(map) {
    var data = generateHeight( worldWidth, worldDepth );
 
-   var geometry = new THREE.PlaneBufferGeometry( 6400, 6400, worldWidth - 1, worldDepth - 1 );
+   var geometry = new THREE.PlaneBufferGeometry( 6400, 6400, worldWidth - 1,
+           worldDepth - 1 );
    geometry.rotateX( - Math.PI / 2 );
 
    var vertices = geometry.attributes.position.array;
