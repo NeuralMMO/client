@@ -54,6 +54,8 @@ class EchoServerProtocol(WebSocketServerProtocol):
             pos = ent.client.pos
             data = {'pos': pos}
         '''
+        gameMap = self.realm.envs[0].env
+        self.packet['map'] = gameMap
 
         data = self.packet
         packet = json.dumps(data).encode('utf8')

@@ -6,6 +6,8 @@ class Client {
       this.handler = new PlayerHandler();
       engine = new Engine();
       this.initializePlayers();
+      mesh = terrain();
+      engine.scene.add(mesh);
    }
 
    update() {
