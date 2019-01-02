@@ -1,7 +1,7 @@
 //var worldWidth = 256, worldDepth = 256,
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 
-function terrain() {
+function terrain(map) {
    var data = generateHeight( worldWidth, worldDepth );
 
    var geometry = new THREE.PlaneBufferGeometry( 6400, 6400, worldWidth - 1, worldDepth - 1 );

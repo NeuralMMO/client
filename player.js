@@ -19,13 +19,17 @@ class PlayerHandler {
 
    updateData(packets) {
       for (var id in packets) {
-         this.players[id].updateData(packets[id])
+         if (id != 'map'){
+            this.players[id].updateData(packets[id])
+         }
       }
    }
 
    update( delta ) {
       for (var id in this.players) {
+         if (id != 'map'){
          this.players[id].update(delta)
+         }
       }
    }
 }

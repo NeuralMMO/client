@@ -1,13 +1,11 @@
 var container, stats;
-var player, engine, client;
+var player, engine, client, mesh;
 
 class Client {
    constructor () {
       this.handler = new PlayerHandler();
       engine = new Engine();
       this.initializePlayers();
-      mesh = terrain();
-      engine.scene.add(mesh);
    }
 
    update() {
@@ -18,6 +16,11 @@ class Client {
          //console.log(packet);
          packet = JSON.parse(packet);
          this.handler.updateData(packet);
+         if (mesh == 0) {
+            map = packet['map'];
+            mesh = terrain(map);
+            engine.scene.add(mesh);
+         }
       }
       this.handler.update(delta);
       engine.update(delta);
