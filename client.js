@@ -1,6 +1,6 @@
 var container, stats;
-var player, engine, client;
-var mesh = 0;
+var player, engine, client, mesh;
+var firstMesh = true;
 
 class Client {
    constructor () {
@@ -17,7 +17,8 @@ class Client {
          //console.log(packet);
          packet = JSON.parse(packet);
          this.handler.updateData(packet);
-         if (mesh == 0) {
+         if (firstMesh) {
+            firstMesh = false;
             var map = packet['map'];
             mesh = terrain(map);
             engine.scene.add(mesh);

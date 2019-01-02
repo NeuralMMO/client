@@ -1,10 +1,13 @@
 //var worldWidth = 256, worldDepth = 256,
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
+var width  = 80;
+var height = 80;
 
 function terrain(map) {
-   var data = generateHeight( worldWidth, worldDepth );
+   this.sz = map.length
+   var data = generateHeight(map);
 
-   var geometry = new THREE.PlaneBufferGeometry( 6400, 6400, worldWidth - 1, worldDepth - 1 );
+   var geometry = new THREE.PlaneBufferGeometry( 6400, 6400, this.sz-1, this.sz-1 );
    geometry.rotateX( - Math.PI / 2 );
 
    var vertices = geometry.attributes.position.array;
@@ -13,7 +16,7 @@ function terrain(map) {
       vertices[ j + 1 ] = data[ i ] * 64;
    }
 
-   texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
+   texture = new THREE.CanvasTexture( generateTexture( data, this.sz, this.sz) );
    texture.wrapS = THREE.ClampToEdgeWrapping;
    texture.wrapT = THREE.ClampToEdgeWrapping;
 
@@ -21,27 +24,42 @@ function terrain(map) {
    return mesh
 }
 
-function tile(x, y) {
-   var ymod = y % 4;
-   var xmod = x % 4;
-
-   if (ymod == 2 || ymod == 3){
-      return 0;
+function tile(val) {
+   switch (val) {
+      case 0:
+         return 0;
+         break;
+      case 1:
+         return 0;
+         break;
+      case 2:
+         return 1;
+         break;
+      case 3:
+         return 1;
+         break;
+      case 4:
+         return 1;
+         break;
+      case 5:
+         return 2;
+         break;
+      case 6:
+         return 0;
+         break;
    }
-   if (xmod == 2 || xmod == 3){
-      return 0;
-   }
-   return 1;
 }
 
-function generateHeight( width, height ) {
-   var size = width * height;
-   var data = new Uint8Array( size );
-   for ( var i = 0; i < size; i ++ ) {
-      var x = i % width;
-      var y = ~ ~ ( i / width );
-      data[ i ] = 1*tile(x, y);
+function generateHeight(map) {
+   var data = new Uint8Array( this.sz*this.sz );
+   var k = 0;
+   for ( var r = 0; r < this.sz; r ++ ) {
+      for ( var c = 0; c < this.sz; c ++ ) {
+         data[k] = 2*tile(map[r][c]);
+         k++;
+      }
    }
+
    return data;
 }
 
