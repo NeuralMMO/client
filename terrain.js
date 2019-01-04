@@ -7,7 +7,7 @@ function terrain(map) {
    this.sz = map.length
    var data = generateHeight(map);
 
-   var geometry = new THREE.PlaneBufferGeometry( 6400, 6400, this.sz-1, this.sz-1 );
+   var geometry = new THREE.PlaneBufferGeometry( 64*sz, 64*sz, this.sz-1, this.sz-1 );
    geometry.rotateX( - Math.PI / 2 );
 
    var vertices = geometry.attributes.position.array;
@@ -45,7 +45,7 @@ function tile(val) {
          return 2;
          break;
       case 6:
-         return 0;
+         return 1;
          break;
    }
 }
@@ -55,7 +55,30 @@ function generateHeight(map) {
    var k = 0;
    for ( var r = 0; r < this.sz; r ++ ) {
       for ( var c = 0; c < this.sz; c ++ ) {
-         data[k] = 2*tile(map[r][c]);
+         if (r==0 || c==0) {
+            data[k] = 1;
+            k++;
+            continue;
+         }
+         var ll = tile(map[r][c-1]);
+         var tt = tile(map[r-1][c]);
+         var tl = tile(map[r-1][c-1]);
+         var cc = tile(map[r][c]);
+         var val = 0.25*(ll + tt + tl + cc);
+         var mag = 2;
+         data[k] = mag * val;
+         /*
+         data[k] = 1;
+         if (ll != 1) {
+            data[k] = mag * ll;
+         }
+         if (tt != 1) {
+            data[k] = mag * tt;
+         }
+         if (cc != 1) {
+            data[k] = mag * cc;
+         }
+         */
          k++;
       }
    }
