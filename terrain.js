@@ -4,6 +4,7 @@ var width  = 80;
 var height = 80;
 
 function terrain(map) {
+   //console.log(map);
    this.sz = map.length
    var data = generateHeight(map);
 

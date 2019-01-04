@@ -43,7 +43,6 @@ class Player {
 
       this.initObj(obj);
       this.overhead = new Overhead( this.obj.position );
-      this.initOverhead();
    }
 
    initObj(obj) {
@@ -51,20 +50,6 @@ class Player {
       this.target = obj.position.clone();
    }
 
-   initOverhead() {
-      /*
-      var spriteMap = new THREE.TextureLoader().load( "resources/hpbar.png" );
-      var spriteMaterial = new THREE.SpriteMaterial({
-         map: spriteMap,
-         color: 0xffffff
-      } );
-      this.overhead = new THREE.Sprite( spriteMaterial );
-      this.overhead.scale.set(256, 64, 1);
-      this.overhead.position.copy(this.obj.position.clone());
-      this.overhead.position.y += 1.5 * sz;
-      engine.scene.add( this.overhead );
-      */
-   }
    setPos(x, y, z) {
       var pos = new THREE.Vector3(x*sz, sz+0.1, z*sz);
       this.obj.position.copy(pos);
@@ -162,5 +147,38 @@ class TargetPlayer extends Player {
             this.translateDir.set(0.0, 0.0, 0.0);
          }
       }
+   }
+}
+
+class Overhead {
+   constructor( pos ) {
+      this.position = pos.clone();
+      // Health: red
+      this.health = this.initSprite(0xff0000, pos.y + 1.5 * sz);
+      // Food: gold
+      this.food = this.initSprite(0xd4af37, pos.y + 1.75 * sz);
+      // Water: blue
+      this.water = this.initSprite(0x0000ff, pos.y + 2 * sz);
+
+      engine.scene.add(this.health);
+      engine.scene.add(this.food);
+      engine.scene.add(this.water);
+   }
+
+   initSprite( colorRGB, height) {
+      var sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
+         color: colorRGB
+      } ) );
+      sprite.scale.set( 128, 16, 1 );
+      sprite.position.copy(this.position.clone());
+      sprite.position.y = height;
+      return sprite;
+   }
+
+   move( movement ) {
+      this.position.add(movement);
+      this.health.position.add(movement);
+      this.food.position.add(movement);
+      this.water.position.add(movement);
    }
 }

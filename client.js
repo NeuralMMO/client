@@ -54,39 +54,6 @@ class Client {
    //square and toggles state to translate.
 }
 
-class Overhead {
-   constructor( pos ) {
-      this.position = pos.clone();
-      // Health: red
-      this.health = this.initSprite(0xff0000, pos.y + 1.5 * sz);
-      // Food: gold
-      this.food = this.initSprite(0xd4af37, pos.y + 1.75 * sz);
-      // Water: blue
-      this.water = this.initSprite(0x0000ff, pos.y + 2 * sz);
-
-      engine.scene.add(this.health);
-      engine.scene.add(this.food);
-      engine.scene.add(this.water);
-   }
-
-   initSprite( colorRGB, height) {
-      var sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
-         color: colorRGB
-      } ) );
-      sprite.scale.set( 128, 16, 1 );
-      sprite.position.copy(this.position.clone());
-      sprite.position.y = height;
-      return sprite;
-   }
-
-   move( movement ) {
-      this.position.add(movement);
-      this.health.position.add(movement);
-      this.food.position.add(movement);
-      this.water.position.add(movement);
-   }
-}
-
 function init() {
    if ( WEBGL.isWebGLAvailable() === false ) {
       document.body.appendChild( WEBGL.getWebGLErrorMessage() );
