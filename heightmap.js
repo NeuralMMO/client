@@ -40,7 +40,7 @@ function init() {
 	else
 		renderer = new THREE.CanvasRenderer();
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	container = document.getElementById( 'ThreeJS' );
+	container = document.getElementById( 'container' );
 	container.appendChild( renderer.domElement );
 
 	// EVENTS
@@ -63,8 +63,8 @@ function init() {
 	scene.add(light);
 
 	// FLOOR
-	var floorTexture = new THREE.ImageUtils.loadTexture(
-            'images/checkerboard.jpg' );
+    var loader = new THREE.TextureLoader();
+	var floorTexture = loader.load( 'images/checkerboard.jpg' );
 	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
 	floorTexture.repeat.set( 10, 10 );
 	var floorMaterial = new THREE.MeshBasicMaterial( {
@@ -87,30 +87,25 @@ function init() {
 	////////////
 
 	// texture used to generate "bumpiness"
-	var bumpTexture = new THREE.ImageUtils.loadTexture(
-            'images/heightmap.png' );
+	var bumpTexture = loader.load('images/heightmap.png' );
 	bumpTexture.wrapS = bumpTexture.wrapT = THREE.RepeatWrapping;
+
 	// magnitude of normal displacement
 	var bumpScale   = 200.0;
 
-	var oceanTexture = new THREE.ImageUtils.loadTexture(
-            'images/dirt-512.jpg' );
+	var oceanTexture = loader.load('images/dirt-512.jpg' );
 	oceanTexture.wrapS = oceanTexture.wrapT = THREE.RepeatWrapping;
 
-	var sandyTexture = new THREE.ImageUtils.loadTexture(
-            'images/sand-512.jpg' );
+	var sandyTexture = loader.load( 'images/sand-512.jpg' );
 	sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping;
 
-	var grassTexture = new THREE.ImageUtils.loadTexture(
-            'images/grass-512.jpg' );
+	var grassTexture = loader.load('images/grass-512.jpg' );
 	grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
 
-	var rockyTexture = new THREE.ImageUtils.loadTexture(
-            'images/rock-512.jpg' );
+	var rockyTexture = loader.load('images/rock-512.jpg' );
 	rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping;
 
-	var snowyTexture = new THREE.ImageUtils.loadTexture(
-            'images/snow-512.jpg' );
+	var snowyTexture = loader.load('images/snow-512.jpg' );
 	snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping;
 
 
@@ -142,7 +137,7 @@ function init() {
 	scene.add( plane );
 
 	var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
-	var waterTex = new THREE.ImageUtils.loadTexture( 'images/water512.jpg' );
+	var waterTex = loader.load( 'images/water512.jpg' );
 	waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
 	waterTex.repeat.set(5,5);
 	var waterMat = new THREE.MeshBasicMaterial( {

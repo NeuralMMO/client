@@ -5,8 +5,7 @@
         <title>Godsword demo</title>
     </head>
     <body>
-        <!--
-        <div id="container"><br /><br /><br /><br /><br />Generating world...</div>
+        <div id="container"><br />Generating world...</div>
         <div id="info">
            Projekt Godsword demo, based off
            <a href="https://threejs.org/examples/#webgl_geometry_minecraft"
@@ -21,6 +20,8 @@
         <script src="three.js/examples/js/loaders/OBJLoader.js"></script>
         <script src="three.js/examples/js/loaders/MTLLoader.js"></script>
         <script src="three.js/examples/js/libs/stats.min.js"></script>
+        <script src="threex/WindowResize.js"></script>
+        <script src="threex/FullScreen.js"></script>
 
         <script src="comms.js"></script>
         <script src="consts.js"></script>
@@ -29,20 +30,14 @@
         <script src="engine.js"></script>
         <script src="player.js"></script>
         <script src="obj.js"></script>
+        <!--
         <script src="client.js"></script>
         -->
 
-        <script src="three.js/build/three.js"></script>
         <script src="js/Detector.js"></script>
-        <script src="js/Stats.js"></script>
-        <script src="three.js/examples/js/controls/OrbitControls.js"></script>
         <script src="js/KeyboardState.js"></script>
-        <script src="js/THREEx.FullScreen.js"></script>
-        <script src="js/THREEx.WindowResize.js"></script>
-        <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
 
 
-        <!-- ---------------- Custom Shader Code ------------------------ -->
         <script id="vertexShader" type="x-shader/x-vertex">
         uniform sampler2D bumpTexture;
         uniform float bumpScale;
@@ -66,8 +61,6 @@
         }
         </script>
 
-
-        <!-- fragment shader a.k.a. pixel shader -->
         <script id="fragmentShader" type="x-shader/x-vertex">
         uniform sampler2D oceanTexture;
         uniform sampler2D sandyTexture;
@@ -89,6 +82,7 @@
             gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + water + sandy + grass + rocky + snowy; //, 1.0);
         }
         </script>
+
         <script src="heightmap.js"></script>
     </body>
 </html>
