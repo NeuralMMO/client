@@ -16,7 +16,7 @@ function terrain(map) {
       vertices[ j + 1 ] = data[ i ] * 64;
    }
 
-   texture = new THREE.CanvasTexture( generateTexture( data, this.sz, this.sz) );
+   texture = new THREE.CanvasTexture( generateTexture( data, map, this.sz, this.sz) );
    texture.wrapS = THREE.ClampToEdgeWrapping;
    texture.wrapT = THREE.ClampToEdgeWrapping;
 
@@ -86,7 +86,7 @@ function generateHeight(map) {
    return data;
 }
 
-function generateTexture( data, width, height ) {
+function generateTexture( data, map, width, height ) {
 
    var canvas, canvasScaled, context, image, imageData, vector3, sun, shade;
 
@@ -112,12 +112,27 @@ function generateTexture( data, width, height ) {
       vector3.y = 2;
       vector3.z = data[ j - width * 2 ] - data[ j + width * 2 ];
       vector3.normalize();
+      //if (isnan(vector3)) {
+      //   continue;
+      //}
+      //var tx = Math.floor(vector3.x / 64);
+      //var tz = Math.floor(vector3.z / 64);
+      //var val = tile(map[tx][tz])
+      var val = 0;
+
 
       shade = vector3.dot( sun );
 
+      imageData[ i ] = ( 96 + shade * 128 ) * ( 0.5 + val * 0.007 );
+      imageData[ i + 1 ] = ( 32 + shade * 96 ) * ( 0.5 + val * 0.007 );
+      imageData[ i + 2 ] = ( shade * 96 ) * ( 0.5 + val * 0.007 );
+
+      /*
       imageData[ i ] = ( 96 + shade * 128 ) * ( 0.5 + data[ j ] * 0.007 );
       imageData[ i + 1 ] = ( 32 + shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
       imageData[ i + 2 ] = ( shade * 96 ) * ( 0.5 + data[ j ] * 0.007 );
+      */
+
 
    }
 
