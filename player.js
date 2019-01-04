@@ -46,7 +46,7 @@ class Player {
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.index = index;
-      this.height = -25;    // above grass, below mountains
+      this.height = sz;    // above grass, below mountains
 
       this.initObj(obj);
       this.overhead = new Overhead( this.obj.position );

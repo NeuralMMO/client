@@ -236,6 +236,9 @@ function addTerrain(map) {
 	}   );
 
 	var planeGeo = new THREE.PlaneGeometry( 1000, 1000, 100, 100 );
+    // Only use first left quadrant
+    planeGeo.translate(1000/2, -1000/2, 125);
+
 	var plane = new THREE.Mesh(	planeGeo, customMaterial );
 	plane.rotation.x = -Math.PI / 2;
 	plane.position.y = -100;
