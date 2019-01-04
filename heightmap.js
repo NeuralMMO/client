@@ -64,7 +64,7 @@ function init() {
 
 	// FLOOR
     var loader = new THREE.TextureLoader();
-	var floorTexture = loader.load( 'images/checkerboard.jpg' );
+	var floorTexture = loader.load( 'resources/images/checkerboard.jpg' );
 	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
 	floorTexture.repeat.set( 10, 10 );
 	var floorMaterial = new THREE.MeshBasicMaterial( {
@@ -87,25 +87,25 @@ function init() {
 	////////////
 
 	// texture used to generate "bumpiness"
-	var bumpTexture = loader.load('images/heightmap.png' );
+	var bumpTexture = loader.load('resources/images/heightmap.png' );
 	bumpTexture.wrapS = bumpTexture.wrapT = THREE.RepeatWrapping;
 
 	// magnitude of normal displacement
 	var bumpScale   = 200.0;
 
-	var oceanTexture = loader.load('images/dirt-512.jpg' );
+	var oceanTexture = loader.load('resources/images/dirt-512.jpg' );
 	oceanTexture.wrapS = oceanTexture.wrapT = THREE.RepeatWrapping;
 
-	var sandyTexture = loader.load( 'images/sand-512.jpg' );
+	var sandyTexture = loader.load('resources/images/sand-512.jpg' );
 	sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping;
 
-	var grassTexture = loader.load('images/grass-512.jpg' );
+	var grassTexture = loader.load('resources/images/grass-512.jpg' );
 	grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
 
-	var rockyTexture = loader.load('images/rock-512.jpg' );
+	var rockyTexture = loader.load('resources/images/rock-512.jpg' );
 	rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping;
 
-	var snowyTexture = loader.load('images/snow-512.jpg' );
+	var snowyTexture = loader.load('resources/images/snow-512.jpg' );
 	snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping;
 
 
@@ -137,7 +137,7 @@ function init() {
 	scene.add( plane );
 
 	var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
-	var waterTex = loader.load( 'images/water512.jpg' );
+	var waterTex = loader.load( 'resources/images/water512.jpg' );
 	waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
 	waterTex.repeat.set(5,5);
 	var waterMat = new THREE.MeshBasicMaterial( {
