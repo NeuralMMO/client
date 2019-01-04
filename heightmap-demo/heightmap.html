@@ -49,6 +49,8 @@
 
         varying float vAmount;
         varying vec2 vUV;
+        //flat out float material;
+        vec3 newPosition;
 
         void main()
         {
@@ -59,7 +61,7 @@
             // assuming map is grayscale it doesn't matter if you use r, g, or b.
 
             // move the position along the normal
-            vec3 newPosition = position + normal * bumpScale * vAmount;
+            newPosition = position + normal * bumpScale * vAmount;
 
             gl_Position = projectionMatrix * modelViewMatrix * vec4(
                 newPosition, 1.0 );
@@ -75,17 +77,39 @@
         uniform sampler2D rockyTexture;
         uniform sampler2D snowyTexture;
 
+        vec2 tilePos;
+        float tile;
+
         varying vec2 vUV;
 
         varying float vAmount;
+        vec3 newPosition;
+        uniform sampler2D bumpTexture;
+        //vec2 resolution = vec2(1024.0, 1024.0);
 
         void main()
         {
-            vec4 water = (smoothstep(0.01, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( oceanTexture, vUV * 10.0 );
-            vec4 sandy = (smoothstep(0.24, 0.27, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( sandyTexture, vUV * 10.0 );
-            vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( grassTexture, vUV * 20.0 );
-            vec4 rocky = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( rockyTexture, vUV * 20.0 );
-            vec4 snowy = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( snowyTexture, vUV * 10.0 );
+            tilePos = floor(newPosition.xz / 64.0) / 80.0;
+            tile = texture2D(bumpTexture, tilePos).r;
+
+
+            //texture2D(bumpTexture, vec2(0.0, 0.0));
+            //texture2D(bumpTexture, tilePos);
+
+            //vec2 position = ( gl_FragCoord.xy / resolution.xy );
+            //vec4 color = texture2D(bumpTexture, position);
+
+            vec4 water = (smoothstep(0.01, 0.25, vAmount) - smoothstep(0.24, 0.26, vAmount)) * texture2D( oceanTexture, vUV* 10.0 );
+            vec4 sandy = (smoothstep(0.24, 0.27, vAmount) - smoothstep(0.28, 0.31, vAmount)) * texture2D( sandyTexture, vUV* 10.0 );
+            vec4 grass = (smoothstep(0.28, 0.32, vAmount) - smoothstep(0.35, 0.40, vAmount)) * texture2D( grassTexture, vUV* 20.0 );
+            vec4 rocky = (smoothstep(0.30, 0.50, vAmount) - smoothstep(0.40, 0.70, vAmount)) * texture2D( rockyTexture, vUV* 20.0 );
+            vec4 snowy = (smoothstep(0.50, 0.65, vAmount))                                   * texture2D( snowyTexture, vUV* 10.0 );
+      
+            water = water * float(tile==0.0);
+            sandy = sandy * float(tile==1.0);
+            grass = grass * float(tile==2.0);
+            rocky = rocky * float(tile==3.0);
+            snowy = snowy * float(tile==4.0);
             gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + water + sandy + grass + rocky + snowy; //, 1.0);
         }
         </script>
