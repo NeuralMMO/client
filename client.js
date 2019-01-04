@@ -36,14 +36,14 @@ class Client {
    }
 
    initializePlayers() {
-      var obj = loadObj( "nn.obj", "nn.mtl" );
+      var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
       player = new TargetPlayer(obj, 0);
       engine.scene.add(obj)
       this.handler.addPlayer(player)
 
       const maxPlayers = 10;
       for (var i = 1; i < maxPlayers; i++) {
-         var obj = loadObj( "nn.obj", "nn.mtl" );
+         var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
          var otherPlayer = new Player(obj, i);
          obj.position.y = 100*i; // silly seal
          engine.scene.add(obj);
@@ -69,10 +69,6 @@ function addTerrain(map) {
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
 	engine.scene.add(skyBox);
 
-	////////////
-	// CUSTOM //
-	////////////
-
 	// texture used to generate "bumpiness"
     // We're going to use a DataTexture instead
     var heights = generateHeight(map);
@@ -83,11 +79,12 @@ function addTerrain(map) {
         // only R channel is updated for now as that's what the vertex
         // shader will care about. Change this to RGB later
         bumpMap[i*3] = heightScale * heights[i];
+        bumpMap[i*3+1] = heightScale * heights[i];
+        bumpMap[i*3+2] = heightScale * heights[i];
     }
 
 	var bumpTexture = new THREE.DataTexture(
             bumpMap, width, height, THREE.RGBFormat);
-    console.log(bumpMap, width, height);
 	bumpTexture.wrapS = bumpTexture.wrapT = THREE.ClampToEdgeWrapping;
     bumpTexture.needsUpdate = true;
 
