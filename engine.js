@@ -8,6 +8,7 @@ class Engine {
       // var map = new Terrain( false ); // flat = False
       // this.mesh = map.getMapMesh();
       // this.scene.add( this.mesh );
+      this.mesh = null;
 
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );

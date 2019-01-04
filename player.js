@@ -28,9 +28,15 @@ class PlayerHandler {
    update( delta ) {
       for (var id in this.players) {
          if (id != 'map'){
-         this.players[id].update(delta)
+            this.players[id].update(delta)
          }
       }
+      /*
+      for (var i = 1; i < this.numPlayers; i++) {
+         this.players[i].moveTo([Math.random() * worldWidth,
+               Math.random() * worldDepth]);
+      }
+      */
    }
 }
 
@@ -40,6 +46,7 @@ class Player {
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.index = index;
+      this.height = -25;    // above grass, below mountains
 
       this.initObj(obj);
       this.overhead = new Overhead( this.obj.position );
@@ -47,11 +54,12 @@ class Player {
 
    initObj(obj) {
       this.obj = obj;
+      this.obj.position.y = this.height;
       this.target = obj.position.clone();
    }
 
    setPos(x, y, z) {
-      var pos = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      var pos = new THREE.Vector3(x*sz, this.height, z*sz);
       this.obj.position.copy(pos);
    }
 
@@ -59,12 +67,6 @@ class Player {
       var move = packet['pos'];
       console.log("Move: ", move)
       this.moveTo(move);
-      /*
-      for (var i = 1; i < this.numPlayers; i++) {
-         this.players[i].moveTo([Math.random() * worldWidth,
-               Math.random() * worldDepth]);
-      }
-      */
    }
 
    update(delta) {
@@ -78,7 +80,7 @@ class Player {
       var x = pos[0];
       var z = pos[1];
 
-      this.target = new THREE.Vector3(x*sz, sz+0.1, z*sz);
+      this.target = new THREE.Vector3(x*sz, this.height, z*sz);
 
       // Signal for begin translation
       this.translateState = true;
@@ -154,11 +156,11 @@ class Overhead {
    constructor( pos ) {
       this.position = pos.clone();
       // Health: red
-      this.health = this.initSprite(0xff0000, pos.y + 1.5 * sz);
+      this.health = this.initSprite(0xff0000, pos.y + 1.1 * sz);
       // Food: gold
-      this.food = this.initSprite(0xd4af37, pos.y + 1.75 * sz);
+      this.food = this.initSprite(0xd4af37, pos.y + 1.15 * sz);
       // Water: blue
-      this.water = this.initSprite(0x0000ff, pos.y + 2 * sz);
+      this.water = this.initSprite(0x0000ff, pos.y + 1.2 * sz);
 
       engine.scene.add(this.health);
       engine.scene.add(this.food);
@@ -169,7 +171,7 @@ class Overhead {
       var sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
          color: colorRGB
       } ) );
-      sprite.scale.set( 128, 16, 1 );
+      sprite.scale.set( 64, 8, 1 );
       sprite.position.copy(this.position.clone());
       sprite.position.y = height;
       return sprite;

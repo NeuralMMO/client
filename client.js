@@ -45,7 +45,7 @@ class Client {
       for (var i = 1; i < maxPlayers; i++) {
          var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
          var otherPlayer = new Player(obj, i);
-         obj.position.y = 100*i; // silly seal
+         //obj.position.y = -100 + 100*i; // silly seal
          engine.scene.add(obj);
          this.handler.addPlayer(otherPlayer);
       }

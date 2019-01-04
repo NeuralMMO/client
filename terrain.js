@@ -240,6 +240,7 @@ function addTerrain(map) {
 	plane.rotation.x = -Math.PI / 2;
 	plane.position.y = -100;
 	engine.scene.add( plane );
+    engine.mesh = plane;
 
 	var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
 	var waterTex = loader.load( 'resources/images/water512.jpg' );

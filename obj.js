@@ -11,9 +11,9 @@ function loadObj(objf, mtlf) {
 
         function onOBJLoad(object) {
            obj = object;
-           obj.scale.x = 100;
-           obj.scale.y = 100;
-           obj.scale.z = 100;
+           obj.scale.x = 50;
+           obj.scale.y = 50;
+           obj.scale.z = 50;
            container.add(obj)
         }
         objLoader.load( objf, onOBJLoad);
