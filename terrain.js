@@ -4,7 +4,6 @@ var width  = 80;
 var height = 80;
 
 function terrain(map) {
-   //console.log(map);
    this.sz = map.length
    var data = generateHeight(map);
 
@@ -52,6 +51,7 @@ function tile(val) {
 }
 
 function generateHeight(map) {
+   this.sz = map.length;
    var data = new Uint8Array( this.sz*this.sz );
    var k = 0;
    for ( var r = 0; r < this.sz; r ++ ) {
@@ -83,7 +83,6 @@ function generateHeight(map) {
          k++;
       }
    }
-
    return data;
 }
 

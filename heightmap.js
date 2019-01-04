@@ -87,7 +87,10 @@ function init() {
 	////////////
 
 	// texture used to generate "bumpiness"
-	var bumpTexture = loader.load('resources/images/heightmap.png' );
+    // We're going to use a DataTexture instead
+	//var bumpTexture = loader.load('resources/images/heightmap.png' );
+	var bumpTexture = new THREE.DataTexture(
+            data, width, height, THREE.RGBFormat);
 	bumpTexture.wrapS = bumpTexture.wrapT = THREE.RepeatWrapping;
 
 	// magnitude of normal displacement
