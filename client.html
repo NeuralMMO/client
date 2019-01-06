@@ -71,8 +71,6 @@
         //vec2 resolution = vec2(1024.0, 1024.0);
 
         void main() {
-
-
             tilePos = floor(newPosition.xy / 64.0);// / 80.0;
             vec2 tileUV = newPosition.xy/64.0 - floor(newPosition.xy / 64.00);
             tile = 255.0 * texture2D(tileTexture, tilePos/80.0).r;
@@ -113,13 +111,12 @@
             sandy = sandy ;//float(tile==4.0);
             rocky = rocky * float(tile==5.0);
             snowy = snowy ;//float(tile==6.0);
-            gl_FragColor = vec4(
-                0.0, 0.0, 0.0, 1.0) + water + sandy + grass + rocky + snowy + forest;
-                //, 1.0);
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0) + (water + sandy + grass
+                + rocky + snowy + forest);
 
             float modx = tilePos.x - (2.0 * floor(tilePos.x/2.0));
             float mody = tilePos.y - (2.0 * floor(tilePos.y/2.0));
-            gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx - mody));
+            gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx-mody));
 
         }
         </script>

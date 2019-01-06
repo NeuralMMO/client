@@ -288,10 +288,16 @@ function addTerrain(map) {
 	}   );
 
    var mapSz = nTiles*tileSz;
-	var planeGeo = new THREE.PlaneGeometry( 
+   var planeGeo = new THREE.PlaneGeometry(
          mapSz, mapSz, tileSz, tileSz);
+
+   var usingPositive = true;
    // Only use first left quadrant
-   planeGeo.translate(mapSz/2, mapSz/2, 125);
+   if (usingPositive) {
+      planeGeo.translate(mapSz/2, -mapSz/2, 125);
+   } else {
+      planeGeo.translate(mapSz/2, -mapSz/2, 125);
+   }
 
 	var plane = new THREE.Mesh(	planeGeo, customMaterial );
 	plane.rotation.x = -Math.PI / 2;
