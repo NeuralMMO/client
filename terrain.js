@@ -30,7 +30,7 @@ function terrain(map) {
 function tile(val) {
    switch (val) {
       case 0:
-         return 0;
+         return 1.01;
          break;
       case 1:
          return 0;
@@ -59,16 +59,24 @@ function generateHeight(map) {
    var k = 0;
    for ( var r = 0; r < this.sz; r ++ ) {
       for ( var c = 0; c < this.sz; c ++ ) {
-         if (r==0 || c==0) {
-            data[k] = 1;
-            k++;
-            continue;
+
+         var ll = 0.0;
+         var tt = 0.0;
+         var tl = 0.0;
+         var cc = 0.0;
+
+         cc = tile(map[r][c]);
+         if (c != 0) {
+            ll = tile(map[r][c-1]);
          }
-         var ll = tile(map[r][c-1]);
-         var tt = tile(map[r-1][c]);
-         var tl = tile(map[r-1][c-1]);
-         var cc = tile(map[r][c]);
-         var val = 0.25*(ll + tt + tl + cc);
+         if (r != 0) {
+            tt = tile(map[r-1][c]);
+         }
+         if (r != 0 && c != 0) {
+            tl = tile(map[r-1][c-1]);
+         }
+         //var val = 0.25*(ll + tt + tl + cc);
+         var val = Math.max(ll, tt, tl, cc);
          var mag = 2;
          data[k] = mag * val;
          /*
@@ -247,20 +255,26 @@ function addTerrain(map) {
 	var sandyTexture = loader.load('resources/images/sand-512.jpg' );
 	sandyTexture.wrapS = sandyTexture.wrapT = THREE.RepeatWrapping;
 
-	var grassTexture = loader.load('resources/images/grass-512.jpg' );
-	grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
-
 	var rockyTexture = loader.load('resources/images/rock-512.jpg' );
 	rockyTexture.wrapS = rockyTexture.wrapT = THREE.RepeatWrapping;
 
 	var snowyTexture = loader.load('resources/images/snow-512.jpg' );
 	snowyTexture.wrapS = snowyTexture.wrapT = THREE.RepeatWrapping;
 
+	var scrubTexture = loader.load('resources/tiles/scrub.png' );
+	scrubTexture.wrapS = scrubTexture.wrapT = THREE.RepeatWrapping;
+
 	var forestTexture = loader.load('resources/tiles/forest.png' );
 	forestTexture.wrapS = forestTexture.wrapT = THREE.RepeatWrapping;
 
 	var lavaTexture = loader.load('resources/tiles/lava.png' );
 	lavaTexture.wrapS = lavaTexture.wrapT = THREE.RepeatWrapping;
+
+	var stoneTexture = loader.load('resources/tiles/stone.png' );
+	stoneTexture.wrapS = stoneTexture.wrapT = THREE.RepeatWrapping;
+
+	var grassTexture = loader.load('resources/tiles/grass.png' );
+	grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
 
 
 	// use "this." to create global object
@@ -275,6 +289,8 @@ function addTerrain(map) {
 		forestTexture: { type: "t", value: forestTexture},
 		lavaTexture:   { type: "t", value: lavaTexture},
 	   tileTexture:	{ type: "t", value: tileTexture },
+		scrubTexture:  { type: "t", value: scrubTexture},
+		stoneTexture:  { type: "t", value: stoneTexture},
 	};
 
 	// create custom material from the shader code above
