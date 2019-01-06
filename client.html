@@ -2,32 +2,128 @@
 <html>
     <head>
         <meta charset=utf-8>
-        <title>Godsword demo</title>
+        <title>Projekt Godsword demo</title>
     </head>
     <body>
-            <div id="container"><br /><br /><br /><br /><br />Generating world...</div>
-            <div id="info">
-               Projekt Godsword demo, based off
-               <a href="https://threejs.org/examples/#webgl_geometry_minecraft"
-                  target="_blank" rel="noopener">three.js/minecraft</a> -
-               <br />(left click: move, middle click: rotate, mouse wheel: zoom)</div>
+        <div id="container"><br />Generating world...</div>
+        <div id="info">
+           (left click: move, middle click: rotate, mouse wheel: zoom)
+        </div>
 
-            <script src="three.js/build/three.js"></script>
-            <script src="three.js/examples/js/controls/OrbitControls.js"></script>
-            <script src="three.js/examples/js/utils/BufferGeometryUtils.js"></script>
-            <script src="three.js/examples/js/ImprovedNoise.js"></script>
-            <script src="three.js/examples/js/WebGL.js"></script>
-            <script src="three.js/examples/js/loaders/OBJLoader.js"></script>
-            <script src="three.js/examples/js/loaders/MTLLoader.js"></script>
-            <script src="three.js/examples/js/libs/stats.min.js"></script>
+        <script src="three.js/build/three.js"></script>
+        <script src="three.js/examples/js/controls/OrbitControls.js"></script>
+        <script src="three.js/examples/js/utils/BufferGeometryUtils.js"></script>
+        <script src="three.js/examples/js/ImprovedNoise.js"></script>
+        <script src="three.js/examples/js/WebGL.js"></script>
+        <script src="three.js/examples/js/loaders/OBJLoader.js"></script>
+        <script src="three.js/examples/js/loaders/MTLLoader.js"></script>
+        <script src="three.js/examples/js/libs/stats.min.js"></script>
+        <script src="threex/WindowResize.js"></script>
+        <script src="threex/FullScreen.js"></script>
 
-            <script src="comms.js"></script>
-            <script src="consts.js"></script>
-            <script src="mesh.js"></script>
-            <script src="terrain.js"></script>
-            <script src="engine.js"></script>
-            <script src="player.js"></script>
-            <script src="obj.js"></script>
-            <script src="client.js"></script>
+        <script src="comms.js"></script>
+        <script src="consts.js"></script>
+        <script src="terrain.js"></script>
+        <script src="engine.js"></script>
+        <script src="player.js"></script>
+        <script src="obj.js"></script>
+
+        <script id="vertexShader" type="x-shader/x-vertex">
+        uniform sampler2D bumpTexture;
+        uniform float bumpScale;
+
+        varying float vAmount; varying vec2 vUV;
+        //flat out float material;
+        varying vec3 newPosition;
+
+        void main()
+        {
+            vUV = uv;
+            vec4 bumpData = texture2D( bumpTexture, uv );
+
+            vAmount = bumpData.r;
+            // assuming map is grayscale it doesn't matter if you use r, g, or b.
+
+            // move the position along the normal
+            newPosition = position + normal * bumpScale * vAmount;
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(
+                newPosition, 1.0 );
+        }
+        </script>
+
+        <script id="fragmentShader" type="x-shader/x-vertex">
+        uniform sampler2D oceanTexture;
+        uniform sampler2D sandyTexture;
+        uniform sampler2D grassTexture;
+        uniform sampler2D rockyTexture;
+        uniform sampler2D snowyTexture;
+        uniform sampler2D forestTexture;
+        uniform sampler2D tileTexture;
+
+        vec2 tilePos;
+        float tile;
+
+        varying vec2 vUV;
+
+        varying float vAmount;
+        varying vec3 newPosition;
+        //vec2 resolution = vec2(1024.0, 1024.0);
+
+        void main() {
+
+
+            tilePos = floor(newPosition.xy / 64.0);// / 80.0;
+            vec2 tileUV = newPosition.xy/64.0 - floor(newPosition.xy / 64.00);
+            tile = 255.0 * texture2D(tileTexture, tilePos/80.0).r;
+
+            //texture2D(bumpTexture, vec2(0.0, 0.0));
+            //texture2D(bumpTexture, tilePos);
+
+            //vec2 position = ( gl_FragCoord.xy / resolution.xy );
+            //vec4 color = texture2D(bumpTexture, position);
+
+            vec4 water = (
+                smoothstep(0.01, 0.25, vAmount) -
+                smoothstep(0.24, 0.26, vAmount)
+                ) * texture2D( oceanTexture, tileUV* 10.0 );
+            vec4 sandy = (
+                smoothstep(0.24, 0.27, vAmount) -
+                smoothstep(0.28, 0.31, vAmount)
+                ) * texture2D( sandyTexture, tileUV* 10.0 );
+            vec4 grass = (
+                smoothstep(0.28, 0.32, vAmount) -
+                smoothstep(0.35, 0.40, vAmount)
+                ) * texture2D( grassTexture, tileUV* 20.0 );
+            vec4 rocky = (
+                smoothstep(0.30, 0.50, vAmount) -
+                smoothstep(0.40, 0.70, vAmount)
+                ) * texture2D( rockyTexture, tileUV* 20.0 );
+            vec4 snowy = (
+                smoothstep(0.50, 0.65, vAmount)
+                ) * texture2D( snowyTexture, tileUV* 10.0 );
+
+            vec4 forest = texture2D( forestTexture, tileUV* 1.0 );
+
+
+            water = water ;//float(tile==0.0 || tile == 1.0);
+            //grass = grass * float(tilePos.x < 40.0);
+            grass = grass * float(tile == 2.0 );
+            forest = forest * float(tile==4.0);
+            sandy = sandy ;//float(tile==4.0);
+            rocky = rocky * float(tile==5.0);
+            snowy = snowy ;//float(tile==6.0);
+            gl_FragColor = vec4(
+                0.0, 0.0, 0.0, 1.0) + water + sandy + grass + rocky + snowy + forest;
+                //, 1.0);
+
+            float modx = tilePos.x - (2.0 * floor(tilePos.x/2.0));
+            float mody = tilePos.y - (2.0 * floor(tilePos.y/2.0));
+            gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx - mody));
+
+        }
+        </script>
+
+        <script src="client.js"></script>
     </body>
 </html>

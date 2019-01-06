@@ -155,7 +155,7 @@ function init() {
 
 function animate()
 {
-    requestAnimationFrame( animate );
+   requestAnimationFrame( animate );
 	render();
 	update();
 }

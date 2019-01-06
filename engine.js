@@ -5,14 +5,16 @@ class Engine {
       this.scene.background = new THREE.Color( 0x006666 );
 
       // initialize map
-      var map = new Terrain( false ); // flat = False
-      this.mesh = map.getMapMesh();
-      this.scene.add( this.mesh );
+      // var map = new Terrain( false ); // flat = False
+      // this.mesh = map.getMapMesh();
+      // this.scene.add( this.mesh );
+      this.mesh = null;
 
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
-      this.camera.position.y = map.getY(
-            worldHalfWidth, worldHalfDepth ) * sz + 2 * sz;
+      this.camera.position.y = 2 * sz;
+      // this.camera.position.y = map.getY(
+      //      worldHalfWidth, worldHalfDepth ) * sz + 2 * sz;
       this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );

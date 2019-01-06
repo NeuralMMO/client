@@ -20,8 +20,9 @@ class Client {
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
-            mesh = terrain(map);
-            engine.scene.add(mesh);
+            addTerrain(map);
+            // mesh = terrain(map);
+            // engine.scene.add(mesh);
          }
       }
       this.handler.update(delta);
@@ -35,24 +36,22 @@ class Client {
    }
 
    initializePlayers() {
-      var obj = loadObj( "nn.obj", "nn.mtl" );
+      var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
       player = new TargetPlayer(obj, 0);
       engine.scene.add(obj)
       this.handler.addPlayer(player)
 
       const maxPlayers = 10;
       for (var i = 1; i < maxPlayers; i++) {
-         var obj = loadObj( "nn.obj", "nn.mtl" );
+         var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
          var otherPlayer = new Player(obj, i);
-         obj.position.y = 100*i; // silly seal
+         //obj.position.y = -100 + 100*i; // silly seal
          engine.scene.add(obj);
          this.handler.addPlayer(otherPlayer);
       }
    }
-
-   //Sets the translation direction based on the clicked 
-   //square and toggles state to translate.
 }
+
 
 function init() {
    if ( WEBGL.isWebGLAvailable() === false ) {
