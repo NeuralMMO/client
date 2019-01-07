@@ -2,6 +2,7 @@
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var width  = 80;
 var height = 80;
+var resolution = 4;
 
 function terrain(map) {
    this.sz = map.length
@@ -57,13 +58,16 @@ function generateHeight(map) {
    this.sz = map.length;
    var data = new Uint8Array( this.sz*this.sz );
    var k = 0;
-   for ( var r = 0; r < this.sz; r ++ ) {
+   for ( var r = 0; r <  this.sz; r ++ ) {
       for ( var c = 0; c < this.sz; c ++ ) {
 
          var ll = 0.0;
          var tt = 0.0;
          var tl = 0.0;
          var cc = 0.0;
+
+         //r = Math.floor(r / resolution);
+         //c = Math.floor(c / resolution);
 
          cc = tile(map[r][c]);
          if (c != 0) {
@@ -75,22 +79,10 @@ function generateHeight(map) {
          if (r != 0 && c != 0) {
             tl = tile(map[r-1][c-1]);
          }
-         //var val = 0.25*(ll + tt + tl + cc);
-         var val = Math.max(ll, tt, tl, cc);
+         var val = 0.25*(ll + tt + tl + cc);
+         //var val = Math.max(ll, tt, tl, cc);
          var mag = 2;
          data[k] = mag * val;
-         /*
-         data[k] = 1;
-         if (ll != 1) {
-            data[k] = mag * ll;
-         }
-         if (tt != 1) {
-            data[k] = mag * tt;
-         }
-         if (cc != 1) {
-            data[k] = mag * cc;
-         }
-         */
          k++;
       }
    }
@@ -305,7 +297,7 @@ function addTerrain(map) {
 
    var mapSz = nTiles*tileSz;
    var planeGeo = new THREE.PlaneGeometry(
-         mapSz, mapSz, tileSz, tileSz);
+         mapSz, mapSz, tileSz*resolution, tileSz*resolution);
 
    var usingPositive = false;
    // Only use first left quadrant

@@ -106,7 +106,6 @@
                   water + grass + rocky + snowy + 
                   forest + scrub + stone + lava);
 
-
             float modx = tilePos.x - (2.0 * floor(tilePos.x/2.0));
             float mody = tilePos.y - (2.0 * floor(tilePos.y/2.0));
             gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx-mody));
