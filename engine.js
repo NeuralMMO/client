@@ -76,7 +76,9 @@ class Engine {
          var z = intersects[ 0 ].point.z;
 
          x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
-         z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
+         // new terrain gen uses +x, -z
+         z = Math.max(Math.min(0, Math.floor(z/sz)), -worldDepth);
+         // z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
       }
 
       return [x, z]
