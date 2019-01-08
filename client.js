@@ -16,7 +16,7 @@ class Client {
          var packet = inbox.shift();
          //console.log(packet);
          packet = JSON.parse(packet);
-         this.handler.updateData(packet);
+         this.handler.updateData(packet['ent']);
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
@@ -39,16 +39,7 @@ class Client {
       var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
       player = new TargetPlayer(obj, 0);
       engine.scene.add(obj)
-      this.handler.addPlayer(player)
-
-      const maxPlayers = 10;
-      for (var i = 1; i < maxPlayers; i++) {
-         var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
-         var otherPlayer = new Player(obj, i);
-         //obj.position.y = -100 + 100*i; // silly seal
-         engine.scene.add(obj);
-         this.handler.addPlayer(otherPlayer);
-      }
+      this.handler.players[0] = player
    }
 }
 

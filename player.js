@@ -9,27 +9,29 @@ class PlayerHandler {
       this.players = [];
    }
 
-   addPlayer( player ) {
-      this.players.push(player);
+   addPlayer(id) {
+      var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
+      this.players[id] = new Player(obj, id);
+      engine.scene.add(obj);
+      //this.players.push(player);
    }
 
    removePlayer( playerIndex ) {
       this.players.splice(playerIndex, 1);
    }
 
-   updateData(packets) {
-      for (var id in packets) {
-         if (id != 'map'){
-            this.players[id].updateData(packets[id])
+   updateData(ents) {
+      for (var id in ents) {
+         if (!(id in this.players)) {
+            this.addPlayer(id)
          }
+         this.players[id].updateData(ents[id]);
       }
    }
 
    update( delta ) {
       for (var id in this.players) {
-         if (id != 'map'){
-            this.players[id].update(delta)
-         }
+         this.players[id].update(delta);
       }
       /*
       for (var i = 1; i < this.numPlayers; i++) {

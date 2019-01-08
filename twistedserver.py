@@ -35,27 +35,22 @@ class EchoServerProtocol(WebSocketServerProtocol):
         super().__init__()
         print("CREATED A SERVER")
         self.frame = 0
-        self.packet = {
-                '0':{
-                    'pos': (5, 0) 
-                    }
-                }
+        self.packet = {}
 
     def onOpen(self):
         print("Opened connection to server")
         self.realm = self.factory.realm
         self.frame += 1
 
-        '''
-        env = self.realm.envs[0]
-        if len(env.desciples) > 0:
-            idx = min(int(e) for e in env.desciples.keys())
-            ent = env.desciples[str(idx)]
-            pos = ent.client.pos
-            data = {'pos': pos}
-        '''
-        gameMap = self.realm.envs[0].env
+        realm = self.realm.envs[0]
+        gameMap = realm.env
+        ent = {}
+        for id, e in realm.desciples.items():
+           ent[id] = {'pos': e.client.pos}
+        ent[id] = {'pos': (0, 0)}
+         
         self.packet['map'] = gameMap.tolist()
+        self.packet['ent'] = ent
 
         data = self.packet
         packet = json.dumps(data).encode('utf8')
@@ -76,8 +71,17 @@ class EchoServerProtocol(WebSocketServerProtocol):
         packet = json.loads(packet)
         #self.sendMessage(payload, isBinary)
         #packet = packet['0']
+        realm = self.realm.envs[0]
+
         pos = packet['pos']
-        self.packet['0']['pos'] = move(self.packet['0']['pos'], pos)
+        ent = self.packet['ent']
+        ent['0'] = {'pos': move(ent['0']['pos'], pos)}
+
+        ent = {}
+        for id, e in realm.desciples.items():
+           ent[id] = {'pos': e.client.pos}
+        self.packet['ent'] = ent
+ 
 
     def sendUpdate(self):
         packet = json.dumps(self.packet).encode('utf8')
@@ -114,7 +118,6 @@ class WSServerFactory(WebSocketServerFactory):
 class Application:
     def __init__(self, realm, step):
         self.realm = realm
-        data = {'pos':(0, 0)}
         #log.startLogging(sys.stdout)
         port = 8080
 
