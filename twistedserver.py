@@ -71,7 +71,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
         for id, e in realm.desciples.items():
            pkt = {}
            pkt['pos']  = e.client.pos
-           pkt['name'] = 'neural'
+           pkt['name'] = e.client.name#'neural'
            ent[id] = pkt
         self.packet['ent'] = ent
 
