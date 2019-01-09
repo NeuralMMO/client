@@ -6,7 +6,6 @@ class Client {
    constructor () {
       this.handler = new PlayerHandler();
       engine = new Engine();
-      this.initializePlayers();
    }
 
    update() {
@@ -37,12 +36,6 @@ class Client {
    }
    */
 
-   initializePlayers() {
-      var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
-      player = new TargetPlayer(obj, 0);
-      engine.scene.add(obj)
-      this.handler.players[0] = player
-   }
 }
 
 

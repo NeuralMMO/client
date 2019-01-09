@@ -2,12 +2,12 @@
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var width  = 80;
 var height = 80;
-var resolution = 1;
+var resolution = 2;
 
 function tile(val) {
    switch (val) {
       case 0:
-         return 1;
+         return 1.01;
          break;
       case 1:
          return 0;
@@ -32,13 +32,14 @@ function tile(val) {
 
 function generateHeight(map) {
    this.sz = map.length;
+   var mag = 2;
    var data = new Uint8Array( resolution*this.sz*this.sz );
    var k = 0;
    var val;
    for ( var r = 0; r <  this.sz; r ++ ) {
       for ( var c = 0; c < this.sz; c ++ ) {
          val = tile(map[r][c]);
-         data[k] = val;
+         data[k] = mag * val;
          k++; 
       }
    }
@@ -90,72 +91,33 @@ function addTerrain(map) {
    var nTiles = map.length;
 
    // LIGHT
-	//var light = new THREE.PointLight(0xffffff, 1, 10000, 1);
-	//light.position.set(0,0,0);
-	//light.position.set(640,640,100);
-	//engine.scene.add(light);
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(100,250,100);
+	engine.scene.add(light);
 
     var loader = new THREE.TextureLoader();
 
 	// SKYBOX
-   /*
 	var skyBoxGeometry = new THREE.CubeGeometry( 20000, 20000, 10000 );
 	var skyBoxMaterial = new THREE.MeshBasicMaterial( {
         color: 0x9999ff, side: THREE.BackSide } );
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
 	engine.scene.add(skyBox);
-   */
 
-   var length = 64*nTiles;
-   var axisSz = tileSz;
-	var xGeometry = new THREE.CubeGeometry( length, 2*axisSz, axisSz);
-   var xMaterial = new THREE.MeshBasicMaterial( {
-        color: 0xff0000} );
-	var xMesh = new THREE.Mesh( xGeometry, xMaterial );
-   xMesh.position.x = length / 2;
-   xMesh.position.y = tileSz;
-   xMesh.position.z = -tileSz/2;
-	engine.scene.add(xMesh);
-
-	var zGeometry = new THREE.CubeGeometry( axisSz, 2*axisSz, length);
-   var zMaterial = new THREE.MeshBasicMaterial( {
-        color: 0x00ff00} );
-	var zMesh = new THREE.Mesh( zGeometry, zMaterial );
-   zMesh.position.z = length / 2;
-   zMesh.position.x = -tileSz/2;
-   zMesh.position.y = tileSz;
-	engine.scene.add(zMesh);
-
-	var yGeometry = new THREE.CubeGeometry( axisSz, length, axisSz);
-   var yMaterial = new THREE.MeshBasicMaterial( {
-        color: 0x0000ff } );
-	var yMesh = new THREE.Mesh( yGeometry, yMaterial );
-	engine.scene.add(yMesh);
-   yMesh.position.y = length / 2;
-   yMesh.position.x = -tileSz/2;
-   yMesh.position.z = -tileSz/2;
-
-	var aGeometry = new THREE.CubeGeometry( 5+2*axisSz, 5+2*axisSz, 5+2*axisSz);
-   var aMaterial = new THREE.MeshBasicMaterial( {
-        color: 0x000000 } );
-	var aMesh = new THREE.Mesh( aGeometry, aMaterial );
-	engine.scene.add(aMesh);
-   aMesh.position.y = tileSz;
-
-
-    // texture used to generate "bumpiness"
+	// texture used to generate "bumpiness"
     // We're going to use a DataTexture instead
     var heights = generateHeight(map);
     var flats = generateFlat(map);
     var bumpMap = new Uint8Array( 3 * heights.length );
     var tileMap = new Uint8Array( 3 * heights.length );
 
+    const heightScale = 45;
     for (var i = 0; i < heights.length; i++) {
         // only R channel is updated for now as that's what the vertex
         // shader will care about. Change this to RGB later
-        bumpMap[i*3]   = heights[i];
-        bumpMap[i*3+1] = heights[i];
-        bumpMap[i*3+2] = heights[i];
+        bumpMap[i*3]   = heightScale * heights[i];
+        bumpMap[i*3+1] = heightScale * heights[i];
+        bumpMap[i*3+2] = heightScale * heights[i];
 
         tileMap[i*3]   = flats[i];
         tileMap[i*3+1] = flats[i];
@@ -174,7 +136,7 @@ function addTerrain(map) {
 
 
 	// magnitude of normal displacement
-	var bumpScale   = 64.0;
+	var bumpScale   = 200.0;
 
 	var oceanTexture = loader.load('resources/images/dirt-512.jpg' );
 	oceanTexture.wrapS = oceanTexture.wrapT = THREE.RepeatWrapping;
@@ -233,45 +195,32 @@ function addTerrain(map) {
    var mapSz = nTiles*tileSz;
    // var planeGeo = new THREE.PlaneGeometry(
    //      mapSz, mapSz, tileSz*resolution, tileSz*resolution);
-
-   //May be off by one, but careful not to break border detection
-   //in the shader, as that is far harder to debug
    var planeGeo = new THREE.PlaneGeometry(
          mapSz, mapSz, width*resolution, height*resolution);
 
 
+   var usingPositive = false;
    // Only use first left quadrant
-   //planeGeo.translate(mapSz/2, mapSz/2, 0);
-   //planeGeo.translate(mapSz/2, 0, 0);
-   //planeGeo.translate(mapSz/2, 0, 0);
-
-   var waterTiles = nTiles-20
-   var waterSz = waterTiles*tileSz; 
-	//var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
-   var waterGeo = new THREE.PlaneGeometry(
-         waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
-   //waterGeo.translate(mapSz/2, mapSz/2, 0);
-
-
-	var waterTex = loader.load( 'resources/tiles/water.png' );
-	waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
-	waterTex.repeat.set(50,50);
-	var waterMat = new THREE.MeshBasicMaterial( {
-        map: waterTex, transparent:true, opacity:0.75} );
-	var water = new THREE.Mesh(	waterGeo, waterMat );
-	water.rotation.x = -Math.PI / 2;
-	water.position.y = 3*tileSz/4;
-	water.position.x = mapSz / 2;
-	water.position.z = mapSz / 2;
-	engine.scene.add( water);
+   if (usingPositive) {
+      planeGeo.translate(mapSz/2, -mapSz/2, 125);
+   } else {
+      planeGeo.translate(mapSz/2, mapSz/2, 125);
+   }
 
 	var plane = new THREE.Mesh(	planeGeo, customMaterial );
 	plane.rotation.x = -Math.PI / 2;
-	plane.rotation.z = -Math.PI / 2;
-	//plane.position.x = mapSz / 2;
-	//plane.position.z = mapSz;
+	plane.position.y = -100;
 	engine.scene.add( plane );
    engine.mesh = plane;
 
-
+	var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
+	var waterTex = loader.load( 'resources/images/water512.jpg' );
+	waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
+	waterTex.repeat.set(5,5);
+	var waterMat = new THREE.MeshBasicMaterial( {
+        map: waterTex, transparent:true, opacity:0.40} );
+	var water = new THREE.Mesh(	planeGeo, waterMat );
+	water.rotation.x = -Math.PI / 2;
+	water.position.y = -50;
+	engine.scene.add( water);
 }
