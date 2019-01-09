@@ -1,13 +1,15 @@
 @Taiyaki
 -Overhead names
--OOPify players (group objects, non procedural add/remove attributes)
 -Animations (death, spawn, attacks)
 -Note: projectiles
 -ES6
--Spawn Location
 
 @Seal
 - Syncing data from server to client
 - Redo infra in surreal
 - Refactor shaders
 - Water/lava/shadows
+
++OOPify players (group objects, non procedural add/remove attributes)
++Spawn Location
+
