@@ -67,7 +67,7 @@ class Player extends THREE.Object3D {
       this.overhead = new Overhead(params);
       this.obj.add(this.overhead)
       this.overhead.position.y = sz;
-   } 
+   }
 
    coords(x, z) {
       return new THREE.Vector3(x*sz+sz/2, this.height, z*sz+sz/2);
@@ -155,19 +155,15 @@ class Overhead extends THREE.Object3D {
    initSprite(hexColor, height) {
       var material = new THREE.SpriteMaterial({color: hexColor});
       var sprite = new THREE.Sprite(material)
-      //sprite.position.copy(this.position.clone());
       sprite.scale.set( 64, 8, 1 );
       sprite.position.y = height;
       this.add(sprite)
-      return sprite;
    }
 
    initName(params) {
-      var sprite = makeTextSprite(params['name'], 200);
-      sprite.scale.set( 64, 8, 1 );
-      sprite.position.y = 20; // height;
+      var sprite = makeTextSprite(params['name'], "200");
+      sprite.scale.set( 30, 90, 1 );
+      //sprite.position.y = -30;
       this.add(sprite);
-      return sprite;
    }
-
 }
