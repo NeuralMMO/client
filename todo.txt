@@ -1,8 +1,10 @@
 @Taiyaki
--Overhead names
 -Animations (death, spawn, attacks)
--Note: projectiles
+    -Note: projectiles
 -ES6
+
++Overhead names
+
 
 @Seal
 - Syncing data from server to client
@@ -12,4 +14,3 @@
 
 +OOPify players (group objects, non procedural add/remove attributes)
 +Spawn Location
-
