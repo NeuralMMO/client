@@ -1,6 +1,9 @@
 @Taiyaki
 -Animations (death, spawn, attacks)
     -Note: projectiles
+-Add wasd camera controls. Trackpads have no middle mouse.
+-Make stat bars (food, health, water) dynamic. You have access to this data from the most recent twistedserver commit.
+- Add damage hitsplats (again, data is in twistedServer)
 -ES6
 
 +Overhead names
