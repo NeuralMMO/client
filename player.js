@@ -142,8 +142,7 @@ class Overhead extends THREE.Object3D {
    constructor(params) {
       super()
       this.initBars()
-      //this.initName(obj, params)
-
+      this.initName(params)
    }
 
    initBars() {
@@ -162,12 +161,11 @@ class Overhead extends THREE.Object3D {
       return sprite;
    }
 
-   initName(obj, params) {
-      var sprite = makeTextSprite(params['name']);
-      //sprite.scale.set( 64, 8, 1 );
-      sprite.position.copy(this.position.clone());
-      sprite.position.y = height;
-      engine.scene.add(this.name);
+   initName(params) {
+      var sprite = makeTextSprite(params['name'], 200);
+      sprite.scale.set( 64, 8, 1 );
+      sprite.position.y = 20; // height;
+      this.add(sprite);
       return sprite;
    }
 
