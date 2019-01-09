@@ -50,13 +50,15 @@ class Player extends THREE.Object3D {
       this.moveTarg = [0, 0];
       this.height = sz;    // above grass, below mountains
 
-      this.initObj();
+      this.initObj(params);
       this.initOverhead(params);
    }
 
-   initObj() {
+   initObj(params) {
+      var pos = params['pos'];
       this.obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
       this.obj.position.y = this.height;
+      this.obj.position.copy(this.coords(pos[0], pos[1]));
       this.target = this.obj.position.clone();
       this.add(this.obj)
    }
@@ -67,9 +69,8 @@ class Player extends THREE.Object3D {
       this.overhead.position.y = sz;
    } 
 
-   setPos(x, y, z) {
-      var pos = new THREE.Vector3(x*sz, this.height, z*sz);
-      this.obj.position.copy(pos);
+   coords(x, z) {
+      return new THREE.Vector3(x*sz+sz/2, this.height, z*sz+sz/2);
    }
 
    updateData (packet) {
@@ -87,7 +88,7 @@ class Player extends THREE.Object3D {
       var x = pos[0];
       var z = pos[1];
 
-      this.target = new THREE.Vector3(x*sz+sz/2, this.height, z*sz+sz/2);
+      this.target = this.coords(x, z);
 
       // Signal for begin translation
       this.translateState = true;
