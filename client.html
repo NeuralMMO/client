@@ -20,6 +20,7 @@
         <script src="three.js/examples/js/libs/stats.min.js"></script>
         <script src="threex/WindowResize.js"></script>
         <script src="threex/FullScreen.js"></script>
+        <script src="textsprite.js"></script>
 
         <script src="comms.js"></script>
         <script src="consts.js"></script>
@@ -164,10 +165,8 @@
             //Check if we are on a border
             vec2 err = newPosition.xy/64.0 - tilePos;
 
-            //if (err.x < tol || err.y < tol) {
-            //   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-            //}
-
+            //Debug shader
+            /*
             if (err.x < tol) {
                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
             }
@@ -179,6 +178,7 @@
             if (err.x < tol && err.y < tol) {
                gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
             }
+            */
 
 
         }

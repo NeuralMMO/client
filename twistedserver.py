@@ -41,20 +41,8 @@ class EchoServerProtocol(WebSocketServerProtocol):
         print("Opened connection to server")
         self.realm = self.factory.realm
         self.frame += 1
+        self.sendUpdate()
 
-        realm = self.realm.envs[0]
-        gameMap = realm.env
-        ent = {}
-        for id, e in realm.desciples.items():
-           ent[id] = {'pos': e.client.pos}
-        ent[id] = {'pos': (0, 0)}
-         
-        self.packet['map'] = gameMap.tolist()
-        self.packet['ent'] = ent
-
-        data = self.packet
-        packet = json.dumps(data).encode('utf8')
-        self.sendMessage(packet, False)
 
         #packet = json.dumps(data).encode('utf8')
         #self.sendMessage(packet, True)
@@ -71,19 +59,25 @@ class EchoServerProtocol(WebSocketServerProtocol):
         packet = json.loads(packet)
         #self.sendMessage(payload, isBinary)
         #packet = packet['0']
-        realm = self.realm.envs[0]
 
         pos = packet['pos']
         ent = self.packet['ent']
         ent['0'] = {'pos': move(ent['0']['pos'], pos)}
 
-        ent = {}
-        for id, e in realm.desciples.items():
-           ent[id] = {'pos': e.client.pos}
-        self.packet['ent'] = ent
- 
 
     def sendUpdate(self):
+        ent = {}
+        realm = self.realm.envs[0]
+        for id, e in realm.desciples.items():
+           pkt = {}
+           pkt['pos']  = e.client.pos
+           pkt['name'] = 'neural'
+           ent[id] = pkt
+        self.packet['ent'] = ent
+
+        gameMap = realm.env
+        self.packet['map'] = gameMap.tolist()
+
         packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)
 

@@ -6,7 +6,7 @@ class PlayerHandler {
     */
 
    constructor() {
-      this.players = [];
+      this.players = {};
    }
 
    addPlayer(id) {
@@ -17,10 +17,17 @@ class PlayerHandler {
    }
 
    removePlayer( playerIndex ) {
-      this.players.splice(playerIndex, 1);
+      this.players[playerIndex].remove()
+      delete this.players[playerIndex];
    }
 
    updateData(ents) {
+      for (var id in this.players) {
+         if (!(id in ents)) {
+            this.removePlayer(id);
+         }
+      }
+
       for (var id in ents) {
          if (!(id in this.players)) {
             this.addPlayer(id)
@@ -49,15 +56,21 @@ class Player {
       this.moveTarg = [0, 0];
       this.index = index;
       this.height = sz;    // above grass, below mountains
+      this.obj = obj
 
       this.initObj(obj);
-      this.overhead = new Overhead( this.obj.position );
+      this.overhead = new Overhead( this.obj.position, name);
    }
 
    initObj(obj) {
       this.obj = obj;
       this.obj.position.y = this.height;
       this.target = obj.position.clone();
+   }
+
+   remove() {
+      engine.scene.remove(this.obj);
+      this.overhead.remove();
    }
 
    setPos(x, y, z) {
@@ -82,7 +95,7 @@ class Player {
       var x = pos[0];
       var z = pos[1];
 
-      this.target = new THREE.Vector3(x*sz, this.height, z*sz);
+      this.target = new THREE.Vector3(x*sz+sz/2, this.height, z*sz+sz/2);
 
       // Signal for begin translation
       this.translateState = true;
@@ -155,18 +168,28 @@ class TargetPlayer extends Player {
 }
 
 class Overhead {
-   constructor( pos ) {
+   constructor(pos, name) {
       this.position = pos.clone();
       // Health: red
       this.health = this.initSprite(0xff0000, pos.y + 1.1 * sz);
       // Food: gold
-      this.food = this.initSprite(0xd4af37, pos.y + 1.15 * sz);
+      this.food = this.initSprite(0xd4af37, pos.y + 1.2 * sz);
       // Water: blue
-      this.water = this.initSprite(0x0000ff, pos.y + 1.2 * sz);
+      this.water = this.initSprite(0x0000ff, pos.y + 1.3 * sz);
 
       engine.scene.add(this.health);
       engine.scene.add(this.food);
       engine.scene.add(this.water);
+
+      this.name = this.initName(pos.y + 1.4 * sz, name);
+      engine.scene.add(this.name);
+   }
+
+   remove() {
+      engine.scene.remove(this.health);
+      engine.scene.remove(this.food);
+      engine.scene.remove(this.water);
+      engine.scene.remove(this.name);
    }
 
    initSprite( colorRGB, height) {
@@ -179,10 +202,19 @@ class Overhead {
       return sprite;
    }
 
+   initName(height, name) {
+      var sprite = makeTextSprite(name);
+      //sprite.scale.set( 64, 8, 1 );
+      sprite.position.copy(this.position.clone());
+      sprite.position.y = height;
+      return sprite;
+   }
+
    move( movement ) {
       this.position.add(movement);
       this.health.position.add(movement);
       this.food.position.add(movement);
       this.water.position.add(movement);
+      this.name.position.add(movement);
    }
 }

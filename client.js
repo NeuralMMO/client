@@ -29,11 +29,13 @@ class Client {
       engine.update(delta);
    }
 
+   /*
    onMouseDown(event) {
       player.translateState = true;
       player.moveTarg = engine.raycast(event.clientX, event.clientY);
       player.sendMove();
    }
+   */
 
    initializePlayers() {
       var obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );

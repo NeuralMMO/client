@@ -267,8 +267,9 @@ function addTerrain(map) {
 
 	var plane = new THREE.Mesh(	planeGeo, customMaterial );
 	plane.rotation.x = -Math.PI / 2;
+	plane.rotation.z = -Math.PI / 2;
 	//plane.position.x = mapSz / 2;
-	plane.position.z = mapSz;
+	//plane.position.z = mapSz;
 	engine.scene.add( plane );
    engine.mesh = plane;
 
