@@ -52,7 +52,7 @@ function init() {
    container.innerHTML = "";
    container.appendChild( engine.renderer.domElement );
 
-   function onMouseDown( event ) { client.onMouseDown( event ); }
+   function onMouseDown( event ) { }; // client.onMouseDown( event ); }
    function onWindowResize() { engine.onWindowResize(); }
 
    stats = new Stats();
