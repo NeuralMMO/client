@@ -44,7 +44,7 @@ class Engine {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan
       }
-      controls.target.set( 0, 0, 0 );
+      controls.target.set( 40*sz, 0, 40*sz );
       controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
       controls.maxPolarAngle = Math.PI / 2.0 - 0.1;
