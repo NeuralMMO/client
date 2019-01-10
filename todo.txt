@@ -1,7 +1,10 @@
 @Taiyaki
 -Animations (death, spawn, attacks)
+    -Death: rotate, flashing
+    -Spawn: flashing
+    -Attacks: change color?
     -Note: projectiles
--ES6
+-ES6 imports working
 
 +Overhead names
 
