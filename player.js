@@ -1,3 +1,9 @@
+import * as textsprite from "./textsprite.js";
+import * as OBJ from "./obj.js";
+
+export {PlayerHandler};
+
+
 class PlayerHandler {
    /*
     * The PlayerHandler receives packets from the server containing player
@@ -5,18 +11,19 @@ class PlayerHandler {
     * and disperses the signals appropriately.
     */
 
-   constructor() {
+   constructor(engine) {
       this.players = {};
+      this.engine = engine;
    }
 
    addPlayer(id, params) {
       var player = new Player(id, params);
       this.players[id] = player;
-      engine.scene.add(player);
+      this.engine.scene.add(player);
    }
 
    removePlayer( playerIndex ) {
-      engine.scene.remove(this.players[playerIndex])
+      this.engine.scene.remove(this.players[playerIndex])
       delete this.players[playerIndex];
    }
 
@@ -58,7 +65,7 @@ class Player extends THREE.Object3D {
 
    initObj(params) {
       var pos = params['pos'];
-      this.obj = loadObj( "resources/nn.obj", "resources/nn.mtl" );
+      this.obj = OBJ.loadObj( "resources/nn.obj", "resources/nn.mtl" );
       this.obj.position.y = this.height;
       this.obj.position.copy(this.coords(pos[0], pos[1]));
       this.target = this.obj.position.clone();
@@ -125,8 +132,8 @@ class Player extends THREE.Object3D {
          // Turn the target into the new position of the player
          //Translate, but also move the camera at the same time.
          if (target) {
-            engine.camera.position.add(movement);
-            engine.controls.target.copy(this.obj.position);
+            this.engine.camera.position.add(movement);
+            this.engine.controls.target.copy(this.obj.position);
          }
 
          var eps = 0.0000001;
@@ -135,7 +142,7 @@ class Player extends THREE.Object3D {
             this.translateState = false;
             this.obj.position.copy(this.target);
             if (target) {
-               engine.controls.target.copy(this.obj.position);
+               this.engine.controls.target.copy(this.obj.position);
             }
             this.translateDir.set(0.0, 0.0, 0.0);
          }
@@ -192,9 +199,10 @@ class Overhead extends THREE.Object3D {
    }
 
    initName(params) {
-      var sprite = makeTextSprite(params['name'], "200");
-      sprite.scale.set( 30, 90, 1 );
-      //sprite.position.y = -30;
+      var sprite = textsprite.makeTextSprite(params['name'], "200");
+      // embiggen it
+      sprite.scale.set( 30, 30, 1 );
+      sprite.position.y = 30;
       this.add(sprite);
    }
 }

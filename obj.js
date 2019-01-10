@@ -1,3 +1,6 @@
+export {loadObj};
+
+
 function loadObj(objf, mtlf) {
     var container = new THREE.Object3D();
     var obj;

@@ -1,11 +1,16 @@
+import * as engineM from './engine.js';
+import * as playerM from './player.js';
+import * as terrainM from './terrain.js';
+
 var container, stats;
-var player, engine, client, mesh;
+var engine, client, mesh;
 var firstMesh = true;
+
 
 class Client {
    constructor () {
-      this.handler = new PlayerHandler();
-      engine = new Engine();
+      engine = new engineM.Engine();
+      this.handler = new playerM.PlayerHandler(engine);
    }
 
    update() {
@@ -13,13 +18,12 @@ class Client {
       while (inbox.length > 0) {
          // Receive packet, begin translating based on the received position
          var packet = inbox.shift();
-         //console.log(packet);
          packet = JSON.parse(packet);
          this.handler.updateData(packet['ent']);
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
-            addTerrain(map);
+            terrainM.addTerrain(map, engine);
             // mesh = terrain(map);
             // engine.scene.add(mesh);
          }

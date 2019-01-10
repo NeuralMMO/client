@@ -1,3 +1,5 @@
+export {Engine};
+
 class Engine {
 
    constructor() {
