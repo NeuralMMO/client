@@ -35,11 +35,13 @@ class PlayerHandler {
       }
    }
 
+   /*
    update( delta ) {
       for (var id in this.players) {
          this.players[id].update(delta);
       }
    }
+   */
 }
 
 class Player extends THREE.Object3D {
@@ -76,7 +78,8 @@ class Player extends THREE.Object3D {
    updateData (packet) {
       var move = packet['pos'];
       console.log("Move: ", move)
-      this.moveTo(move);
+      new Move(this, move);
+      //this.moveTo(move);
    }
 
    update(delta) {
@@ -109,6 +112,7 @@ class Player extends THREE.Object3D {
       ws.send(packet);
    }
 
+   /*
    translate(delta) {
       var target = false;
       if (this.translateState) {
@@ -137,6 +141,33 @@ class Player extends THREE.Object3D {
          }
       }
    }
+   */
+}
+
+//We dont exactly have animation tracks for this project
+class ProceduralAnimation {
+   constructor() {
+      this.clock = new THREE.Clock()
+      this.elapsedTime = 0.0;
+      this.delta = 0.0;
+      setTimeout(this.update.bind(this), 1000*tick/nAnim);
+   }
+
+   update() {
+      this.delta = this.clock.getDelta();
+      var time = this.elapsedTime + this.delta;
+      this.elapsedTime = Math.min(time, tick);
+      this.step(this.delta, this.elapsedTime);
+      if (this.elapsedTime < tick) {
+         setTimeout(this.update.bind(this), 1000*tick/nAnim);
+      }
+   }
+
+   //Abstract
+   step(delta, elapsedTime) {
+      throw new Error('Must override abstract step method of ProceduralAnimation');
+   }
+
 }
 
 class Overhead extends THREE.Object3D {
