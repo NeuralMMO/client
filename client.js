@@ -1,10 +1,11 @@
-import * as engineM from '/GodswordClient/engine.js';
-import * as playerM from '/GodswordClient/player.js';
-import * as terrainM from '/GodswordClient/terrain.js';
+import * as engineM from './engine.js';
+import * as playerM from './player.js';
+import * as terrainM from './terrain.js';
 
 var container, stats;
 var engine, client, mesh;
 var firstMesh = true;
+
 
 class Client {
    constructor () {
@@ -17,7 +18,6 @@ class Client {
       while (inbox.length > 0) {
          // Receive packet, begin translating based on the received position
          var packet = inbox.shift();
-         //console.log(packet);
          packet = JSON.parse(packet);
          this.handler.updateData(packet['ent']);
          if (firstMesh) {
