@@ -1,3 +1,6 @@
+export {makeTextSprite};
+
+
 function makeTextSprite(message, fontsize) {
     var ctx, texture, sprite, spriteMaterial;
     var canvas = document.createElement('canvas');
@@ -6,7 +9,7 @@ function makeTextSprite(message, fontsize) {
 
     // setting canvas width/height before ctx draw, else canvas is empty
     canvas.width = ctx.measureText(message).width;
-    canvas.height = fontsize * 6; // fontsize * 1.5
+    canvas.height = fontsize * 1.5
 
     // after setting the canvas width/height we have to re-set font to apply
     // looks like ctx reset

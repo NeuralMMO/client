@@ -29,14 +29,9 @@
         <script src="three.js/examples/js/libs/stats.min.js"></script>
         <script src="threex/WindowResize.js"></script>
         <script src="threex/FullScreen.js"></script>
-        <script src="textsprite.js"></script>
 
         <script src="comms.js"></script>
         <script src="consts.js"></script>
-        <script src="terrain.js"></script>
-        <script src="engine.js"></script>
-        <script src="player.js"></script>
-        <script src="obj.js"></script>
 
         <script id="vertexShader" type="x-shader/x-vertex">
         uniform sampler2D bumpTexture;
@@ -134,7 +129,6 @@
                 smoothstep(0.28, 0.31, vAmount)
                 ) * texture2D( sandyTexture, tileUV* 10.0 );
             */
- 
 
             lava = lava * float(tile==0.0);
             water = sandy * float(tile == 1.0);
@@ -168,12 +162,9 @@
                gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
             }
             */
-
-
         }
-
         </script>
 
-        <script src="client.js"></script>
+        <script src="client.js" type="module"></script>
     </body>
 </html>

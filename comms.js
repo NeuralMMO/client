@@ -13,6 +13,7 @@ ws.onmessage = function (event) {
 };
 document.body.appendChild(messages);
 */
+
 function onMessage(event) {
    msg = event.data;
    inbox.push(msg);

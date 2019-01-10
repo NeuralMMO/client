@@ -1,11 +1,15 @@
+import * as engineM from '/GodswordClient/engine.js';
+import * as playerM from '/GodswordClient/player.js';
+import * as terrainM from '/GodswordClient/terrain.js';
+
 var container, stats;
-var player, engine, client, mesh;
+var engine, client, mesh;
 var firstMesh = true;
 
 class Client {
    constructor () {
-      this.handler = new PlayerHandler();
-      engine = new Engine();
+      engine = new engineM.Engine();
+      this.handler = new playerM.PlayerHandler(engine);
    }
 
    update() {
@@ -19,7 +23,7 @@ class Client {
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
-            addTerrain(map);
+            terrainM.addTerrain(map, engine);
             // mesh = terrain(map);
             // engine.scene.add(mesh);
          }

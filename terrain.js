@@ -1,3 +1,5 @@
+export {addTerrain};
+
 //var worldWidth = 256, worldDepth = 256,
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var width  = 80;
@@ -31,49 +33,26 @@ function tile(val) {
 }
 
 function generateHeight(map) {
-   this.sz = map.length;
-   var data = new Uint8Array( resolution*this.sz*this.sz );
+   var mapSz = map.length;
+   var data = new Uint8Array( resolution*mapSz*mapSz );
    var k = 0;
    var val;
-   for ( var r = 0; r <  this.sz; r ++ ) {
-      for ( var c = 0; c < this.sz; c ++ ) {
+   for ( var r = 0; r <  mapSz; r ++ ) {
+      for ( var c = 0; c < mapSz; c ++ ) {
          val = tile(map[r][c]);
          data[k] = val;
-         k++; 
+         k++;
       }
    }
    return data
-   /*
-         var ll = 0.0;
-         var tt = 0.0;
-         var tl = 0.0;
-         var cc = 0.0;
-
-         //r = Math.floor(r / resolution);
-         //c = Math.floor(c / resolution);
-
-         cc = tile(map[r][c]);
-         if (c != 0) {
-            ll = tile(map[r][c-1]);
-         }
-         if (r != 0) {
-            tt = tile(map[r-1][c]);
-         }
-         if (r != 0 && c != 0) {
-            tl = tile(map[r-1][c-1]);
-         }
-         var val = 0.25*(ll + tt + tl + cc);
-         //var val = Math.max(ll, tt, tl, cc);
-         data[k] = mag * val;
-   */
 }
 
 function generateFlat(map) {
-   this.sz = map.length;
-   var data = new Uint8Array( this.sz*this.sz );
+   var mapSz = map.length;
+   var data = new Uint8Array( mapSz*mapSz );
    var k = 0;
-   for ( var r = 0; r < this.sz; r ++ ) {
-      for ( var c = 0; c < this.sz; c ++ ) {
+   for ( var r = 0; r < mapSz; r ++ ) {
+      for ( var c = 0; c < mapSz; c ++ ) {
          data[k] = map[r][c];
          k++;
       }
@@ -81,7 +60,7 @@ function generateFlat(map) {
    return data;
 }
 
-function addTerrain(map) {
+function addTerrain(map, engine) {
     /*
      * Adds terrain which shades water, grass, dirt, and mountains
      * based on a heightmap given by the server.
@@ -205,7 +184,7 @@ function addTerrain(map) {
 
 
    // use "this." to create global object
-   this.customUniforms = {
+   var customUniforms = {
       bumpTexture:   { type: "t", value: bumpTexture },
       bumpScale:     { type: "f", value: bumpScale },
       oceanTexture:  { type: "t", value: oceanTexture },
