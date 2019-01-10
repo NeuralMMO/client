@@ -5,6 +5,9 @@
     -Attacks: change color?
     -Note: projectiles
 -ES6 imports working
+-Add wasd camera controls. Trackpads have no middle mouse.
+-Make stat bars (food, health, water) dynamic. You have access to this data from the most recent twistedserver commit.
+- Add damage hitsplats (again, data is in twistedServer)
 
 +Overhead names
 

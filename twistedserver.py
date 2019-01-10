@@ -69,9 +69,25 @@ class EchoServerProtocol(WebSocketServerProtocol):
         ent = {}
         realm = self.realm.envs[0]
         for id, e in realm.desciples.items():
+           e = e.client
            pkt = {}
-           pkt['pos']  = e.client.pos
-           pkt['name'] = e.client.name#'neural'
+           pkt['pos']  = e.pos
+           pkt['entID'] = e.entID
+           pkt['color'] = e.color.hex
+           pkt['name'] = str(e.entID)
+           pkt['food'] = e.food
+           pkt['water'] = e.water
+           pkt['health'] = e.health
+           pkt['maxFood'] = e.maxFood
+           pkt['maxWater'] = e.maxWater
+           pkt['maxHealth'] = e.maxHealth
+           pkt['damage'] = e.damage
+
+           pkt['attack'] = None
+           pkt['target'] = None
+           if e.attack is not None: 
+              pkt['attack'] = e.attack.action.__name__
+              pkt['target'] = e.attack.args.pos
            ent[id] = pkt
         self.packet['ent'] = ent
 
@@ -112,7 +128,7 @@ class WSServerFactory(WebSocketServerFactory):
 class Application:
     def __init__(self, realm, step):
         self.realm = realm
-        #log.startLogging(sys.stdout)
+        log.startLogging(sys.stdout)
         port = 8080
 
         #factory = WSServerFactory(u'ws://localhost:'+str(port), realm)
