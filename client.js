@@ -24,7 +24,7 @@ class Client {
             // engine.scene.add(mesh);
          }
       }
-      this.handler.update(delta);
+      //this.handler.update(delta);
       engine.update(delta);
    }
 
