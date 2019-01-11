@@ -23,10 +23,11 @@ class Client {
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
-            terrainM.addTerrain(map, engine);
+            this.terrainMaterial = terrainM.addTerrain(map, engine);
             // mesh = terrain(map);
             // engine.scene.add(mesh);
          }
+         terrainM.updateTerrain(packet['map'], this.terrainMaterial);
       }
       //this.handler.update(delta);
       engine.update(delta);

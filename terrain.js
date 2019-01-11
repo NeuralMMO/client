@@ -1,4 +1,4 @@
-export {addTerrain};
+export {addTerrain, updateTerrain};
 
 //var worldWidth = 256, worldDepth = 256,
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
@@ -34,14 +34,16 @@ function tile(val) {
 
 function generateHeight(map) {
    var mapSz = map.length;
-   var data = new Uint8Array( resolution*mapSz*mapSz );
+   var data = new Uint8Array( 3*resolution*mapSz*mapSz );
    var k = 0;
    var val;
    for ( var r = 0; r <  mapSz; r ++ ) {
       for ( var c = 0; c < mapSz; c ++ ) {
          val = tile(map[r][c]);
          data[k] = val;
-         k++;
+         data[k+1] = val;
+         data[k+2] = val;
+         k += 3;
       }
    }
    return data
@@ -49,15 +51,26 @@ function generateHeight(map) {
 
 function generateFlat(map) {
    var mapSz = map.length;
-   var data = new Uint8Array( mapSz*mapSz );
+   var data = new Uint8Array( 3*mapSz*mapSz );
    var k = 0;
    for ( var r = 0; r < mapSz; r ++ ) {
       for ( var c = 0; c < mapSz; c ++ ) {
          data[k] = map[r][c];
-         k++;
+         data[k+1] = map[r][c];
+         data[k+2] = map[r][c];
+         k += 3;
       }
    }
    return data;
+}
+
+function updateTerrain(map, customMaterial) {
+   var tileMap = generateFlat(map);
+   var tileTexture = new THREE.DataTexture(
+            tileMap, width, height, THREE.RGBFormat);
+   tileTexture.wrapS = tileTexture.wrapT = THREE.ClampToEdgeWrapping;
+   tileTexture.needsUpdate = true;
+   customMaterial.uniforms.tileTexture.value = tileTexture;
 }
 
 function addTerrain(map, engine) {
@@ -121,25 +134,8 @@ function addTerrain(map, engine) {
    engine.scene.add(aMesh);
    aMesh.position.y = tileSz;
 
-
-    // texture used to generate "bumpiness"
-    // We're going to use a DataTexture instead
-    var heights = generateHeight(map);
-    var flats = generateFlat(map);
-    var bumpMap = new Uint8Array( 3 * heights.length );
-    var tileMap = new Uint8Array( 3 * flats.length );
-
-    for (var i = 0; i < flats.length; i++) {
-        // only R channel is updated for now as that's what the vertex
-        // shader will care about. Change this to RGB later
-        bumpMap[i*3]   = heights[i];
-        bumpMap[i*3+1] = heights[i];
-        bumpMap[i*3+2] = heights[i];
-
-        tileMap[i*3]   = flats[i];
-        tileMap[i*3+1] = flats[i];
-        tileMap[i*3+2] = flats[i];
-    }
+   var bumpMap = generateHeight(map);
+   var tileMap = generateFlat(map);
 
    var bumpTexture = new THREE.DataTexture(
             bumpMap, width, height, THREE.RGBFormat);
@@ -209,30 +205,21 @@ function addTerrain(map, engine) {
    });
    //   side:THREE.BackSide}   );
 
-   var mapSz = nTiles*tileSz;
-   // var planeGeo = new THREE.PlaneGeometry(
-   //      mapSz, mapSz, tileSz*resolution, tileSz*resolution);
-
    //May be off by one, but careful not to break border detection
    //in the shader, as that is far harder to debug
+   var mapSz = nTiles*tileSz;
    var planeGeo = new THREE.PlaneGeometry(
          mapSz, mapSz, width*resolution, height*resolution);
    planeGeo.applyMatrix(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2, 0, 0));
    planeGeo.applyMatrix(new THREE.Matrix4().makeTranslation(mapSz/2, 0, mapSz/2));
-
-
-   // Only use first left quadrant
-   //planeGeo.translate(mapSz/2, mapSz/2, 0);
-   //planeGeo.translate(mapSz/2, 0, 0);
-   //planeGeo.translate(mapSz/2, 0, 0);
+   var plane = new THREE.Mesh(planeGeo, customMaterial);
+   engine.scene.add( plane );
+   engine.mesh = plane;
 
    var waterTiles = nTiles-2
    var waterSz = waterTiles*tileSz; 
-   //var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
    var waterGeo = new THREE.PlaneGeometry(
          waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
-   //waterGeo.translate(mapSz/2, mapSz/2, 0);
-
 
    var waterTex = loader.load( 'resources/tiles/water.png' );
    waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
@@ -246,13 +233,6 @@ function addTerrain(map, engine) {
    water.position.z = mapSz / 2;
    engine.scene.add( water);
 
-   var plane = new THREE.Mesh(planeGeo, customMaterial);
-   //plane.rotation.x = -Math.PI / 2;
-   //plane.position.x = -mapSz / 2;
-   //plane.position.z = -mapSz / 2;
-   engine.scene.add( plane );
-   engine.mesh = plane;
-
-
+   return customMaterial
 }
 
