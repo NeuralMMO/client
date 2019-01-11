@@ -4,7 +4,7 @@ export {addTerrain};
 //worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var width  = 80;
 var height = 80;
-var resolution = 1;
+var resolution = 3;
 
 function tile(val) {
    switch (val) {
@@ -127,9 +127,9 @@ function addTerrain(map, engine) {
     var heights = generateHeight(map);
     var flats = generateFlat(map);
     var bumpMap = new Uint8Array( 3 * heights.length );
-    var tileMap = new Uint8Array( 3 * heights.length );
+    var tileMap = new Uint8Array( 3 * flats.length );
 
-    for (var i = 0; i < heights.length; i++) {
+    for (var i = 0; i < flats.length; i++) {
         // only R channel is updated for now as that's what the vertex
         // shader will care about. Change this to RGB later
         bumpMap[i*3]   = heights[i];
@@ -206,8 +206,8 @@ function addTerrain(map, engine) {
        uniforms: customUniforms,
       vertexShader:   document.getElementById('vertexShader').textContent,
       fragmentShader: document.getElementById('fragmentShader').textContent,
-      // side: THREE.DoubleSide
-   }   );
+   });
+   //   side:THREE.BackSide}   );
 
    var mapSz = nTiles*tileSz;
    // var planeGeo = new THREE.PlaneGeometry(
@@ -217,6 +217,8 @@ function addTerrain(map, engine) {
    //in the shader, as that is far harder to debug
    var planeGeo = new THREE.PlaneGeometry(
          mapSz, mapSz, width*resolution, height*resolution);
+   planeGeo.applyMatrix(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2, 0, 0));
+   planeGeo.applyMatrix(new THREE.Matrix4().makeTranslation(mapSz/2, 0, mapSz/2));
 
 
    // Only use first left quadrant
@@ -224,7 +226,7 @@ function addTerrain(map, engine) {
    //planeGeo.translate(mapSz/2, 0, 0);
    //planeGeo.translate(mapSz/2, 0, 0);
 
-   var waterTiles = nTiles-20
+   var waterTiles = nTiles-2
    var waterSz = waterTiles*tileSz; 
    //var waterGeo = new THREE.PlaneGeometry( 1000, 1000, 1, 1 );
    var waterGeo = new THREE.PlaneGeometry(
@@ -244,11 +246,10 @@ function addTerrain(map, engine) {
    water.position.z = mapSz / 2;
    engine.scene.add( water);
 
-   var plane = new THREE.Mesh(   planeGeo, customMaterial );
-   plane.rotation.x = -Math.PI / 2;
-   plane.rotation.z = -Math.PI / 2;
-   //plane.position.x = mapSz / 2;
-   //plane.position.z = mapSz;
+   var plane = new THREE.Mesh(planeGeo, customMaterial);
+   //plane.rotation.x = -Math.PI / 2;
+   //plane.position.x = -mapSz / 2;
+   //plane.position.z = -mapSz / 2;
    engine.scene.add( plane );
    engine.mesh = plane;
 

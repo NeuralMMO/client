@@ -38,7 +38,7 @@ class PlayerHandler {
          if (!(id in this.players)) {
             this.addPlayer(id, ents[id])
          }
-         this.players[id].updateData(ents[id]);
+         this.players[id].updateData(this.engine, ents[id]);
       }
    }
 
@@ -65,7 +65,7 @@ class Player extends THREE.Object3D {
 
    initObj(params) {
       var pos = params['pos'];
-      this.obj = OBJ.loadObj( "resources/nn.obj", "resources/nn.mtl" );
+      this.obj = OBJ.loadNN(params['color']);
       this.obj.position.y = this.height;
       this.obj.position.copy(this.coords(pos[0], pos[1]));
       this.target = this.obj.position.clone();
@@ -82,10 +82,32 @@ class Player extends THREE.Object3D {
       return new THREE.Vector3(x*sz+sz/2, this.height, z*sz+sz/2);
    }
 
-   updateData (packet) {
+   updateData (engine, packet) {
       var move = packet['pos'];
       console.log("Move: ", move)
-      new Move(this, move);
+      var thisMove = new Move(this, move);
+      var damage = packet['damage'];
+      if (damage != null) {
+         var thisDamage = new Damage(this, packet['damage']);
+      }
+
+      if (packet['target'] != null) {
+         switch (packet['attack']) {
+            case 'Melee':
+               var thisAttk = new Melee(engine.scene, this, 
+                     packet['pos'], packet['target']);
+               break;
+            case 'Range':
+               var thisAttk = new Range(engine.scene, this, 
+                     packet['pos'], packet['target']);
+               break;
+            case 'Mage':
+               var thisAttk = new Mage(engine.scene, this, 
+                     packet['pos'], packet['target']);
+               break;
+         } 
+      }
+ 
       //this.moveTo(move);
    }
 
@@ -118,37 +140,6 @@ class Player extends THREE.Object3D {
       });
       ws.send(packet);
    }
-
-   /*
-   translate(delta) {
-      var target = false;
-      if (this.translateState) {
-         var movement = this.translateDir.clone();
-         movement.multiplyScalar(delta / tick);
-
-         // Move player, then camera
-         this.obj.position.add(movement);
-
-         // Turn the target into the new position of the player
-         //Translate, but also move the camera at the same time.
-         if (target) {
-            this.engine.camera.position.add(movement);
-            this.engine.controls.target.copy(this.obj.position);
-         }
-
-         var eps = 0.0000001;
-         if (this.obj.position.distanceToSquared(this.target) <= eps) {
-            // Finish animating, reset
-            this.translateState = false;
-            this.obj.position.copy(this.target);
-            if (target) {
-               this.engine.controls.target.copy(this.obj.position);
-            }
-            this.translateDir.set(0.0, 0.0, 0.0);
-         }
-      }
-   }
-   */
 }
 
 //We dont exactly have animation tracks for this project
@@ -157,6 +148,7 @@ class ProceduralAnimation {
       this.clock = new THREE.Clock()
       this.elapsedTime = 0.0;
       this.delta = 0.0;
+      this.setup()
       setTimeout(this.update.bind(this), 1000*tick/nAnim);
    }
 
@@ -168,6 +160,9 @@ class ProceduralAnimation {
       if (this.elapsedTime < tick) {
          setTimeout(this.update.bind(this), 1000*tick/nAnim);
       }
+      else {
+         this.finish();
+      }
    }
 
    //Abstract
@@ -175,6 +170,108 @@ class ProceduralAnimation {
       throw new Error('Must override abstract step method of ProceduralAnimation');
    }
 
+   //Optional call before animation
+   setup() {
+   }
+
+   //Optional call upon animation termination
+   finish() {
+   }
+
+}
+
+class Move extends ProceduralAnimation {
+   constructor(ent, targ) {
+      super();
+      this.pos  = ent.obj.position.clone();
+      this.targ = ent.coords(targ[0], targ[1]);
+      this.isTarget = false;
+      this.ent = ent;
+   }
+
+   step(delta, elapsedTime) {
+      var moveFrac = elapsedTime / tick;
+      var x = this.pos.x + moveFrac * (this.targ.x - this.pos.x);
+      var y = this.pos.y + moveFrac * (this.targ.y - this.pos.y);
+      var z = this.pos.z + moveFrac * (this.targ.z - this.pos.z);
+      var pos = new THREE.Vector3(x, y, z)
+      this.ent.obj.position.copy(pos);
+      if (this.isTarget) {
+         engine.camera.position.add(movement);
+         engine.controls.target.copy(this.ent.obj.position);
+      }
+   }
+}
+
+class Damage extends ProceduralAnimation {
+   constructor(ent, damage) {
+      super();
+      this.dmg = textsprite.makeTextSprite(damage, "200", '#ff0000');
+      this.dmg.scale.set( 30, 30, 1 );
+      this.height = 128
+      this.dmg.position.y = this.height
+      this.ent = ent;
+      ent.obj.add(this.dmg)
+   }
+
+   step(delta, elapsedTime) {
+      var moveFrac = elapsedTime / tick;
+      this.dmg.position.y = this.height+32*moveFrac;
+   }
+
+   finish() {
+      this.ent.obj.remove(this.dmg);
+   }
+}
+
+class Attack extends ProceduralAnimation {
+   constructor(scene, ent, orig, targ) {
+      super();
+      this.orig = ent.coords(orig[0], orig[1]);
+      this.targ = ent.coords(targ[0], targ[1]);
+      this.scene = scene;
+
+      var attkGeom = new THREE.SphereGeometry(8, 4, 4);
+      var attkMatl = new THREE.MeshBasicMaterial( {
+           color: this.color} );
+      var attkMesh = new THREE.Mesh(attkGeom, attkMatl);
+      this.attk = attkMesh
+      this.attk.position.x = this.orig.x;
+      this.attk.position.y = this.orig.y;
+      this.attk.position.z = this.orig.z;
+      scene.add(this.attk);
+   }
+
+   step(delta, elapsedTime) {
+      var moveFrac = elapsedTime / tick;
+      var x = this.orig.x + moveFrac * (this.targ.x - this.orig.x) + 32;
+      var y = 128;
+      var z = this.orig.z + moveFrac * (this.targ.z - this.orig.z) + 32;
+      var pos = new THREE.Vector3(x, y, z)
+      this.attk.position.copy(pos);
+   }
+
+   finish() {
+      this.scene.remove(this.attk);
+   }
+}
+
+class Melee extends Attack{
+   setup() {
+      this.color = '#ff0000';
+   }
+}
+
+class Range extends Attack{
+   setup() {
+      this.color = '#00ff00';
+   }
+}
+
+class Mage extends Attack{
+   setup() {
+      this.color = '#0000ff';
+   }
 }
 
 class Overhead extends THREE.Object3D {
@@ -199,7 +296,7 @@ class Overhead extends THREE.Object3D {
    }
 
    initName(params) {
-      var sprite = textsprite.makeTextSprite(params['name'], "200");
+      var sprite = textsprite.makeTextSprite(params['name'], "200", params['color']);
       // embiggen it
       sprite.scale.set( 30, 30, 1 );
       sprite.position.y = 30;

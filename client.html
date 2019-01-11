@@ -46,36 +46,37 @@
         float val;
         float tol = 0.025;
         float mag = 1.0;
+        float nTiles = 80.00001;
 
         void main()
         {
-            vec3 position = vec3(position.x + 64.0*40.0, position.y+64.0*40.0, position.z);
+            //vec3 position = vec3(position.x + 64.0*40.0, position.y+64.0*40.0, position.z);
             vUV = uv;
-            tilePos = floor(position.xy / 64.0);
-            vAmount = 255.0*texture2D(bumpTexture, tilePos/80.0).r;
+            tilePos = floor(position.xz / 64.0);
+            vAmount = 255.0*texture2D(bumpTexture, tilePos/nTiles).r;
 
             //Check if we are on a border
-            vec2 err = position.xy/64.0 - tilePos;
+            vec2 err = position.xz/64.0 - tilePos;
 
 
             if (err.x < tol) {
-               val = 255.0*texture2D(bumpTexture, vec2(tilePos.x-1.0, tilePos.y)/80.0).r;
+               val = 255.0*texture2D(bumpTexture, vec2(tilePos.x-1.0, tilePos.y)/nTiles).r;
                if (val == 1.0) { vAmount = mag; }
             }
 
             if (err.y < tol) {
-               val = 255.0*texture2D(bumpTexture, vec2(tilePos.x, tilePos.y-1.0)/80.0).r;
+               val = 255.0*texture2D(bumpTexture, vec2(tilePos.x, tilePos.y-1.0)/nTiles).r;
                if (val == 1.0) { vAmount = mag; }
             }
 
             if (err.x < tol && err.y < tol) {
-               val = 255.0*texture2D(bumpTexture, vec2(tilePos.x-1.0, tilePos.y-1.0)/80.0).r;
+               val = 255.0*texture2D(bumpTexture, vec2(tilePos.x-1.0, tilePos.y-1.0)/nTiles).r;
                if (val == 1.0) { vAmount = mag; }
             }
 
 
-            if (position.x == 0.0 || position.y == 0.0 || 
-                  position.x / 64.0 == 80.0 || position.y / 64.0 == 80.0) {
+            if (position.x == 0.0 || position.z == 0.0 || 
+                  position.x / 64.0 == 80.0 || position.z / 64.0 == 80.0) {
                vAmount = 0.0;
             }
 
@@ -106,12 +107,15 @@
 
         varying float vAmount;
         varying vec3 newPosition;
+        float nTiles = 80.0001;
 
         void main() {
-
-            tilePos = floor(newPosition.xy / 64.0);
-            vec2 tileUV = newPosition.xy/64.0 - floor(newPosition.xy / 64.00);
-            tile = 255.0 * texture2D(tileTexture, tilePos/80.0).r;
+            //Check 80 minus
+            //tilePos = 80.0 - floor(newPosition.xy / 64.0);
+            //vec2 tileUV = newPosition.xz/64.0 - floor(newPosition.xz / 64.00);
+            tilePos = floor(newPosition.xz / 64.0);
+            vec2 tileUV = newPosition.xz/64.0;
+            tile = 255.0 * texture2D(tileTexture, tilePos/nTiles ).r;
 
 
             vec4 water  = texture2D( oceanTexture,  tileUV* 1.0 );
@@ -146,7 +150,11 @@
             float mody = tilePos.y - (2.0 * floor(tilePos.y/2.0));
             gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx-mody));
             //Check if we are on a border
-            vec2 err = newPosition.xy/64.0 - tilePos;
+            vec2 err = newPosition.xz/64.0 - tilePos;
+
+            //float xcolor = newPosition.x /10000.0;
+            //float ycolor = newPosition.z /10000.0;
+            //gl_FragColor = vec4(xcolor, ycolor, 0.0, 1.0);
 
             //Debug shader
             /*
