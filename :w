@@ -272,75 +272,46 @@ class Mage extends Attack{
 }
 
 class StatBar extends THREE.Object3D {
-   constructor(color, width, height) {
-      super();
-      this.valBar = this.initSprite(color);
-      this.valBar.center = new THREE.Vector2(1, 0);
+   constructor(width, height, color) {
+      this.valBar = initSprite(color, width, height);
+      this.redBar = initSprite(color, 0, height);
 
-      this.redBar = this.initSprite(0xff0000);
-      this.redBar.center = new THREE.Vector2(0, 0);
-
-      this.offset = 64;
-      this.height = height;
-      this.width = width;
-      this.update(width);
    }
 
-   initSprite(hexColor) {
-      var material = new THREE.SpriteMaterial({color: hexColor});
-      var sprite = new THREE.Sprite(material)
-      this.add(sprite)
-      return sprite
-   }
-
-   update(val) {
-      this.valBar.scale.set(val, this.height, 1);
-      this.redBar.scale.set(this.width - val, this.height, 1);
-   }
-}
-
-class Stats extends THREE.Object3D {
-   constructor(params) {
-      super();
-      this.barHeight = 8;
-
-      this.health = this.initBar(0x00ff00, params['maxHealth'], 0)
-      this.water  = this.initBar(0x0000ff, params['maxWater'], 8)
-      this.food   = this.initBar(0xd4af37, params['maxFood'], 16)
-   }
-
-   update(params) {
-      this.health.update(params['health']);
-      this.water.update(params['water']);
-      this.food.update(params['food']);
-   }
-
-   initBar(color, width, height){
-      var bar = new StatBar(color, width, this.barHeight);
-      bar.position.y = height
-      this.add(bar)
-      return bar
-   }
 }
 
 class Overhead extends THREE.Object3D {
    constructor(params) {
       super()
-      this.initName(params);
-      this.initStats(params);
-   }
-      
-   update(params) {
-      this.stats.update(params);
+      this.initBars()
+      this.initName(params)
    }
 
-   initStats(params) {
-      this.stats = new Stats(params);
-      this.add(this.stats);
+   update(params) {
+      this.health.scale.set(params['health'], 8, 1);
+      this.food.scale.set(params['food'], 8, 1);
+      this.water.scale.set(params['water'], 8, 1);
+   }
+   initBars() {
+      this.health = this.initSprite(0x00ff00, 0);
+      this.food = this.initSprite(0xd4af37, 8)
+      this.water = this.initSprite(0x0000ff, 16)
+      //this.red = this.initSprite(0xff0000, 0);
+      //this.red.scale.set(64, 24, 1);
+   }
+
+   initSprite(hexColor, height) {
+      var material = new THREE.SpriteMaterial({color: hexColor});
+      var sprite = new THREE.Sprite(material)
+      sprite.scale.set( 64, 8, 1 );
+      sprite.position.y = height;
+      this.add(sprite)
+      return sprite
    }
 
    initName(params) {
       var sprite = textsprite.makeTextSprite(params['name'], "200", params['color']);
+      // embiggen it
       sprite.scale.set( 30, 30, 1 );
       sprite.position.y = 30;
       this.add(sprite);

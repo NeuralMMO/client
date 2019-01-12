@@ -17,7 +17,11 @@ class Client {
       var delta = engine.clock.getDelta();
       while (inbox.length > 0) {
          // Receive packet, begin translating based on the received position
-         var packet = inbox.shift();
+         //var packet = inbox.shift();
+         var packet = inbox.pop();
+         while(inbox.length > 0) {
+            inbox.shift();
+         }
          packet = JSON.parse(packet);
          this.handler.updateData(packet['ent']);
          if (firstMesh) {

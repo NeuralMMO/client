@@ -87,7 +87,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
            pkt['target'] = None
            if e.attack is not None: 
               pkt['attack'] = e.attack.action.__name__
-              pkt['target'] = e.attack.args.pos
+              pkt['target'] = e.attack.args.entID
            ent[id] = pkt
         self.packet['ent'] = ent
 
