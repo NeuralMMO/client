@@ -166,6 +166,33 @@
         }
         </script>
 
+        <script id="statVertexShader" type="x-shader/x-vertex">
+        uniform vec3 scale;
+        varying vec2 vUV;
+
+        void main()
+        {
+            vUV = uv;
+            //gl_Position = projectionMatrix * (modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0) + vec4(position.x, position.y, 0.0, 0.0));
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+        </script>
+
+        <script id="statFragmentShader" type="x-shader/x-vertex">
+        uniform vec3 color;
+        uniform float width;
+        uniform float val;
+        varying vec2 vUV;
+
+        void main() {
+           if (vUV.x > val / width) {
+              gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+           } else {
+              gl_FragColor = vec4(color.x, color.y, color.z, 1.0);
+           }
+        }
+        </script>
+
         <script src="client.js" type="module"></script>
     </body>
 </html>

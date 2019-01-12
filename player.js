@@ -19,7 +19,7 @@ class PlayerHandler {
    }
 
    addPlayer(id, params) {
-      var player = new Player(id, params);
+      var player = new Player(id, params, this.engine);
       this.players[id] = player;
       this.engine.scene.add(player);
    }
@@ -46,13 +46,14 @@ class PlayerHandler {
 }
 
 class Player extends THREE.Object3D {
-   constructor(id, params)  {
+   constructor(id, params, engine)  {
       super()
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.height = sz;    // above grass, below mountains
       this.entID = params['entID']
+      this.engine = engine
 
       this.initObj(params);
       this.initOverhead(params);
@@ -69,7 +70,7 @@ class Player extends THREE.Object3D {
    }
 
    initOverhead(params) {
-      this.overhead = new Sprite.Overhead(params);
+      this.overhead = new Sprite.Overhead(params, this.engine);
       this.obj.add(this.overhead)
       this.overhead.position.y = sz;
    }
@@ -89,7 +90,7 @@ class Player extends THREE.Object3D {
       this.cancelAnims();
 
       var move = packet['pos'];
-      console.log("Move: ", move)
+      //console.log("Move: ", move)
       this.anims.push(new Animation.Move(this, move));
       var damage = packet['damage'];
       if (damage != null) {
