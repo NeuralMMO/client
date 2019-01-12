@@ -4,6 +4,7 @@ const worldWidth = 64, worldDepth = 64;
 const worldHalfWidth = worldWidth / 2;
 const worldHalfDepth = worldDepth / 2;
 const sz = 64;
+const tileSz = 64;
 
 const tiles = {
     0: "lava",
@@ -22,4 +23,14 @@ const tileColors = {
     "forest": 0x00ff00, // darkgreen
     "stone": 0x0f0f0f, // darkgrey
     "orerock": 0x808080 // grey
+}
+
+const tileHeights = {
+   0: 1,
+   1: 0,
+   2: 1,
+   3: 1,
+   4: 1,
+   5: 2,
+   6: 1
 }

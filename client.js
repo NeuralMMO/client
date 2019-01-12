@@ -11,6 +11,7 @@ class Client {
    constructor () {
       engine = new engineM.Engine();
       this.handler = new playerM.PlayerHandler(engine);
+      this.engine = engine;
    }
 
    update() {
@@ -27,24 +28,20 @@ class Client {
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
-            this.terrainMaterial = terrainM.addTerrain(map, engine);
-            // mesh = terrain(map);
-            // engine.scene.add(mesh);
+            this.terrain = new terrainM.Terrain(map, engine);
          }
-         terrainM.updateTerrain(packet['map'], this.terrainMaterial);
+         this.terrain.update(packet['map']);
       }
-      //this.handler.update(delta);
       engine.update(delta);
    }
 
-   /*
    onMouseDown(event) {
-      player.translateState = true;
-      player.moveTarg = engine.raycast(event.clientX, event.clientY);
-      player.sendMove();
-   }
-   */
+      //player.moveTarg = engine.raycast(event.clientX, event.clientY);
+      //player.sendMove();
 
+      //var pos = this.engine.raycast(event.clientX, event.clientY);
+      //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
+   }
 }
 
 
@@ -61,7 +58,7 @@ function init() {
    container.innerHTML = "";
    container.appendChild( engine.renderer.domElement );
 
-   function onMouseDown( event ) { }; // client.onMouseDown( event ); }
+   function onMouseDown( event ) { client.onMouseDown( event ); }
    function onWindowResize() { engine.onWindowResize(); }
 
    stats = new Stats();

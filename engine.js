@@ -64,9 +64,9 @@ class Engine {
 
    raycast(clientX, clientY) {
       this.mouse.x = (
-            clientX / engine.renderer.domElement.clientWidth ) * 2 - 1;
+            clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
       this.mouse.y = - (
-            clientY / engine.renderer.domElement.clientHeight ) * 2 + 1;
+            clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
       this.raycaster.setFromCamera( this.mouse, this.camera );
 
       // See if the ray from the camera into the world hits one of our meshes
@@ -75,15 +75,16 @@ class Engine {
       // Toggle rotation bool for meshes that we clicked
       if ( intersects.length > 0 ) {
          var x = intersects[ 0 ].point.x;
+         var y = intersects[ 0 ].point.x;
          var z = intersects[ 0 ].point.z;
 
-         x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
+         //x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
          // new terrain gen uses +x, -z
-         z = Math.max(Math.min(0, Math.floor(z/sz)), -worldDepth);
+         //z = Math.max(Math.min(0, Math.floor(z/sz)), -worldDepth);
          // z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
       }
 
-      return [x, z]
+      return [x, y, z]
    }
 
    //TODO: sometimes the camera rotates itself?

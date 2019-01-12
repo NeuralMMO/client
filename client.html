@@ -91,8 +91,6 @@
         uniform sampler2D oceanTexture;
         uniform sampler2D sandyTexture;
         uniform sampler2D grassTexture;
-        uniform sampler2D rockyTexture;
-        uniform sampler2D snowyTexture;
         uniform sampler2D forestTexture;
         uniform sampler2D lavaTexture;
         uniform sampler2D scrubTexture;
@@ -108,6 +106,7 @@
         varying float vAmount;
         varying vec3 newPosition;
         float nTiles = 80.0001;
+        vec4 water;
 
         void main() {
             //Check 80 minus
@@ -117,11 +116,7 @@
             vec2 tileUV = newPosition.xz/64.0;
             tile = 255.0 * texture2D(tileTexture, tilePos/nTiles ).r;
 
-
-            vec4 water  = texture2D( oceanTexture,  tileUV* 1.0 );
             vec4 grass  = texture2D( grassTexture,  tileUV* 1.0 );
-            vec4 rocky  = texture2D( rockyTexture,  tileUV* 1.0 );
-            vec4 snowy  = texture2D( snowyTexture,  tileUV* 1.0 );
             vec4 forest = texture2D( forestTexture, tileUV* 1.0 );
             vec4 lava   = texture2D( lavaTexture,   tileUV* 1.0 );
             vec4 scrub  = texture2D( scrubTexture,  tileUV* 1.0 );
@@ -140,10 +135,8 @@
             scrub = scrub * float(tile == 3.0);
             forest = forest * float(tile==4.0);
             stone = stone * float(tile==5.0);
-            rocky = rocky * 0.0;
-            snowy = snowy * 0.0;
             gl_FragColor = (vec4(0.0, 0.0, 0.0, 1.0) + 
-                  water + grass + rocky + snowy + 
+                  water + grass +
                   forest + scrub + stone + lava);
 
             float modx = tilePos.x - (2.0 * floor(tilePos.x/2.0));

@@ -74,7 +74,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
            pkt['pos']  = e.pos
            pkt['entID'] = e.entID
            pkt['color'] = e.color.hex
-           pkt['name'] = str(e.entID)
+           pkt['name'] = 'Neural_' + str(e.entID)
            pkt['food'] = e.food
            pkt['water'] = e.water
            pkt['health'] = e.health
