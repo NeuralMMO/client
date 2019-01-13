@@ -30,6 +30,7 @@ class Client {
          }
          this.terrain.update(packet['map']);
       }
+      this.terrain.updateFast();
       this.engine.update(delta);
    }
 

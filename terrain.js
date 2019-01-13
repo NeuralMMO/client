@@ -104,6 +104,8 @@ class Terrain {
       planeGeo.applyMatrix(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2, 0, 0));
       planeGeo.applyMatrix(new THREE.Matrix4().makeTranslation(this.mapSz/2, 0, this.mapSz/2));
       var plane = new THREE.Mesh(planeGeo, customMaterial);
+      plane.castShadow = true;
+      plane.receiveShadow = true;
       engine.scene.add( plane );
       engine.mesh = plane;
    }
@@ -112,19 +114,37 @@ class Terrain {
    water(map, engine) {
       var waterTiles = this.nTiles-2
       var waterSz = waterTiles*tileSz; 
-      var waterGeo = new THREE.PlaneGeometry(
-            waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
+      var waterTex = this.loader.load( 'three.js/examples/textures/waternormals.jpg' );
+      waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
+ 
+      var waterGeo = new THREE.PlaneBufferGeometry(
+            waterSz, waterSz);
+      //      waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
+      var water = new THREE.Water(waterGeo, {
+         textureWidth: 512,
+         textureHeight: 512,
+         waterNormals: waterTex,
+         alpha: 1.0,
+         sunDirection: THREE.Vector3(0, 1, 0),
+         sunColor: 0xffffff,
+         waterColor: 0x001e0f,
+         distortionScale: 3.7,
+         fog: engine.scene.fog !== undefined
+      });
 
+      /*
       var waterTex = this.loader.load( 'resources/tiles/water.png' );
       waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
       waterTex.repeat.set(50,50);
-      var waterMat = new THREE.MeshBasicMaterial( {
+      var waterMat = new THREE.MeshPhongMaterial( {
            map: waterTex, transparent:true, opacity:0.75} );
       var water = new THREE.Mesh(   waterGeo, waterMat );
+      */
       water.rotation.x = -Math.PI / 2;
       water.position.y = 3*tileSz/4;
       water.position.x = this.mapSz / 2;
       water.position.z = this.mapSz / 2;
+      this.water = water;
       engine.scene.add( water);
    }
 
@@ -280,6 +300,11 @@ class Terrain {
       tileTexture.wrapS = tileTexture.wrapT = THREE.ClampToEdgeWrapping;
       tileTexture.needsUpdate = true;
       this.customMaterial.uniforms.tileTexture.value = tileTexture;
+  }
+
+   updateFast(){
+      this.water.material.uniforms.time.value += 1.0 / 60.0;
+      this.water.needsUpdate = true;
    }
 
 }

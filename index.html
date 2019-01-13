@@ -27,6 +27,8 @@
         <script src="three.js/examples/js/loaders/OBJLoader.js"></script>
         <script src="three.js/examples/js/loaders/MTLLoader.js"></script>
         <script src="three.js/examples/js/libs/stats.min.js"></script>
+        <script src="three.js/examples/js/objects/Water.js"></script>
+        <script src="three.js/examples/js/objects/Sky.js"></script>
         <script src="threex/WindowResize.js"></script>
         <script src="threex/FullScreen.js"></script>
 
@@ -402,12 +404,12 @@ void main() {
             vec2 tileUV = newPosition.xz/64.0;
             tile = 255.0 * texture2D(tileTexture, tilePos/nTiles ).r;
 
-            vec4 grass  = texture2D( grassTexture,  tileUV* 1.0 );
-            vec4 forest = texture2D( forestTexture, tileUV* 1.0 );
-            vec4 lava   = texture2D( lavaTexture,   tileUV* 1.0 );
-            vec4 scrub  = texture2D( scrubTexture,  tileUV* 1.0 );
-            vec4 stone  = texture2D( stoneTexture,  tileUV* 1.0 );
-            vec4 sandy  = texture2D( sandyTexture,  tileUV* 1.0 );
+            vec4 grass  = texture2D( grassTexture,  tileUV* 2.0 );
+            vec4 forest = texture2D( forestTexture, tileUV* 2.0 );
+            vec4 lava   = texture2D( lavaTexture,   tileUV* 2.0 );
+            vec4 scrub  = texture2D( scrubTexture,  tileUV* 2.0 );
+            vec4 stone  = texture2D( stoneTexture,  tileUV* 3.0 );
+            vec4 sandy  = texture2D( sandyTexture,  tileUV* 2.0 );
             /*
             vec4 sandy = (
                 smoothstep(0.24, 0.27, vAmount) -

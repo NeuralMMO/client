@@ -5,7 +5,7 @@ class Engine {
    constructor(mode) {
       this.mode = mode;
       this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color( 0x006666 );
+      this.scene.background = new THREE.Color( 0x003333 );
 
       // initialize map
       // var map = new Terrain( false ); // flat = False
@@ -21,6 +21,9 @@ class Engine {
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
       this.renderer.setSize( window.innerWidth, window.innerHeight );
+      this.renderer.shadowMapEnabled = true;
+      this.renderer.shadowMap.renderSingleSided = false;
+      this.renderer.shadowMap.renderReverseSided = false;
 
       this.initializeControls();
 
@@ -28,17 +31,27 @@ class Engine {
       this.raycaster = new THREE.Raycaster();
       this.clock = new THREE.Clock();
 
-      // initialize lights
-      //var ambientLight = new THREE.AmbientLight( 0xcccccc );
+      //initialize lights
+      //var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5);
       //this.scene.add( ambientLight );
 
-      var pointLight = new THREE.PointLight( 0xffffff, 1, 0, 2 );
-      pointLight.position.set( 700, 400, 700 )
+      var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2 );
+      pointLight.position.set( 64*40, 1500, 64*40 )
+      pointLight.castShadow = true
+      pointLight.shadow.camera.far = 0
       this.scene.add(pointLight);
 
-      //var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-      //directionalLight.position.set( 1, 1, 0.5 ).normalize();
-      //this.scene.add( directionalLight );
+
+      /*
+      var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+      directionalLight.position.set( 1, 0.5, 0 ).normalize();
+      directionalLight.castShadow = true
+      this.scene.add( directionalLight );
+
+      var spotLight = new THREE.SpotLight( 0xffffff, 2 );
+      spotLight.castShadow = true
+      this.scene.add( spotLight);
+      */
 
       document.body.appendChild( this.renderer.domElement );
    }
