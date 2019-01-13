@@ -17,9 +17,97 @@ class Terrain {
 
       this.loader = new THREE.TextureLoader();
       this.axes(engine)
-      this.mesh(map, engine)
+      //this.mesh(map, engine)
       this.water(map, engine)
+      //this.shades(map, engine)
+      this.terr(map, engine)
+  }
+
+   shades(map, engine) {
+      var cubeColorHex = "#ff00ff";
+      var customUniforms = THREE.UniformsUtils.merge([
+        THREE.ShaderLib.phong.uniforms,
+        { diffuse: { value: new THREE.Color(cubeColorHex) } },
+      ]);
+
+      var vertShader = document.getElementById(
+            'phongVertexShader').textContent;
+      var fragShader = document.getElementById(
+            'phongFragmentShader').textContent;
+ 
+      var customMaterial = new THREE.ShaderMaterial(
+      {
+         uniforms: customUniforms,
+         vertexShader: vertShader,   
+         fragmentShader: fragShader,
+         lights: true,
+         name: 'custom-material'
+      });
+ 
+      var geom = new THREE.IcosahedronGeometry(200, 0);
+      var matl = customMaterial
+      //var matl = new THREE.MeshPhongMaterial({color:cubeColorHex});
+      var mesh = new THREE.Mesh(geom, matl);
+      mesh.position.x = 1000
+      mesh.position.y = 300
+      mesh.position.z = 1000
+      engine.scene.add(mesh);
    }
+
+   terr(map, engine) {
+      var bumpMap = this.generateHeight(map);
+      var bumpTexture = this.dataTexture(bumpMap, width, height);
+
+      var tileMap = this.generateFlat(map);
+      var tileTexture = this.dataTexture(tileMap, width, height);
+
+      var sandyTexture  = this.texture('resources/images/sand-512.jpg');
+      var scrubTexture  = this.texture('resources/tiles/scrub.png' );
+      var forestTexture = this.texture('resources/tiles/forest.png' );
+      var lavaTexture   = this.texture('resources/tiles/lava.png' );
+      var stoneTexture  = this.texture('resources/tiles/stone.png' );
+      var grassTexture  = this.texture('resources/tiles/grass.png' );
+
+      // use "this." to create global object
+      var custUniforms = {
+         bumpTexture:   { type: "t", value: bumpTexture },
+         tileTexture:   { type: "t", value: tileTexture },
+         tileScale:     { type: "f", value: tileSz},
+         sandyTexture:  { type: "t", value: sandyTexture },
+         grassTexture:  { type: "t", value: grassTexture },
+         forestTexture: { type: "t", value: forestTexture},
+         lavaTexture:   { type: "t", value: lavaTexture},
+         scrubTexture:  { type: "t", value: scrubTexture},
+         stoneTexture:  { type: "t", value: stoneTexture},
+      };
+      var customUniforms = Object.assign( 
+            custUniforms, THREE.ShaderLib.phong.uniforms);
+
+      var vertShader = document.getElementById(
+            'phongVertexShader').textContent;
+      var fragShader = document.getElementById(
+            'phongFragmentShader').textContent;
+ 
+      var customMaterial = new THREE.ShaderMaterial(
+      {
+         uniforms: customUniforms,
+         vertexShader: vertShader,   
+         fragmentShader: fragShader,
+         name: 'custom-material',
+         lights: true,
+      });
+      this.customMaterial = customMaterial;
+      //customMaterial.needsUpdate = true;
+
+      var planeGeo = new THREE.PlaneGeometry(
+            this.mapSz, this.mapSz, width*resolution, height*resolution);
+      planeGeo.applyMatrix(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2, 0, 0));
+      planeGeo.applyMatrix(new THREE.Matrix4().makeTranslation(this.mapSz/2, 0, this.mapSz/2));
+      var plane = new THREE.Mesh(planeGeo, customMaterial);
+      engine.scene.add( plane );
+      engine.mesh = plane;
+   }
+
 
    water(map, engine) {
       var waterTiles = this.nTiles-2
@@ -66,16 +154,27 @@ class Terrain {
          scrubTexture:  { type: "t", value: scrubTexture},
          stoneTexture:  { type: "t", value: stoneTexture},
       };
+   
+      customUniforms = THREE.UniformsUtils.merge([
+            THREE.ShaderLib.phong.uniforms, customUniforms]);
+      customUniforms = THREE.ShaderLib.phong.uniforms;
 
       // create custom material from the shader code above
       //   that is within specially labelled script tags
+
+
       var customMaterial = new THREE.ShaderMaterial(
       {
-          uniforms: customUniforms,
+         uniforms: customUniforms,
+         vertexShader:   document.getElementById('phongVertexShader').textContent,
+         fragmentShader: document.getElementById('phongFragmentShader').textContent,
+         light: true
+      });
+      /*
          vertexShader:   document.getElementById('vertexShader').textContent,
          fragmentShader: document.getElementById('fragmentShader').textContent,
-      });
-
+      */
+ 
       //May be off by one, but careful not to break border detection
       //in the shader, as that is far harder to debug
       var planeGeo = new THREE.PlaneGeometry(

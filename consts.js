@@ -15,14 +15,40 @@ const tiles = {
     5: "stone",
     6: "orerock",
 }
-const tileColors = {
-    "lava": 0xfff000, // orange
-    "water": 0x0000bb, // darkblue
-    "grass": 0x0fff0f, // green
-    "scrub": 0x0ff00f, // lightgreen
-    "forest": 0x00ff00, // darkgreen
-    "stone": 0x0f0f0f, // darkgrey
-    "orerock": 0x808080 // grey
+const Neon = {
+   'RED':      '#ff0000',
+   'ORANGE':   '#ff8000',
+   'YELLOW':   '#ffff00',
+
+   'GREEN':    '#00ff00',
+   'MINT':     '#00ff80',
+   'CYAN':     '#00ffff',
+
+   'BLUE':     '#0000ff',
+   'PURPLE':   '#8000ff',
+   'MAGENTA':  '#ff00ff',
+
+   'FUCHSIA':  '#ff0080',
+   'SPRING':   '#80ff80',
+   'SKY':      '#0080ff',
+
+   'WHITE':    '#ffffff',
+   'GRAY':     '#666666',
+   'BLACK':    '#000000',
+
+   'BLOOD':    '#bb0000',
+   'BROWN':    '#7a3402',
+   'GOLD':     '#eec600',
+   'SILVER':   '#b8b8b8',
+
+   'TERM':     '#41ff00',
+   'MASK':     '#d67fff'
+}
+
+var nnObjs = {}
+for (var name in Neon) {
+   var color = Neon[name]; 
+   nnObjs[color] = loadNN(color);
 }
 
 const tileHeights = {

@@ -135,7 +135,7 @@ class Range extends Attack{
 
 class Mage extends Attack{
    setup() {
-      this.attkGeom = new THREE.IcosahedronGeometry(10, 4);
+      this.attkGeom = new THREE.IcosahedronGeometry(10);
       this.color = '#0000ff';
    }
 }

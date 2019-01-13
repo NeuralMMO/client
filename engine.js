@@ -30,12 +30,16 @@ class Engine {
       this.clock = new THREE.Clock();
 
       // initialize lights
-      var ambientLight = new THREE.AmbientLight( 0xcccccc );
-      this.scene.add( ambientLight );
+      //var ambientLight = new THREE.AmbientLight( 0xcccccc );
+      //this.scene.add( ambientLight );
 
-      var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-      directionalLight.position.set( 1, 1, 0.5 ).normalize();
-      this.scene.add( directionalLight );
+      var pointLight = new THREE.PointLight( 0xffffff, 1, 0, 2 );
+      pointLight.position.set( 700, 400, 700 )
+      this.scene.add(pointLight);
+
+      //var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+      //directionalLight.position.set( 1, 1, 0.5 ).normalize();
+      //this.scene.add( directionalLight );
 
       document.body.appendChild( this.renderer.domElement );
    }

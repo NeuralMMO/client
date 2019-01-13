@@ -1,5 +1,5 @@
 import * as textsprite from "./textsprite.js";
-import * as OBJ from "./obj.js";
+//import * as OBJ from "./obj.js";
 import * as Animation from "./animation.js";
 import * as Sprite from "./sprite.js";
 
@@ -61,7 +61,8 @@ class Player extends THREE.Object3D {
 
    initObj(params) {
       var pos = params['pos'];
-      this.obj = OBJ.loadNN(params['color']);
+      //this.obj = OBJ.loadNN(params['color']);
+      this.obj = nnObjs[params['color']].clone();
       this.obj.position.y = this.height;
       this.obj.position.copy(this.coords(pos));
       this.target = this.obj.position.clone();
