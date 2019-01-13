@@ -117,8 +117,9 @@ class Terrain {
       var waterTex = this.loader.load( 'three.js/examples/textures/waternormals.jpg' );
       waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
  
-      var waterGeo = new THREE.PlaneGeometry(
-            waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
+      var waterGeo = new THREE.PlaneBufferGeometry(
+            waterSz, waterSz);
+      //      waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
       var water = new THREE.Water(waterGeo, {
          textureWidth: 512,
          textureHeight: 512,
