@@ -6,6 +6,8 @@ const worldHalfDepth = worldDepth / 2;
 const sz = 64;
 const tileSz = 64;
 
+const modes = { ADMIN: 0, PLAYER: 1, SPECTATOR: 2};
+
 const tiles = {
     0: "lava",
     1: "water",
@@ -47,7 +49,7 @@ const Neon = {
 
 var nnObjs = {}
 for (var name in Neon) {
-   var color = Neon[name]; 
+   var color = Neon[name];
    nnObjs[color] = loadNN(color);
 }
 

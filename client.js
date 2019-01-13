@@ -2,20 +2,18 @@ import * as engineM from './engine.js';
 import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 
-var container, stats;
-var engine, client, mesh;
+var container, stats, client;
 var firstMesh = true;
 
 
 class Client {
    constructor () {
-      engine = new engineM.Engine();
-      this.handler = new playerM.PlayerHandler(engine);
-      this.engine = engine;
+      this.engine = new engineM.Engine(modes.ADMIN);
+      this.handler = new playerM.PlayerHandler(this.engine);
    }
 
    update() {
-      var delta = engine.clock.getDelta();
+      var delta = this.engine.clock.getDelta();
       while (inbox.length > 0) {
          // Receive packet, begin translating based on the received position
          //var packet = inbox.shift();
@@ -28,15 +26,15 @@ class Client {
          if (firstMesh) {
             firstMesh = false;
             var map = packet['map'];
-            this.terrain = new terrainM.Terrain(map, engine);
+            this.terrain = new terrainM.Terrain(map, this.engine);
          }
          this.terrain.update(packet['map']);
       }
-      engine.update(delta);
+      this.engine.update(delta);
    }
 
    onMouseDown(event) {
-      //player.moveTarg = engine.raycast(event.clientX, event.clientY);
+      //player.moveTarg = this.engine.raycast(event.clientX, event.clientY);
       //player.sendMove();
 
       //var pos = this.engine.raycast(event.clientX, event.clientY);
@@ -56,10 +54,10 @@ function init() {
 
    // hook up signals
    container.innerHTML = "";
-   container.appendChild( engine.renderer.domElement );
+   container.appendChild( client.engine.renderer.domElement );
 
    function onMouseDown( event ) { client.onMouseDown( event ); }
-   function onWindowResize() { engine.onWindowResize(); }
+   function onWindowResize() { client.engine.onWindowResize(); }
 
    stats = new Stats();
    container.appendChild( stats.dom );

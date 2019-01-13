@@ -2,7 +2,8 @@ export {Engine};
 
 class Engine {
 
-   constructor() {
+   constructor(mode) {
+      this.mode = mode;
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color( 0x006666 );
 
@@ -15,8 +16,6 @@ class Engine {
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
       this.camera.position.y = 2 * sz;
-      // this.camera.position.y = map.getY(
-      //      worldHalfWidth, worldHalfDepth ) * sz + 2 * sz;
       this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -45,24 +44,42 @@ class Engine {
    }
 
    initializeControls() {
-      var controls = new THREE.OrbitControls(this.camera, container);
+      var controls;
+      controls = new THREE.OrbitControls(this.camera, container);
       controls.mouseButtons = {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan
       }
       controls.target.set( 40*sz, 0, 40*sz );
-      controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
       controls.maxPolarAngle = Math.PI / 2.0 - 0.1;
+
       controls.movementSpeed = 1000;
       controls.lookSpeed = 0.125;
       controls.lookVertical = true;
+      controls.enablePan = false;
+
+      if ( this.mode == modes.ADMIN ) {
+         controls.enableKeys = true;
+         controls.enablePan = true;
+      }
+
+      var laptopMode = false;
+      if (laptopMode) {
+         //controls = new THREE.FlyControls(this.camera, container);
+         // WASD translate controls
+         controls.keys.UP = 87; // W
+         controls.keys.DOWN = 83; // S
+         controls.keys.LEFT = 65; // A
+         controls.keys.RIGHT = 68; // D
+      }
       this.controls = controls;
    }
 
    onWindowResize() {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
+      this.controls.update();
       this.renderer.setSize( window.innerWidth, window.innerHeight );
    }
 
