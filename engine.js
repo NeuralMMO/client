@@ -2,17 +2,13 @@ export {Engine};
 
 class Engine {
 
-   constructor(mode, container) {
+   constructor(mode, aContainer) {
       this.mode = mode;
-      this.container = container;
+      this.container = aContainer;
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color( 0x003333 );
 
-      // initialize map
-      // var map = new Terrain( false ); // flat = False
-      // this.mesh = map.getMapMesh();
-      // this.scene.add( this.mesh );
-      this.mesh = null;
+      this.mesh = null; // we'll initialize from the server packet
 
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
@@ -70,14 +66,14 @@ class Engine {
       controls.movementSpeed = 1000;
       controls.lookSpeed = 0.125;
       controls.lookVertical = true;
-      controls.enablePan = false;
 
       if ( this.mode == modes.ADMIN ) {
          controls.enableKeys = true;
          controls.enablePan = true;
       }
 
-      //controls.enabled = false;
+      controls.enabled = false;
+      controls.update();
       this.controls = controls;
    }
 

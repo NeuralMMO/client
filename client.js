@@ -3,25 +3,27 @@ import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
 
-var client, viewer, stats
+var client, viewer, viewer_container, stats;
 
 
 class Client {
-   constructor () {
+   constructor (client_container) {
       this.engine = new engineM.Engine(modes.ADMIN, client_container);
       this.handler = new playerM.PlayerHandler(this.engine);
 
-      client_container.appendChild( this.engine.renderer.domElement );
       this.init = true;
-      this.dom();
    }
 
    // hook up signals
-   dom() {
-      function onMouseDown( event ) { this.onMouseDown( event ); }
-      client_container.addEventListener( 'click', onMouseDown, false );
+   setupSignals() {
+      client_container.innerHTML = ""; // get rid of the text after loading
+      client_container.appendChild( this.engine.renderer.domElement );
 
-      function onWindowResize() { this.engine.onWindowResize(); }
+      var scope = this; // javascript quirk... don't touch this
+      function onMouseDown( event ) { scope.onMouseDown( event ); }
+      function onWindowResize() { scope.onWindowResize(); }
+
+      client_container.addEventListener( 'click', onMouseDown, false );
       window.addEventListener( 'resize', onWindowResize, false );
    }
 
@@ -43,6 +45,10 @@ class Client {
       this.engine.update(delta);
    }
 
+   onWindowResize () {
+      this.engine.onWindowResize();
+   }
+
    onMouseDown(event) {
       //player.moveTarg = this.engine.raycast(event.clientX, event.clientY);
       //player.sendMove();
@@ -53,8 +59,9 @@ class Client {
 }
 
 class Viewer {
-   constructor (client) {
-      this.engine = new engineM.Engine(viewer_container);
+   constructor (client, viewer_container) {
+      this.engine = new engineM.Engine(modes.ADMIN, viewer_container);
+      viewer_container.innerHTML = ""; // get rid of the text after loading
       viewer_container.appendChild( this.engine.renderer.domElement );
       this.handler = new playerM.PlayerHandler(this.engine);
       this.client = client;
@@ -87,16 +94,19 @@ function webglError() {
 }
 
 function init() {
-   webglError()
-   client = new Client();
-   viewer = new Viewer(client);
+   webglError();
+   var client_container = document.getElementById("client_container");
+   var viewer_container = document.getElementById("viewer_container");
+
+   client = new Client(client_container);
+   //viewer = new Viewer(client, viewer_container);
    stats  = new Stats();
-   client_container.innerHTML = ""; // get rid of the text after loading
    client_container.appendChild(stats.dom);
+   client.setupSignals();
 
    var instructions = document.getElementById("instructions");
    instructions.addEventListener("click", function() {
-       client.engine.controls.enabled = true;
+	   client.engine.controls.enabled = true;
 	   client.engine.controls.update();
 	   instructions.innerHTML = "";
    }, false);
@@ -106,7 +116,7 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
-   viewer.update();
+   //viewer.update();
    stats.update();
 }
 

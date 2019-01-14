@@ -1,4 +1,5 @@
 @Taiyaki
+- load stuff after NNs are loaded
 - create entity info box, switched on by clicking on entity, colors itself
   with entity color
 - lightbulb toggle switch, "let there be light"
