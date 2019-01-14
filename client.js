@@ -13,6 +13,7 @@ class Client {
       this.handler = new playerM.PlayerHandler(this.engine);
 
       this.init = true;
+      this.packet = null;
    }
 
    // hook up signals
@@ -28,13 +29,21 @@ class Client {
       window.addEventListener( 'resize', onWindowResize, false );
    }
 
+   updatePacket() {
+      if (inbox.length > 0) {
+         this.packet = inbox.pop();
+      } else {
+         this.packet = null;
+      }
+   }
+
    update() {
       var delta = this.engine.clock.getDelta();
+      this.updatePacket();
 
-      if (inbox.length > 0) {
+      if (this.packet) {
          // Receive packet, begin translating based on the received position
-         var packet = inbox[0];
-         packet = JSON.parse(packet);
+         var packet = JSON.parse(this.packet);
          this.handler.updateData(packet['ent']);
          if (this.init) {
             this.init = false;
@@ -43,7 +52,7 @@ class Client {
          }
          this.terrain.update(packet['map']);
       }
-      this.terrain.updateFast();
+      //this.terrain.updateFast();
       this.engine.update(delta);
    }
 
@@ -72,9 +81,9 @@ class Counts {
 
    update() {
       var delta = this.engine.clock.getDelta();
-      if (inbox.length > 0) {
+      if (this.client.packet) {
          // Receive packet, begin translating based on the received position
-         var packet = inbox[0];
+         var packet = this.client.packet;
          packet = JSON.parse(packet);
          this.handler.updateData(packet['ent']);
          if (this.init) {
@@ -103,9 +112,9 @@ class Values{
 
    update() {
       var delta = this.engine.clock.getDelta();
-      if (inbox.length > 0) {
+      if (this.client.packet) {
          // Receive packet, begin translating based on the received position
-         var packet = inbox[0];
+         var packet = this.client.packet;
          packet = JSON.parse(packet);
          this.handler.updateData(packet['ent']);
          if (this.init) {
@@ -146,8 +155,12 @@ function init() {
    instructions.addEventListener("click", function() {
 	   client.engine.controls.enabled = true;
 	   client.engine.controls.update();
+	   counts.engine.controls.enabled = true;
+	   counts.engine.controls.update();
+	   values.engine.controls.enabled = true;
+	   values.engine.controls.update();
 	   instructions.style.display = "none";
-       blocker.style.display = "none";
+      blocker.style.display = "none";
    }, false);
 
    animate();
