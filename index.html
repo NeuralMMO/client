@@ -11,17 +11,58 @@
             font-family: "DragonSlapper";
             src: url(resources/dragonslapper.woff);
         }
+
+		#blocker {
+			position: absolute;
+
+			width: 100%;
+			height: 100%;
+
+			background-color: rgba(0,0,0,0.5);
+		}
+
+        #instructions {
+			width: 100%;
+			height: 100%;
+
+			display: -webkit-box;
+			display: -moz-box;
+			display: box;
+
+			-webkit-box-orient: horizontal;
+			-moz-box-orient: horizontal;
+			box-orient: horizontal;
+
+			-webkit-box-pack: center;
+			-moz-box-pack: center;
+			box-pack: center;
+
+			-webkit-box-align: center;
+			-moz-box-align: center;
+			box-align: center;
+
+			color: #eeeeee;
+			text-align: center;
+
+			cursor: pointer;
+        }
     </style>
 
     <body>
-        <div id="client_container"><br />Projekt Godsword</div>
-        <div id="viewer_container"><br />Research Viewer</div>
-        <div id="info">
-           (left click: move, middle click: rotate, mouse wheel: zoom)
+        <div id="blocker" style="display: block;">
+            <div id="instructions">
+			    <span style="font-size:40px">Click to begin</span> <br>
+			    <span style="font-size:60px">PROJEKT GODSWORD.</span> <br>
+        	    <b>WASD/middle mouse</b> pitch/yaw, <b>arrow keys</b> pan,
+			    <b>scroll wheel</b> zoom<br/>
+            </div>
         </div>
 
+        <div id="entityBox"> </div>
+        <div id="client_container"><br />Generating world...</div>
+        <div id="viewer_container"><br />Generating viewer...</div>
+
         <script src="three.js/build/three.js"></script>
-        <script src="three.js/examples/js/controls/OrbitControls.js"></script>
         <script src="three.js/examples/js/utils/BufferGeometryUtils.js"></script>
         <script src="three.js/examples/js/ImprovedNoise.js"></script>
         <script src="three.js/examples/js/WebGL.js"></script>
@@ -35,6 +76,7 @@
 
         <script src="comms.js"></script>
         <script src="consts.js"></script>
+        <script src="OrbitControls.js"></script>
         <script src="client.js" type="module"></script>
 
         <script id="vertexShader" type="x-shader/x-vertex">

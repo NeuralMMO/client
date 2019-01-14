@@ -5,15 +5,15 @@ class Overhead extends THREE.Object3D {
    constructor(params, engine) {
       super()
       this.initName(params);
-      this.initStats(params, engine);
+      this.initSpriteStats(params, engine);
    }
 
    update(params) {
       this.stats.update(params);
    }
 
-   initStats(params, engine) {
-      this.stats = new Stats(params, engine);
+   initSpriteStats(params, engine) {
+      this.stats = new SpriteStats(params, engine);
       this.add(this.stats);
    }
 
@@ -25,7 +25,7 @@ class Overhead extends THREE.Object3D {
    }
 }
 
-class Stats extends THREE.Object3D {
+class SpriteStats extends THREE.Object3D {
    constructor(params, engine) {
       super();
       this.barHeight = 8;

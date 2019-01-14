@@ -2,22 +2,17 @@ export {Engine};
 
 class Engine {
 
-   constructor(container) {
+   constructor(mode, aContainer) {
+      this.mode = mode;
+      this.container = aContainer;
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color( 0x003333 );
-      this.container = container;
 
-      // initialize map
-      // var map = new Terrain( false ); // flat = False
-      // this.mesh = map.getMapMesh();
-      // this.scene.add( this.mesh );
-      this.mesh = null;
+      this.mesh = null; // we'll initialize from the server packet
 
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000 );
       this.camera.position.y = 2 * sz;
-      // this.camera.position.y = map.getY(
-      //      worldHalfWidth, worldHalfDepth ) * sz + 2 * sz;
       this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -38,9 +33,9 @@ class Engine {
       //this.scene.add( ambientLight );
 
       var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2 );
-      pointLight.position.set( 64*40, 1500, 64*40 )
-      pointLight.castShadow = true
-      pointLight.shadow.camera.far = 0
+      pointLight.position.set( 64*40, 1500, 64*40 );
+      pointLight.castShadow = true;
+      pointLight.shadow.camera.far = 0;
       this.scene.add(pointLight);
 
 
@@ -62,21 +57,30 @@ class Engine {
       var controls = new THREE.OrbitControls(this.camera, this.container);
       controls.mouseButtons = {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
-         RIGHT: THREE.MOUSE.LEFT // pan
+         // RIGHT: THREE.MOUSE.LEFT // pan
       }
       controls.target.set( 40*sz, 0, 40*sz );
-      controls.enablePan = false;
       controls.minPolarAngle = 0.0001;
       controls.maxPolarAngle = Math.PI / 2.0 - 0.1;
+
       controls.movementSpeed = 1000;
       controls.lookSpeed = 0.125;
       controls.lookVertical = true;
+
+      if ( this.mode == modes.ADMIN ) {
+         controls.enableKeys = true;
+         controls.enablePan = true;
+      }
+
+      controls.enabled = false;
+      controls.update();
       this.controls = controls;
    }
 
    onWindowResize() {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
+      this.controls.update();
       this.renderer.setSize( window.innerWidth, window.innerHeight );
    }
 

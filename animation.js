@@ -4,6 +4,7 @@ export {Move, Damage, Melee, Range, Mage}
 
 //We dont exactly have animation tracks for this project
 class ProceduralAnimation {
+
    constructor() {
       this.clock = new THREE.Clock()
       this.elapsedTime = 0.0;
@@ -27,7 +28,8 @@ class ProceduralAnimation {
 
    //Abstract
    step(delta, elapsedTime) {
-      throw new Error('Must override abstract step method of ProceduralAnimation');
+      throw new Error(
+              'Must override abstract step method of ProceduralAnimation');
    }
 
    //Optional call before animation
@@ -58,11 +60,13 @@ class Move extends ProceduralAnimation {
       var x = this.pos.x + moveFrac * (this.targ.x - this.pos.x);
       var y = this.pos.y + moveFrac * (this.targ.y - this.pos.y);
       var z = this.pos.z + moveFrac * (this.targ.z - this.pos.z);
-      var pos = new THREE.Vector3(x, y, z)
+      var pos = new THREE.Vector3(x, y, z);
       this.ent.obj.position.copy(pos);
+
       if (this.isTarget) {
          engine.camera.position.copy(pos);
          engine.controls.target.copy(pos);//this.ent.obj.position);
+         engine.controls.update();
       }
    }
 }
@@ -71,7 +75,7 @@ class Damage extends ProceduralAnimation {
    constructor(ent, damage) {
       super();
       this.dmg = textsprite.makeTextSprite(damage, "200", '#ff0000');
-      this.dmg.scale.set( 30, 30, 1 );
+      this.dmg.scale.set( 10, 30, 1 );
       this.height = 128
       this.dmg.position.y = this.height
       this.ent = ent;
@@ -129,7 +133,7 @@ class Melee extends Attack{
 class Range extends Attack{
    setup() {
       this.attkGeom = new THREE.OctahedronGeometry(10);
-      this.color = '#00ff00'; 
+      this.color = '#00ff00';
    }
 }
 

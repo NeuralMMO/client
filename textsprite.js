@@ -13,7 +13,7 @@ function makeTextSprite(message, fontsize, color) {
 
     // setting canvas width/height before ctx draw, else canvas is empty
     canvas.width = ctx.measureText(message).width;
-    canvas.height = fontsize * 1.5
+    canvas.height = fontsize * 1.5;
 
     // after setting the canvas width/height we have to re-set font to apply
     // looks like ctx reset

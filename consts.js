@@ -7,6 +7,8 @@ const sz = 64;
 const tileSz = 64;
 const nTiles = 80;
 
+const modes = { ADMIN: 0, PLAYER: 1, SPECTATOR: 2};
+
 const tiles = {
     0: "lava",
     1: "water",
