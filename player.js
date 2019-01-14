@@ -94,7 +94,7 @@ class Player extends THREE.Object3D {
       for (var anim in this.anims) {
          this.anims[anim].cancel()
       }
-   } 
+   }
 
    updateData (engine, packet, players) {
       this.cancelAnims();
@@ -102,6 +102,7 @@ class Player extends THREE.Object3D {
       var move = packet['pos'];
       //console.log("Move: ", move)
       this.anims.push(new Animation.Move(this, move));
+
       var damage = packet['damage'];
       if (damage != null) {
          this.anims.push(new Animation.Damage(this, packet['damage']));
@@ -112,7 +113,7 @@ class Player extends THREE.Object3D {
       var targ = packet['target'];
       if (targ != null) {
          var targID = parseInt(targ, 10);
-         if  (this.entID != targID && targID in players) {
+         if (this.entID != targID && targID in players) {
             var attk;
             switch (packet['attack']) {
                case 'Melee':
@@ -124,7 +125,7 @@ class Player extends THREE.Object3D {
                case 'Mage':
                   attk = new Animation.Mage(engine.scene, this, players[targID]);
                   break;
-            } 
+            }
             this.anims.push(attk);
          }
       }

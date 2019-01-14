@@ -59,11 +59,14 @@ class Move extends ProceduralAnimation {
       var x = this.pos.x + moveFrac * (this.targ.x - this.pos.x);
       var y = this.pos.y + moveFrac * (this.targ.y - this.pos.y);
       var z = this.pos.z + moveFrac * (this.targ.z - this.pos.z);
-      var pos = new THREE.Vector3(x, y, z)
+      var pos = new THREE.Vector3(x, y, z);
+      console.log(pos);
       this.ent.obj.position.copy(pos);
+
       if (this.isTarget) {
          engine.camera.position.copy(pos);
          engine.controls.target.copy(pos);//this.ent.obj.position);
+         engine.controls.update();
       }
    }
 }

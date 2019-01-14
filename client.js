@@ -113,6 +113,7 @@ function init() {
 	   instructions.style.display = "none";
        blocker.style.display = "none";
    }, false);
+
    animate();
 }
 
