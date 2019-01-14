@@ -1,12 +1,12 @@
 @Taiyaki
--lightbulb toggle switch, "let there be light"
--playermode, admin mode, spectator mode
--Add wasd camera controls. Trackpads have no middle mouse.
--Make stat bars (food, health, water) dynamic. You have access to this data from the most recent twistedserver commit.
-- Add damage hitsplats (again, data is in twistedServer)
+- create entity info box, switched on by clicking on entity, colors itself
+  with entity color
+- lightbulb toggle switch, "let there be light"
+- playermode, admin mode, spectator mode
 
-+Overhead names
-+ES6 imports working
++ Overhead names
++ ES6 imports working
+- Add wasd camera controls. Trackpads have no middle mouse.
 
 
 @Seal
@@ -20,5 +20,7 @@
     - Attacks: change color?
     - Note: projectiles
 
-+OOPify players (group objects, non procedural add/remove attributes)
-+Spawn Location
++ OOPify players (group objects, non procedural add/remove attributes)
++ Spawn Location
+- Make stat bars (food, health, water) dynamic. You have access to this data from the most recent twistedserver commit.
+- Add damage hitsplats (again, data is in twistedServer)

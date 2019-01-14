@@ -36,9 +36,9 @@ class Engine {
       //this.scene.add( ambientLight );
 
       var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2 );
-      pointLight.position.set( 64*40, 1500, 64*40 )
-      pointLight.castShadow = true
-      pointLight.shadow.camera.far = 0
+      pointLight.position.set( 64*40, 1500, 64*40 );
+      pointLight.castShadow = true;
+      pointLight.shadow.camera.far = 0;
       this.scene.add(pointLight);
 
 
