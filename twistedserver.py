@@ -37,12 +37,28 @@ class EchoServerProtocol(WebSocketServerProtocol):
         self.frame = 0
         self.packet = {}
 
+    def visVals(self, vals, sz):
+        T()
+        ary = np.zeros((sz, sz))
+        for v in vals:
+           pos, v = v
+           r, c = pos
+           ary[r, c] = v
+        return ary
+
     def onOpen(self):
         print("Opened connection to server")
         self.realm = self.factory.realm
         self.frame += 1
-        self.sendUpdate()
 
+        gameTiles = realm.world.env.tiles
+        sz = gameTiles.shape[0]
+
+        ann = self.realm.envs[0].sword.anns[0]
+        vals = ann.visVals()
+        self.vals = self.visVals(vals, sz)
+
+        self.sendUpdate()
 
         #packet = json.dumps(data).encode('utf8')
         #self.sendMessage(packet, True)
@@ -102,6 +118,8 @@ class EchoServerProtocol(WebSocketServerProtocol):
               tl.append(tile.counts.tolist())
            tiles.append(tl)
         self.packet['counts'] = tiles
+
+        self.packet['values'] = self.vals
  
         packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)

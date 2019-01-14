@@ -2,6 +2,7 @@ import * as engineM from './engine.js';
 import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
+import * as valuesM from './values.js';
 
 var client, viewer, stats
 
@@ -71,10 +72,18 @@ class Viewer {
             var map = packet['map'];
             this.counts = new countsM.Counts(
                   packet['map'], packet['counts'], this.engine);
+            this.values = new valuesM.Values(
+                  packet['map'], packet['values'], this.engine);
+            this.terrain = new terrainM.Terrain(map, this.engine);
+ 
          }
          this.counts.update(packet['map'], packet['counts']);
+         this.values.update(packet['map'], packet['values']);
+         this.terrain.update(packet['map']);
       }
       this.counts.updateFast();
+      this.values.updateFast();
+      this.terrain.updateFast();
       this.engine.update(delta);
    }
 }
