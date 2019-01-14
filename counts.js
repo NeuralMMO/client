@@ -7,7 +7,7 @@ var height = 80;
 var resolution = 3;
 
 class Counts {
-   constructor(map, engine) {
+   constructor(map, counts, engine) {
        /*
         * Adds terrain which shades water, grass, dirt, and mountains
         * based on a heightmap given by the server.
@@ -20,7 +20,7 @@ class Counts {
       //this.mesh(map, engine)
       this.water(map, engine)
       //this.shades(map, engine)
-      this.terr(map, engine)
+      this.terr(map, counts, engine)
   }
 
    shades(map, engine) {
@@ -54,12 +54,27 @@ class Counts {
       engine.scene.add(mesh);
    }
 
-   terr(map, engine) {
+   countTex(map, idx){
+      var tileMap = this.generateCounts(map, idx);
+      var tileTexture = this.dataTexture(tileMap, width, height);
+      return tileTexture
+   }
+
+   terr(map, counts, engine) {
       var bumpMap = this.generateHeight(map);
       var bumpTexture = this.dataTexture(bumpMap, width, height);
 
       var tileMap = this.generateFlat(map);
       var tileTexture = this.dataTexture(tileMap, width, height);
+
+      var countZeroTex  = this.countTex(counts, 0);
+      var countOneTex   = this.countTex(counts, 1);
+      var countTwoTex   = this.countTex(counts, 2);
+      var countThreeTex = this.countTex(counts, 3);
+      var countFourTex  = this.countTex(counts, 4);
+      var countFiveTex  = this.countTex(counts, 5);
+      var countSixTex   = this.countTex(counts, 6);
+      var countSevenTex = this.countTex(counts, 7);
 
       var sandyTexture  = this.texture('resources/images/sand-512.jpg');
       var scrubTexture  = this.texture('resources/tiles/scrub.png' );
@@ -72,6 +87,14 @@ class Counts {
       var custUniforms = {
          bumpTexture:   { type: "t", value: bumpTexture },
          tileTexture:   { type: "t", value: tileTexture },
+         countZeroTex:  { type: "t", value: countZeroTex },
+         countOneTex:   { type: "t", value: countOneTex },
+         countTwoTex:   { type: "t", value: countTwoTex },
+         countThreeTex: { type: "t", value: countThreeTex },
+         countFourTex:  { type: "t", value: countFourTex },
+         countFiveTex:  { type: "t", value: countFiveTex },
+         countSixTex:   { type: "t", value: countSixTex },
+         countSevenTex: { type: "t", value: countSevenTex },
          tileScale:     { type: "f", value: tileSz},
          sandyTexture:  { type: "t", value: sandyTexture },
          grassTexture:  { type: "t", value: grassTexture },
@@ -84,9 +107,9 @@ class Counts {
             custUniforms, THREE.ShaderLib.phong.uniforms);
 
       var vertShader = document.getElementById(
-            'phongVertexShader').textContent;
+            'phongCountsVertexShader').textContent;
       var fragShader = document.getElementById(
-            'phongFragmentShader').textContent;
+            'phongCountsFragmentShader').textContent;
  
       var customMaterial = new THREE.ShaderMaterial(
       {
@@ -147,68 +170,6 @@ class Counts {
       this.water = water;
       engine.scene.add( water);
    }
-
-   mesh(map, engine) {
-      var bumpMap = this.generateHeight(map);
-      var bumpTexture = this.dataTexture(bumpMap, width, height);
-
-      var tileMap = this.generateFlat(map);
-      var tileTexture = this.dataTexture(tileMap, width, height);
-
-      var sandyTexture  = this.texture('resources/images/sand-512.jpg');
-      var scrubTexture  = this.texture('resources/tiles/scrub.png' );
-      var forestTexture = this.texture('resources/tiles/forest.png' );
-      var lavaTexture   = this.texture('resources/tiles/lava.png' );
-      var stoneTexture  = this.texture('resources/tiles/stone.png' );
-      var grassTexture  = this.texture('resources/tiles/grass.png' );
-
-      // use "this." to create global object
-      var customUniforms = {
-         bumpTexture:   { type: "t", value: bumpTexture },
-         tileTexture:   { type: "t", value: tileTexture },
-         bumpScale:     { type: "f", value: tileSz},
-         sandyTexture:  { type: "t", value: sandyTexture },
-         grassTexture:  { type: "t", value: grassTexture },
-         forestTexture: { type: "t", value: forestTexture},
-         lavaTexture:   { type: "t", value: lavaTexture},
-         scrubTexture:  { type: "t", value: scrubTexture},
-         stoneTexture:  { type: "t", value: stoneTexture},
-      };
-   
-      customUniforms = THREE.UniformsUtils.merge([
-            THREE.ShaderLib.phong.uniforms, customUniforms]);
-      customUniforms = THREE.ShaderLib.phong.uniforms;
-
-      // create custom material from the shader code above
-      //   that is within specially labelled script tags
-
-
-      var customMaterial = new THREE.ShaderMaterial(
-      {
-         uniforms: customUniforms,
-         vertexShader:   document.getElementById('phongVertexShader').textContent,
-         fragmentShader: document.getElementById('phongFragmentShader').textContent,
-         light: true
-      });
-      /*
-         vertexShader:   document.getElementById('vertexShader').textContent,
-         fragmentShader: document.getElementById('fragmentShader').textContent,
-      */
- 
-      //May be off by one, but careful not to break border detection
-      //in the shader, as that is far harder to debug
-      var planeGeo = new THREE.PlaneGeometry(
-            this.mapSz, this.mapSz, width*resolution, height*resolution);
-      planeGeo.applyMatrix(new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1, 0, 0), -Math.PI/2, 0, 0));
-      planeGeo.applyMatrix(new THREE.Matrix4().makeTranslation(this.mapSz/2, 0, this.mapSz/2));
-      var plane = new THREE.Mesh(planeGeo, customMaterial);
-      engine.scene.add( plane );
-      engine.mesh = plane;
-
-      this.customMaterial = customMaterial
- 
-   }
-
    texture(fname) {
       var texture = this.loader.load(fname);
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -278,6 +239,21 @@ class Counts {
       return data
    }
 
+   generateCounts(map, idx) {
+      var mapSz = map.length;
+      var data = new Uint8Array( 3*mapSz*mapSz );
+      var k = 0;
+      for ( var r = 0; r < mapSz; r ++ ) {
+         for ( var c = 0; c < mapSz; c ++ ) {
+            data[k] = map[r][c][idx];
+            data[k+1] = map[r][c][idx];
+            data[k+2] = map[r][c][idx];
+            k += 3;
+         }
+      }
+      return data;
+   }
+
    generateFlat(map) {
       var mapSz = map.length;
       var data = new Uint8Array( 3*mapSz*mapSz );
@@ -293,13 +269,19 @@ class Counts {
       return data;
    }
 
-   update(map) {
+  update(map, counts) {
       var tileMap = this.generateFlat(map);
       var tileTexture = new THREE.DataTexture(
                tileMap, width, height, THREE.RGBFormat);
       tileTexture.wrapS = tileTexture.wrapT = THREE.ClampToEdgeWrapping;
       tileTexture.needsUpdate = true;
       this.customMaterial.uniforms.tileTexture.value = tileTexture;
+
+      var countMap = this.generateFlat(counts);
+      var countTexture = new THREE.DataTexture(
+               countMap, width, height, THREE.RGBFormat);
+      countTexture.wrapS = countTexture.wrapT = THREE.ClampToEdgeWrapping;
+      countTexture.needsUpdate = true;
   }
 
    updateFast(){

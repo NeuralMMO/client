@@ -78,9 +78,10 @@ class Viewer {
          if (this.init) {
             this.init = false;
             var map = packet['map'];
-            this.counts = new countsM.Counts(map, this.engine);
+            this.counts = new countsM.Counts(
+                  packet['map'], packet['counts'], this.engine);
          }
-         this.counts.update(packet['map']);
+         this.counts.update(packet['map'], packet['counts']);
       }
       this.counts.updateFast();
       this.engine.update(delta);

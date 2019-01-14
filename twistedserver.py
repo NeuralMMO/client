@@ -99,7 +99,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
         for tileList in gameTiles:
            tl = []
            for tile in tileList:
-              tl.append(sum(tile.counts))
+              tl.append(tile.counts.tolist())
            tiles.append(tl)
         self.packet['counts'] = tiles
  
