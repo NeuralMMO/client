@@ -57,7 +57,7 @@ class Engine {
       var controls = new THREE.OrbitControls(this.camera, this.container);
       controls.mouseButtons = {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
-         RIGHT: THREE.MOUSE.LEFT // pan
+         // RIGHT: THREE.MOUSE.LEFT // pan
       }
       controls.target.set( 40*sz, 0, 40*sz );
       controls.minPolarAngle = 0.0001;

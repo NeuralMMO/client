@@ -102,14 +102,16 @@ function init() {
    client = new Client(client_container);
    //viewer = new Viewer(client, viewer_container);
    stats  = new Stats();
-   client_container.appendChild(stats.dom);
    client.setupSignals();
+   client_container.appendChild(stats.dom);
 
+   var blocker = document.getElementById("blocker");
    var instructions = document.getElementById("instructions");
    instructions.addEventListener("click", function() {
 	   client.engine.controls.enabled = true;
 	   client.engine.controls.update();
-	   instructions.innerHTML = "";
+	   instructions.style.display = "none";
+       blocker.style.display = "none";
    }, false);
    animate();
 }
