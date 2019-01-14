@@ -2,9 +2,10 @@ export {Engine};
 
 class Engine {
 
-   constructor() {
+   constructor(container) {
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color( 0x003333 );
+      this.container = container;
 
       // initialize map
       // var map = new Terrain( false ); // flat = False
@@ -58,7 +59,7 @@ class Engine {
    }
 
    initializeControls() {
-      var controls = new THREE.OrbitControls(this.camera, container);
+      var controls = new THREE.OrbitControls(this.camera, this.container);
       controls.mouseButtons = {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan

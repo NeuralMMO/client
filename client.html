@@ -14,7 +14,8 @@
     </style>
 
     <body>
-        <div id="container"><br />Generating world...</div>
+        <div id="client_container"><br />Projekt Godsword</div>
+        <div id="viewer_container"><br />Research Viewer</div>
         <div id="info">
            (left click: move, middle click: rotate, mouse wheel: zoom)
         </div>
@@ -32,9 +33,9 @@
         <script src="threex/WindowResize.js"></script>
         <script src="threex/FullScreen.js"></script>
 
-        <script src="obj.js"></script>
         <script src="comms.js"></script>
         <script src="consts.js"></script>
+        <script src="client.js" type="module"></script>
 
         <script id="vertexShader" type="x-shader/x-vertex">
         uniform sampler2D bumpTexture;
@@ -198,7 +199,6 @@
         }
         </script>
 
-        <script src="client.js" type="module"></script>
 
         <script id="phongVertexShader" type="x-shader/x-vertex">
 
@@ -428,7 +428,7 @@ void main() {
 
             float modx = tilePos.x - (2.0 * floor(tilePos.x/2.0));
             float mody = tilePos.y - (2.0 * floor(tilePos.y/2.0));
-            gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx-mody));
+            gl_FragColor = 0.9*gl_FragColor + 0.1*gl_FragColor*(abs(modx-mody));
 
             gl_FragColor = vec4(gl_FragColor.xyz * outgoingLight, diffuseColor.a);
 

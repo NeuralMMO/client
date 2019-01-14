@@ -1,39 +1,44 @@
 import * as engineM from './engine.js';
 import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
+import * as countsM from './counts.js';
 
-var container, stats;
-var engine, client, mesh;
-var firstMesh = true;
-
+var client, viewer, stats
 
 class Client {
    constructor () {
-      engine = new engineM.Engine();
-      this.handler = new playerM.PlayerHandler(engine);
-      this.engine = engine;
+      this.engine = new engineM.Engine(client_container);
+      client_container.appendChild( this.engine.renderer.domElement );
+      this.handler = new playerM.PlayerHandler(this.engine);
+      this.init = true;
+      this.dom();
    }
 
+   // hook up signals
+   dom() {
+      function onMouseDown( event ) { this.onMouseDown( event ); }
+      client_container.addEventListener( 'click', onMouseDown, false );
+
+      function onWindowResize() { this.engine.onWindowResize(); }
+      window.addEventListener( 'resize', onWindowResize, false );
+   }
+ 
    update() {
-      var delta = engine.clock.getDelta();
-      while (inbox.length > 0) {
+      var delta = this.engine.clock.getDelta();
+      if (inbox.length > 0) {
          // Receive packet, begin translating based on the received position
-         //var packet = inbox.shift();
-         var packet = inbox.pop();
-         while(inbox.length > 0) {
-            inbox.shift();
-         }
+         var packet = inbox[0];
          packet = JSON.parse(packet);
          this.handler.updateData(packet['ent']);
-         if (firstMesh) {
-            firstMesh = false;
+         if (this.init) {
+            this.init = false;
             var map = packet['map'];
-            this.terrain = new terrainM.Terrain(map, engine);
+            this.terrain = new terrainM.Terrain(map, this.engine);
          }
          this.terrain.update(packet['map']);
       }
       this.terrain.updateFast();
-      engine.update(delta);
+      this.engine.update(delta);
    }
 
    onMouseDown(event) {
@@ -45,36 +50,56 @@ class Client {
    }
 }
 
-
-function init() {
-   if ( WEBGL.isWebGLAvailable() === false ) {
-      document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-      document.getElementById( 'container' ).innerHTML = "";
+class Viewer {
+   constructor (client) {
+      this.engine = new engineM.Engine(viewer_container);
+      viewer_container.appendChild( this.engine.renderer.domElement );
+      this.handler = new playerM.PlayerHandler(this.engine);
+      this.client = client;
+      this.init = true;
    }
 
+   update() {
+      var delta = this.engine.clock.getDelta();
+      if (inbox.length > 0) {
+         // Receive packet, begin translating based on the received position
+         var packet = inbox[0];
+         packet = JSON.parse(packet);
+         this.handler.updateData(packet['ent']);
+         if (this.init) {
+            this.init = false;
+            var map = packet['map'];
+            this.counts = new countsM.Counts(map, this.engine);
+         }
+         this.counts.update(packet['map']);
+      }
+      this.counts.updateFast();
+      this.engine.update(delta);
+   }
+}
+
+function webglError() {
+   if ( WEBGL.isWebGLAvailable() === false ) {
+      document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+   }
+}
+
+function init() {
+   webglError()
    client = new Client();
-   container = document.getElementById( 'container' );
-
-   // hook up signals
-   container.innerHTML = "";
-   container.appendChild( engine.renderer.domElement );
-
-   function onMouseDown( event ) { client.onMouseDown( event ); }
-   function onWindowResize() { engine.onWindowResize(); }
-
-   stats = new Stats();
-   container.appendChild( stats.dom );
-   container.addEventListener( 'click', onMouseDown, false );
-   window.addEventListener( 'resize', onWindowResize, false );
+   viewer = new Viewer(client);
+   stats  = new Stats();
+   client_container.appendChild(stats.dom);
+   animate();
 }
 
 function animate() {
    requestAnimationFrame( animate );
    client.update();
+   viewer.update();
    stats.update();
 }
 
 
 // Main
 init();
-animate();
