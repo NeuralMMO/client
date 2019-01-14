@@ -5,6 +5,7 @@ const worldHalfWidth = worldWidth / 2;
 const worldHalfDepth = worldDepth / 2;
 const sz = 64;
 const tileSz = 64;
+const nTiles = 80;
 
 const modes = { ADMIN: 0, PLAYER: 1, SPECTATOR: 2};
 
@@ -45,12 +46,6 @@ const Neon = {
 
    'TERM':     '#41ff00',
    'MASK':     '#d67fff'
-}
-
-var nnObjs = {}
-for (var name in Neon) {
-   var color = Neon[name];
-   nnObjs[color] = loadNN(color);
 }
 
 const tileHeights = {

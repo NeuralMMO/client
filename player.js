@@ -1,5 +1,5 @@
 import * as textsprite from "./textsprite.js";
-//import * as OBJ from "./obj.js";
+import * as OBJ from "./obj.js";
 import * as Animation from "./animation.js";
 import * as Sprite from "./sprite.js";
 
@@ -16,10 +16,19 @@ class PlayerHandler {
    constructor(engine) {
       this.players = {};
       this.engine = engine;
+      this.load()
+   }
+
+   load() {
+      this.nnObjs = {}
+      for (var name in Neon) {
+         var color = Neon[name];
+         this.nnObjs[color] = OBJ.loadNN(color);
+      }
    }
 
    addPlayer(id, params) {
-      var player = new Player(id, params, this.engine);
+      var player = new Player(this, id, params)
       this.players[id] = player;
       this.engine.scene.add(player);
    }
@@ -46,23 +55,23 @@ class PlayerHandler {
 }
 
 class Player extends THREE.Object3D {
-   constructor(id, params, engine)  {
+   constructor(handler, id, params)  {
       super()
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.height = sz;    // above grass, below mountains
       this.entID = params['entID']
-      this.engine = engine
+      this.engine = handler.engine
 
-      this.initObj(params);
+      this.initObj(params, handler);
       this.initOverhead(params);
    }
 
-   initObj(params) {
+   initObj(params, handler) {
       var pos = params['pos'];
       //this.obj = OBJ.loadNN(params['color']);
-      this.obj = nnObjs[params['color']].clone();
+      this.obj = handler.nnObjs[params['color']].clone();
       this.obj.position.y = this.height;
       this.obj.position.copy(this.coords(pos));
       this.target = this.obj.position.clone();

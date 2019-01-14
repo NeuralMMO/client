@@ -94,6 +94,15 @@ class EchoServerProtocol(WebSocketServerProtocol):
         gameMap = realm.env
         self.packet['map'] = gameMap.tolist()
 
+        gameTiles = realm.world.env.tiles
+        tiles = []
+        for tileList in gameTiles:
+           tl = []
+           for tile in tileList:
+              tl.append(sum(tile.counts))
+           tiles.append(tl)
+        self.packet['counts'] = tiles
+ 
         packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)
 
@@ -128,7 +137,7 @@ class WSServerFactory(WebSocketServerFactory):
 class Application:
     def __init__(self, realm, step):
         self.realm = realm
-        log.startLogging(sys.stdout)
+        #log.startLogging(sys.stdout)
         port = 8080
 
         #factory = WSServerFactory(u'ws://localhost:'+str(port), realm)

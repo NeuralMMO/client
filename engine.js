@@ -2,8 +2,9 @@ export {Engine};
 
 class Engine {
 
-   constructor(mode) {
+   constructor(mode, container) {
       this.mode = mode;
+      this.container = container;
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color( 0x003333 );
 
@@ -57,8 +58,7 @@ class Engine {
    }
 
    initializeControls() {
-      var controls;
-      controls = new THREE.OrbitControls(this.camera, container);
+      var controls = new THREE.OrbitControls(this.camera, this.container);
       controls.mouseButtons = {
          LEFT: THREE.MOUSE.MIDDLE, // rotate
          RIGHT: THREE.MOUSE.LEFT // pan
@@ -77,6 +77,7 @@ class Engine {
          controls.enablePan = true;
       }
 
+      //controls.enabled = false;
       this.controls = controls;
    }
 

@@ -17,11 +17,9 @@ document.body.appendChild(messages);
 function onMessage(event) {
    msg = event.data;
    inbox.push(msg);
-   /*
-   while (msgQueue.length > 0) {
-      console.log(msgQueue.shift());
+   while (inbox.length > 1) {
+      inbox.shift();
    }
-   */
 }
 ws.onmessage = onMessage;
 

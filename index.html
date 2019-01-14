@@ -11,14 +11,44 @@
             font-family: "DragonSlapper";
             src: url(resources/dragonslapper.woff);
         }
+
+        #instructions {
+			width: 100%;
+			height: 100%;
+
+			display: -webkit-box;
+			display: -moz-box;
+			display: box;
+
+			-webkit-box-orient: horizontal;
+			-moz-box-orient: horizontal;
+			box-orient: horizontal;
+
+			-webkit-box-pack: center;
+			-moz-box-pack: center;
+			box-pack: center;
+
+			-webkit-box-align: center;
+			-moz-box-align: center;
+			box-align: center;
+
+			color: #eeeeee;
+			text-align: center;
+
+			cursor: pointer;
+        }
     </style>
 
     <body>
-        <div id="container"><br />Generating world...</div>
-        <!--<div id="info">
-            (left click: move, middle click: rotate, mouse wheel: zoom)
-        </div>-->
+        <div id="instructions">
+			<span style="font-size:40px">Click to begin.</span>
+        	<b>WASD/middle mouse</b> pitch/yaw, <b>arrow keys</b> pan,
+			<b>scroll wheel</b> zoom<br/>
+        </div>
+
         <div id="entityBox"> </div>
+        <div id="client_container"><br />Generating world...</div>
+        <div id="viewer_container"><br />Generating viewer...</div>
 
         <script src="three.js/build/three.js"></script>
         <script src="three.js/examples/js/utils/BufferGeometryUtils.js"></script>
@@ -32,10 +62,10 @@
         <script src="threex/WindowResize.js"></script>
         <script src="threex/FullScreen.js"></script>
 
-        <script src="obj.js"></script>
         <script src="comms.js"></script>
         <script src="consts.js"></script>
         <script src="OrbitControls.js"></script>
+        <script src="client.js" type="module"></script>
 
         <script id="vertexShader" type="x-shader/x-vertex">
         uniform sampler2D bumpTexture;
@@ -199,7 +229,6 @@
         }
         </script>
 
-        <script src="client.js" type="module"></script>
 
         <script id="phongVertexShader" type="x-shader/x-vertex">
 
@@ -429,7 +458,7 @@ void main() {
 
             float modx = tilePos.x - (2.0 * floor(tilePos.x/2.0));
             float mody = tilePos.y - (2.0 * floor(tilePos.y/2.0));
-            gl_FragColor = 0.8*gl_FragColor + 0.2*gl_FragColor*(abs(modx-mody));
+            gl_FragColor = 0.9*gl_FragColor + 0.1*gl_FragColor*(abs(modx-mody));
 
             gl_FragColor = vec4(gl_FragColor.xyz * outgoingLight, diffuseColor.a);
 

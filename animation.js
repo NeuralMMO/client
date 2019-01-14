@@ -27,7 +27,8 @@ class ProceduralAnimation {
 
    //Abstract
    step(delta, elapsedTime) {
-      throw new Error('Must override abstract step method of ProceduralAnimation');
+      throw new Error(
+              'Must override abstract step method of ProceduralAnimation');
    }
 
    //Optional call before animation
@@ -129,7 +130,7 @@ class Melee extends Attack{
 class Range extends Attack{
    setup() {
       this.attkGeom = new THREE.OctahedronGeometry(10);
-      this.color = '#00ff00'; 
+      this.color = '#00ff00';
    }
 }
 
