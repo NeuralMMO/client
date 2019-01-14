@@ -2,7 +2,7 @@
  * @author James Baicoianu / http://www.baicoianu.com/
  */
 
-THREE.FlyControls = function ( object, domElement ) {
+THREE.LaptopControls = function ( object, domElement ) {
 
 	this.object = object;
 
@@ -25,16 +25,20 @@ THREE.FlyControls = function ( object, domElement ) {
 
 	this.mouseStatus = 0;
 
-	this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
+	this.moveState = {
+        left: 0, right: 0,
+        forward: 0, back: 0,
+        pitchUp: 0, pitchDown: 0,
+        yawLeft: 0, yawRight: 0,
+    };
+
 	this.moveVector = new THREE.Vector3( 0, 0, 0 );
 	this.rotationVector = new THREE.Vector3( 0, 0, 0 );
 
 	this.keydown = function ( event ) {
 
 		if ( event.altKey ) {
-
 			return;
-
 		}
 
 		//event.preventDefault();
@@ -43,24 +47,25 @@ THREE.FlyControls = function ( object, domElement ) {
 
 			case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
 
-			case 87: /*W*/ this.moveState.forward = 1; break;
-			case 83: /*S*/ this.moveState.back = 1; break;
+			case 87: /*W*/ this.moveState.pitchUp = 1; break;
+			case 83: /*S*/ this.moveState.pitchDown = 1; break;
 
-			case 65: /*A*/ this.moveState.left = 1; break;
-			case 68: /*D*/ this.moveState.right = 1; break;
+			case 65: /*A*/ this.moveState.yawLeft = 1; break;
+			case 68: /*D*/ this.moveState.yawRight = 1; break;
 
-			case 82: /*R*/ this.moveState.up = 1; break;
-			case 70: /*F*/ this.moveState.down = 1; break;
 
-			case 38: /*up*/ this.moveState.pitchUp = 1; break;
-			case 40: /*down*/ this.moveState.pitchDown = 1; break;
+			case 38: /*up*/ this.moveState.forward = 1; break;
+			case 40: /*down*/ this.moveState.backward = 1; break;
 
-			case 37: /*left*/ this.moveState.yawLeft = 1; break;
-			case 39: /*right*/ this.moveState.yawRight = 1; break;
+			case 37: /*left*/ this.moveState.left = 1; break;
+			case 39: /*right*/ this.moveState.right = 1; break;
 
-			case 81: /*Q*/ this.moveState.rollLeft = 1; break;
-			case 69: /*E*/ this.moveState.rollRight = 1; break;
-
+            /* We don't use roll
+			 * case 82: R this.moveState.up = 1; break;
+			 * case 70: F this.moveState.down = 1; break;
+             * case 81: Q this.moveState.rollLeft = 1; break;
+			 * case 69: E this.moveState.rollRight = 1; break;
+             */
 		}
 
 		this.updateMovementVector();

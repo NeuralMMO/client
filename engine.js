@@ -77,15 +77,6 @@ class Engine {
          controls.enablePan = true;
       }
 
-      var laptopMode = false;
-      if (laptopMode) {
-         //controls = new THREE.FlyControls(this.camera, container);
-         // WASD translate controls
-         controls.keys.UP = 87; // W
-         controls.keys.DOWN = 83; // S
-         controls.keys.LEFT = 65; // A
-         controls.keys.RIGHT = 68; // D
-      }
       this.controls = controls;
    }
 
