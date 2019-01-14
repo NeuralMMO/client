@@ -4,6 +4,7 @@ export {Move, Damage, Melee, Range, Mage}
 
 //We dont exactly have animation tracks for this project
 class ProceduralAnimation {
+
    constructor() {
       this.clock = new THREE.Clock()
       this.elapsedTime = 0.0;
@@ -60,7 +61,6 @@ class Move extends ProceduralAnimation {
       var y = this.pos.y + moveFrac * (this.targ.y - this.pos.y);
       var z = this.pos.z + moveFrac * (this.targ.z - this.pos.z);
       var pos = new THREE.Vector3(x, y, z);
-      console.log(pos);
       this.ent.obj.position.copy(pos);
 
       if (this.isTarget) {

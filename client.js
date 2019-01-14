@@ -29,6 +29,7 @@ class Client {
 
    update() {
       var delta = this.engine.clock.getDelta();
+
       if (inbox.length > 0) {
          // Receive packet, begin translating based on the received position
          var packet = inbox[0];
