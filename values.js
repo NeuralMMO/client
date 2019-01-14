@@ -17,45 +17,12 @@ class Values{
 
       this.loader = new THREE.TextureLoader();
       this.axes(engine)
-      //this.mesh(map, engine)
       this.water(map, engine)
-      //this.shades(map, engine)
       this.terr(map, values, engine)
   }
 
-   shades(map, engine) {
-      var cubeColorHex = "#ff00ff";
-      var customUniforms = THREE.UniformsUtils.merge([
-        THREE.ShaderLib.phong.uniforms,
-        { diffuse: { value: new THREE.Color(cubeColorHex) } },
-      ]);
-
-      var vertShader = document.getElementById(
-            'phongVertexShader').textContent;
-      var fragShader = document.getElementById(
-            'phongFragmentShader').textContent;
- 
-      var customMaterial = new THREE.ShaderMaterial(
-      {
-         uniforms: customUniforms,
-         vertexShader: vertShader,   
-         fragmentShader: fragShader,
-         lights: true,
-         name: 'custom-material'
-      });
- 
-      var geom = new THREE.IcosahedronGeometry(200, 0);
-      var matl = customMaterial
-      //var matl = new THREE.MeshPhongMaterial({color:cubeColorHex});
-      var mesh = new THREE.Mesh(geom, matl);
-      mesh.position.x = 1000
-      mesh.position.y = 300
-      mesh.position.z = 1000
-      engine.scene.add(mesh);
-   }
-
    valueTex(map){
-      var tileMap = this.generateFlat(map);
+      var tileMap = this.generateVals(map);
       var tileTexture = this.dataTexture(tileMap, width, height);
       return tileTexture
    }
@@ -93,9 +60,9 @@ class Values{
             custUniforms, THREE.ShaderLib.phong.uniforms);
 
       var vertShader = document.getElementById(
-            'phongCountsVertexShader').textContent;
+            'phongValueVertexShader').textContent;
       var fragShader = document.getElementById(
-            'phongCountsFragmentShader').textContent;
+            'phongValueFragmentShader').textContent;
  
       var customMaterial = new THREE.ShaderMaterial(
       {
@@ -223,6 +190,21 @@ class Values{
          }
       }
       return data
+   }
+
+   generateVals(map) {
+      var mapSz = map.length;
+      var data = new Uint8Array( 3*mapSz*mapSz );
+      var k = 0;
+      for ( var r = 0; r < mapSz; r ++ ) {
+         for ( var c = 0; c < mapSz; c ++ ) {
+            data[k] = map[r][c][0];
+            data[k+1] = map[r][c][1];
+            data[k+2] = map[r][c][2];
+            k += 3;
+         }
+      }
+      return data;
    }
 
    generateFlat(map) {

@@ -4,7 +4,7 @@ import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
 import * as valuesM from './values.js';
 
-var client, viewer, viewer_container, stats;
+var client, counts, values, stats;
 
 
 class Client {
@@ -60,7 +60,7 @@ class Client {
    }
 }
 
-class Viewer {
+class Counts {
    constructor (client, viewer_container) {
       this.engine = new engineM.Engine(modes.ADMIN, viewer_container);
       viewer_container.innerHTML = ""; // get rid of the text after loading
@@ -82,21 +82,46 @@ class Viewer {
             var map = packet['map'];
             this.counts = new countsM.Counts(
                   packet['map'], packet['counts'], this.engine);
-            this.values = new valuesM.Values(
-                  packet['map'], packet['values'], this.engine);
-            this.terrain = new terrainM.Terrain(map, this.engine);
  
          }
          this.counts.update(packet['map'], packet['counts']);
-         this.values.update(packet['map'], packet['values']);
-         this.terrain.update(packet['map']);
       }
       this.counts.updateFast();
-      this.values.updateFast();
-      this.terrain.updateFast();
       this.engine.update(delta);
    }
 }
+
+class Values{
+   constructor (client, viewer_container) {
+      this.engine = new engineM.Engine(modes.ADMIN, viewer_container);
+      viewer_container.innerHTML = ""; // get rid of the text after loading
+      viewer_container.appendChild( this.engine.renderer.domElement );
+      this.handler = new playerM.PlayerHandler(this.engine);
+      this.client = client;
+      this.init = true;
+   }
+
+   update() {
+      var delta = this.engine.clock.getDelta();
+      if (inbox.length > 0) {
+         // Receive packet, begin translating based on the received position
+         var packet = inbox[0];
+         packet = JSON.parse(packet);
+         this.handler.updateData(packet['ent']);
+         if (this.init) {
+            this.init = false;
+            var map = packet['map'];
+            this.values = new valuesM.Values(
+                  packet['map'], packet['values'], this.engine);
+ 
+         }
+         this.values.update(packet['map'], packet['values']);
+      }
+      this.values.updateFast();
+      this.engine.update(delta);
+   }
+}
+
 
 function webglError() {
    if ( WEBGL.isWebGLAvailable() === false ) {
@@ -110,7 +135,8 @@ function init() {
    var viewer_container = document.getElementById("viewer_container");
 
    client = new Client(client_container);
-   //viewer = new Viewer(client, viewer_container);
+   counts = new Counts(client, counts_container);
+   values = new Values(client, values_container);
    stats  = new Stats();
    client.setupSignals();
    client_container.appendChild(stats.dom);
@@ -130,7 +156,8 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
-   //viewer.update();
+   counts.update();
+   values.update();
    stats.update();
 }
 
