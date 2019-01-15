@@ -59,6 +59,7 @@
         </div>
 
         <div id="entityBox"> </div>
+
         <div id="client_container"><br />Game Client</div>
         <div id="counts_container"><br />Counts Visualizer</div>
         <div id="values_container"><br />Values Visualizer</div>
@@ -742,7 +743,7 @@ void main() {
 
             gl_FragColor = vec4(gl_FragColor.xyz * outgoingLight, diffuseColor.a);
 
-            gl_FragColor = 0.6*gl_FragColor + 0.4*vec4(val.r, val.g, val.b, 1.0);
+            gl_FragColor = 0.4*gl_FragColor + 0.6*vec4(val.r, val.g, val.b, 1.0);
             //Check if we are on a border
             vec2 err = newPosition.xz/64.0 - tilePos;
 
