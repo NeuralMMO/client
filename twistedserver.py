@@ -37,21 +37,48 @@ class EchoServerProtocol(WebSocketServerProtocol):
         self.frame = 0
         self.packet = {}
 
+    def visVals(self, vals, sz):
+      ary = np.zeros((sz, sz, 3))
+      vMean = np.mean([e[1] for e in vals])
+      vStd  = np.std([e[1] for e in vals])
+      nStd, nTol = 4.0, 0.5
+      grayVal = int(255 / nStd * nTol)
+      for v in vals:
+         pos, mat = v
+         r, c = pos
+         mat = (mat - vMean) / vStd
+         color = np.clip(mat, -nStd, nStd)
+         color = int(color * 255.0 / nStd)
+         if color > 0:
+             color = (0, color, 128)
+         else:
+             color = (-color, 0, 128)
+         ary[r, c] = color
+      return ary.astype(np.uint8)
+
     def onOpen(self):
         print("Opened connection to server")
-        self.realm = self.factory.realm
-        self.frame += 1
-        self.sendUpdate()
-
-
         #packet = json.dumps(data).encode('utf8')
         #self.sendMessage(packet, True)
 
     def onClose(self, wasClean, code=None, reason=None):
         print('Connection closed')
 
+    #Correct connection method?
     def onConnect(self, request):
         print("WebSocket connection request: {}".format(request))
+        realm = self.factory.realm.envs[0]
+        self.realm = realm
+        self.frame += 1
+
+        gameTiles = realm.world.env.tiles
+        sz = gameTiles.shape[0]
+
+        ann = self.realm.sword.anns[0]
+        vals = ann.visVals()
+        self.vals = self.visVals(vals, sz)
+
+        self.sendUpdate()
 
     def onMessage(self, packet, isBinary):
         print("Message", packet)
@@ -67,7 +94,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
 
     def sendUpdate(self):
         ent = {}
-        realm = self.realm.envs[0]
+        realm = self.realm
         for id, e in realm.desciples.items():
            e = e.client
            pkt = {}
@@ -102,6 +129,8 @@ class EchoServerProtocol(WebSocketServerProtocol):
               tl.append(tile.counts.tolist())
            tiles.append(tl)
         self.packet['counts'] = tiles
+
+        self.packet['values'] = self.vals.tolist()
  
         packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)
