@@ -16,7 +16,7 @@ class Values{
       this.mapSz = this.nTiles*tileSz;
 
       this.loader = new THREE.TextureLoader();
-      this.axes(engine)
+      //this.axes(engine)
       this.water(map, engine)
       this.terr(map, values, engine)
   }

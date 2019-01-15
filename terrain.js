@@ -16,7 +16,7 @@ class Terrain {
       this.mapSz = this.nTiles*tileSz;
 
       this.loader = new THREE.TextureLoader();
-      this.axes(engine)
+      //this.axes(engine)
       //this.mesh(map, engine)
       this.water(map, engine)
       //this.shades(map, engine)
