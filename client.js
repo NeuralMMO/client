@@ -3,14 +3,13 @@ import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
 
-var client, viewer, viewer_container, stats;
+var client, viewer, stats;
 
 
 class Client {
    constructor (client_container) {
       this.engine = new engineM.Engine(modes.ADMIN, client_container);
       this.handler = new playerM.PlayerHandler(this.engine);
-
       this.init = true;
    }
 
