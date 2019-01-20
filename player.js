@@ -3,7 +3,7 @@ import * as OBJ from "./obj.js";
 import * as Animation from "./animation.js";
 import * as Sprite from "./sprite.js";
 
-export {PlayerHandler};
+export {Player, PlayerHandler};
 
 
 class PlayerHandler {

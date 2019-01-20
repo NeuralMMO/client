@@ -14,6 +14,8 @@ class Client {
 
       this.init = true;
       this.packet = null;
+      this.frame = 0;
+
    }
 
    // hook up signals
@@ -45,11 +47,53 @@ class Client {
          // Receive packet, begin translating based on the received position
          var packet = JSON.parse(this.packet);
          this.handler.updateData(packet['ent']);
+         this.frame += 1;
          if (this.init) {
             this.init = false;
             var map = packet['map'];
             this.terrain = new terrainM.Terrain(map, this.engine);
          }
+         if (this.frame == 35) {
+            var pkt1 = {
+               'pos': (34, 32),
+               'entID': 394,
+               'color':'#ff0000',
+               'name': 'Neural_394',
+               'food':4, 
+               'water':7,
+               'health':5,
+               'maxFood':10,
+               'maxWater':10,
+               'maxHealth':10,
+               'damage':2,
+            }
+
+            var pkt2 = {
+               'pos': (20, 20),
+               'entID': 383,
+               'color':'#ff0000',
+               'name': 'Neural_383',
+               'food':4, 
+               'water':7,
+               'health':5,
+               'maxFood':10,
+               'maxWater':10,
+               'maxHealth':10,
+               'damage':2,
+               'attack':'Range',
+               'target':'394',
+            }
+        
+            var player1 = new playerM.Player(this.handler, 0, pkt1)
+            this.engine.scene.add(player1);
+            player1.updateData(this.engine, pkt1, {})
+
+            var player2 = new playerM.Player(this.handler, 0, pkt2)
+            this.engine.scene.add(player2);
+            player2.updateData(this.engine, pkt2, {394: player1})
+
+         }
+ 
          this.terrain.update(packet['map']);
       }
       //this.terrain.updateFast();
