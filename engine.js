@@ -80,7 +80,7 @@ class Engine {
    onWindowResize() {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
-      this.controls.update();
+      // this.controls.update();
       this.renderer.setSize( window.innerWidth, window.innerHeight );
    }
 
@@ -109,7 +109,6 @@ class Engine {
       return [x, y, z]
    }
 
-   //TODO: sometimes the camera rotates itself?
    update(delta) {
       this.controls.update( delta );
       this.renderer.render( this.scene, this.camera );

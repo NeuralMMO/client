@@ -11,7 +11,6 @@ class Client {
    constructor (client_container) {
       this.engine = new engineM.Engine(modes.ADMIN, client_container);
       this.handler = new playerM.PlayerHandler(this.engine);
-
       this.init = true;
       this.packet = null;
       this.frame = 0;
@@ -166,7 +165,6 @@ class Values{
             var map = packet['map'];
             this.values = new valuesM.Values(
                   packet['map'], packet['values'], this.engine);
- 
          }
          this.values.update(packet['map'], packet['values']);
       }

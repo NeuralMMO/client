@@ -16,15 +16,30 @@ class PlayerHandler {
    constructor(engine) {
       this.players = {};
       this.engine = engine;
-      this.load()
+      this.load();
+      this.finishedLoading = false;
    }
 
    load() {
       this.nnObjs = {}
+      var promises = [];
+      var scope = this;
+
       for (var name in Neon) {
          var color = Neon[name];
-         this.nnObjs[color] = OBJ.loadNN(color);
+         var loadedPromise = OBJ.loadNN(color);
+
+         loadedPromise.then( function (result) {
+            scope.nnObjs[result.myColor] = result.obj;
+         });
+
+         promises.push(loadedPromise);
       }
+
+      Promise.all(promises).then(function () {
+         scope.finishedLoading = true;
+         console.log("PlayerHandler: Finished loading all meshes.");
+      });
    }
 
    addPlayer(id, params) {
@@ -39,6 +54,10 @@ class PlayerHandler {
    }
 
    updateData(ents) {
+      if (!this.finishedLoading) {
+         return;
+      }
+
       for (var id in this.players) {
          if (!(id in ents)) {
             this.removePlayer(id);
