@@ -109,6 +109,25 @@ class Engine {
       return [x, y, z]
    }
 
+   raycastPlayer(clientX, clientY, playerMesh) {
+      this.mouse.x = (
+            clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
+      this.mouse.y = - (
+            clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
+      this.raycaster.setFromCamera( this.mouse, this.camera );
+
+      // See if the ray from the camera into the world hits one of our meshes
+      var intersects = this.raycaster.intersectObject( playerMesh );
+
+      // Toggle rotation bool for meshes that we clicked
+      if ( intersects.length > 0 ) {
+         var x = intersects[ 0 ].point.x;
+         var y = intersects[ 0 ].point.x;
+         var z = intersects[ 0 ].point.z;
+      }
+      return [x, y, z] // use this to determine which player we hit
+   }
+
    update(delta) {
       this.controls.update( delta );
       this.renderer.render( this.scene, this.camera );

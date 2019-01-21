@@ -3,6 +3,7 @@ import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
 import * as valuesM from './values.js';
+import * as entityM from './entitybox.js';
 
 var client, counts, values, stats;
 
@@ -60,8 +61,12 @@ class Client {
    }
 
    onMouseDown(event) {
-      //player.moveTarg = this.engine.raycast(event.clientX, event.clientY);
-      //player.sendMove();
+      var entityBox = document.getElementById( 'entityBox' );
+      var box = new entityM.EntityBox(color);
+
+      // hook up signals
+      entityBox.innerHTML = "";
+      entityBox.appendChild( box.renderer.domElement );
 
       //var pos = this.engine.raycast(event.clientX, event.clientY);
       //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
