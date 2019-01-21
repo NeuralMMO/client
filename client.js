@@ -61,15 +61,42 @@ class Client {
    }
 
    onMouseDown(event) {
+      // handle player event first
+      var minDistance = 1000000; // large number
+      var minPlayer = null;
+
+      for (var id in this.handler.players) {
+         // Player subclasses Object3D
+         var player = this.handler.players[id];
+         var coords = this.engine.raycast(event.clientX, event.clientY,
+                 player);
+         if (coords) {
+            var distance = this.engine.camera.position.distanceTo(coords);
+            console.log(distance);
+            if (distance < minDistance) {
+               minDistance = distance;
+               minPlayer = player;
+            }
+         }
+      }
+      if (minPlayer) {
+         // now we've identified the closest player
+         console.log("Clicked player ", minPlayer.clientId);
+         this.createEntityBox(minPlayer);
+      }
+
+      // then handle translate event (if self is player)
+      //var pos = this.engine.raycast(event.clientX, event.clientY);
+      //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
+   }
+
+   createEntityBox(player) {
       var entityBox = document.getElementById( 'entityBox' );
-      var box = new entityM.EntityBox(color);
+      var box = new entityM.EntityBox(player.color);
 
       // hook up signals
       entityBox.innerHTML = "";
       entityBox.appendChild( box.renderer.domElement );
-
-      //var pos = this.engine.raycast(event.clientX, event.clientY);
-      //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
    }
 }
 

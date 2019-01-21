@@ -84,7 +84,7 @@ class Engine {
       this.renderer.setSize( window.innerWidth, window.innerHeight );
    }
 
-   raycast(clientX, clientY) {
+   raycast(clientX, clientY, mesh) {
       this.mouse.x = (
             clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
       this.mouse.y = - (
@@ -92,7 +92,8 @@ class Engine {
       this.raycaster.setFromCamera( this.mouse, this.camera );
 
       // See if the ray from the camera into the world hits one of our meshes
-      var intersects = this.raycaster.intersectObject( this.mesh );
+      var intersects = this.raycaster.intersectObject( mesh );
+      // for normal use: this.mesh?
 
       // Toggle rotation bool for meshes that we clicked
       if ( intersects.length > 0 ) {
@@ -104,28 +105,9 @@ class Engine {
          // new terrain gen uses +x, -z
          //z = Math.max(Math.min(0, Math.floor(z/sz)), -worldDepth);
          // z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
+         return [x, y, z];
       }
-
-      return [x, y, z]
-   }
-
-   raycastPlayer(clientX, clientY, playerMesh) {
-      this.mouse.x = (
-            clientX / this.renderer.domElement.clientWidth ) * 2 - 1;
-      this.mouse.y = - (
-            clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
-      this.raycaster.setFromCamera( this.mouse, this.camera );
-
-      // See if the ray from the camera into the world hits one of our meshes
-      var intersects = this.raycaster.intersectObject( playerMesh );
-
-      // Toggle rotation bool for meshes that we clicked
-      if ( intersects.length > 0 ) {
-         var x = intersects[ 0 ].point.x;
-         var y = intersects[ 0 ].point.x;
-         var z = intersects[ 0 ].point.z;
-      }
-      return [x, y, z] // use this to determine which player we hit
+      return false;
    }
 
    update(delta) {
