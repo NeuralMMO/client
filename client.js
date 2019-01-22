@@ -3,6 +3,7 @@ import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
 import * as valuesM from './values.js';
+import * as textsprite from './textsprite.js';
 
 var client, counts, values, stats;
 
@@ -51,34 +52,34 @@ class Client {
             this.init = false;
             var map = packet['map'];
             this.terrain = new terrainM.Terrain(map, this.engine);
-         }
-         if (this.frame == 35) {
+
+            /*
             var pkt1 = {
-               'pos': (34, 32),
+               'pos': [18, 11],
                'entID': 394,
-               'color':'#ff0000',
+               'color':'#ff8000',
                'name': 'Neural_394',
-               'food':4, 
-               'water':7,
-               'health':5,
-               'maxFood':10,
-               'maxWater':10,
-               'maxHealth':10,
+               'food':25, 
+               'water':12,
+               'health':16,
+               'maxFood':32,
+               'maxWater':32,
+               'maxHealth':32,
                'damage':2,
             }
 
             var pkt2 = {
-               'pos': (20, 20),
+               'pos': [19, 13],
                'entID': 383,
-               'color':'#ff0000',
+               'color':'#8000ff',
                'name': 'Neural_383',
-               'food':4, 
-               'water':7,
-               'health':5,
-               'maxFood':10,
-               'maxWater':10,
-               'maxHealth':10,
-               'damage':2,
+               'food':8, 
+               'water':28,
+               'health':23,
+               'maxFood':32,
+               'maxWater':32,
+               'maxHealth':32,
+               'damage':0,
                'attack':'Range',
                'target':'394',
             }
@@ -86,10 +87,39 @@ class Client {
             var player1 = new playerM.Player(this.handler, 0, pkt1)
             this.engine.scene.add(player1);
             player1.updateData(this.engine, pkt1, {})
+            this.player1 = player1
 
             var player2 = new playerM.Player(this.handler, 0, pkt2)
             this.engine.scene.add(player2);
             player2.updateData(this.engine, pkt2, {394: player1})
+            this.player2 = player2
+
+            var attkGeom = new THREE.IcosahedronGeometry(10);
+            var attkMatl = new THREE.MeshBasicMaterial({color: '#0000ff'});
+            var attkMesh = new THREE.Mesh(attkGeom, attkMatl);
+
+            var p2 = player2.obj.position
+            var p1 = player1.obj.position
+            var moveFrac = 0.75
+            var y = 96;
+
+            var x = p1.x + moveFrac * (p2.x - p1.x) + 16;
+            var z = p1.z + moveFrac * (p2.z - p1.z) + 16;
+            var pos = new THREE.Vector3(x, y, z)
+            attkMesh.position.x = x
+            attkMesh.position.y = y
+            attkMesh.position.z = z
+            this.attkMesh = attkMesh
+            this.engine.scene.add(attkMesh);
+
+            var dmg = textsprite.makeTextSprite(2, "200", '#ff0000');
+            dmg.scale.set( 10, 30, 1 );
+            dmg.position.x = p2.x
+            dmg.position.y = p2.y + 128
+            dmg.position.z = p2.z
+            this.dmg = dmg
+            this.engine.scene.add(dmg);
+            */
 
          }
  
