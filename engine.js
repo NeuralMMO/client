@@ -16,7 +16,8 @@ class Engine {
       this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-      this.renderer.setPixelRatio( window.devicePixelRatio );
+      //this.renderer.setPixelRatio( window.devicePixelRatio );
+      this.renderer.setPixelRatio(2); //Antialias x2
       this.renderer.setSize( window.innerWidth, window.innerHeight );
       this.renderer.shadowMapEnabled = true;
       this.renderer.shadowMap.renderSingleSided = false;

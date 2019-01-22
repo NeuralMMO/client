@@ -125,7 +125,8 @@ class Client {
  
          this.terrain.update(packet['map']);
       }
-      //this.terrain.updateFast();
+      this.terrain.updateFast();
+      this.handler.updateFast();
       this.engine.update(delta);
    }
 

@@ -53,6 +53,12 @@ class PlayerHandler {
       delete this.players[playerIndex];
    }
 
+   updateFast() {
+      for (var id in this.players) {
+         this.players[id].updateFast();
+      }
+   }
+
    updateData(ents) {
       if (!this.finishedLoading) {
          return;
@@ -115,7 +121,7 @@ class Player extends THREE.Object3D {
       }
    }
 
-   updateData (engine, packet, players) {
+   updateData(engine, packet, players) {
       this.cancelAnims();
 
       var move = packet['pos'];
@@ -150,8 +156,8 @@ class Player extends THREE.Object3D {
       }
    }
 
-   update(delta) {
-      this.translate( delta );
+   updateFast() {
+      this.overhead.updateFast()
    }
 
    sendMove() {
