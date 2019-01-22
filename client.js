@@ -5,7 +5,7 @@ import * as countsM from './counts.js';
 import * as valuesM from './values.js';
 import * as entityM from './entitybox.js';
 
-var client, counts, values, stats;
+var client, counts, values, stats, box;
 
 
 class Client {
@@ -72,31 +72,31 @@ class Client {
                  player);
          if (coords) {
             var distance = this.engine.camera.position.distanceTo(coords);
-            console.log(distance);
             if (distance < minDistance) {
                minDistance = distance;
                minPlayer = player;
             }
          }
       }
+
       if (minPlayer) {
          // now we've identified the closest player
-         console.log("Clicked player ", minPlayer.clientId);
-         this.createEntityBox(minPlayer);
+         console.log("Clicked player", minPlayer.clientId);
+         if (!box) {
+            box = new entityM.EntityBox();
+         }
+         box.changeColor(minPlayer.color);
+
+         if (this.engine.mode == modes.SPECTATOR) {
+            // follow this player
+         }
       }
 
       // then handle translate event (if self is player)
-      //var pos = this.engine.raycast(event.clientX, event.clientY);
-      //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
-   }
-
-   createEntityBox(player) {
-      var entityBox = document.getElementById( 'entityBox' );
-      var box = new entityM.EntityBox(player.color);
-
-      // hook up signals
-      entityBox.innerHTML = "";
-      entityBox.appendChild( box.renderer.domElement );
+      if (this.engine.mode == modes.PLAYER) {
+         //var pos = this.engine.raycast(event.clientX, event.clientY);
+         //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
+      }
    }
 }
 
@@ -122,7 +122,6 @@ class Counts {
             var map = packet['map'];
             this.counts = new countsM.Counts(
                   packet['map'], packet['counts'], this.engine);
- 
          }
          this.counts.update(packet['map'], packet['counts']);
       }
@@ -174,21 +173,27 @@ function init() {
    var viewer_container = document.getElementById("viewer_container");
 
    client = new Client(client_container);
-   counts = new Counts(client, counts_container);
-   values = new Values(client, values_container);
+   //counts = new Counts(client, counts_container);
+   //values = new Values(client, values_container);
+
    stats  = new Stats();
    client.setupSignals();
-   client_container.appendChild(stats.dom);
+   //client_container.appendChild(stats.dom);
 
    var blocker = document.getElementById("blocker");
    var instructions = document.getElementById("instructions");
    instructions.addEventListener("click", function() {
 	   client.engine.controls.enabled = true;
 	   client.engine.controls.update();
-	   counts.engine.controls.enabled = true;
-	   counts.engine.controls.update();
-	   values.engine.controls.enabled = true;
-	   values.engine.controls.update();
+
+      if (counts) {
+	      counts.engine.controls.enabled = true;
+	      counts.engine.controls.update();
+      }
+	   if (values) {
+         values.engine.controls.enabled = true;
+	      values.engine.controls.update();
+      }
 	   instructions.style.display = "none";
       blocker.style.display = "none";
    }, false);
@@ -199,9 +204,10 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
-   counts.update();
-   values.update();
-   stats.update();
+   if (counts) { counts.update();}
+   if (values) { values.update();}
+   if (stats) { stats.update();}
+   if (box) { box.update();}
 }
 
 

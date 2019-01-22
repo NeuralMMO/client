@@ -18,9 +18,9 @@ class Engine {
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
       this.renderer.setSize( window.innerWidth, window.innerHeight );
-      this.renderer.shadowMapEnabled = true;
-      this.renderer.shadowMap.renderSingleSided = false;
-      this.renderer.shadowMap.renderReverseSided = false;
+      this.renderer.shadowMap.enabled = true;
+      //this.renderer.shadowMap.renderSingleSided = false;
+      //this.renderer.shadowMap.renderReverseSided = false;
 
       this.initializeControls();
 
@@ -92,20 +92,21 @@ class Engine {
       this.raycaster.setFromCamera( this.mouse, this.camera );
 
       // See if the ray from the camera into the world hits one of our meshes
-      var intersects = this.raycaster.intersectObject( mesh );
+      var intersects = this.raycaster.intersectObject( mesh, true );
+      // recursive=true
       // for normal use: this.mesh?
 
       // Toggle rotation bool for meshes that we clicked
       if ( intersects.length > 0 ) {
-         var x = intersects[ 0 ].point.x;
-         var y = intersects[ 0 ].point.x;
-         var z = intersects[ 0 ].point.z;
+         //var x = intersects[ 0 ].point.x;
+         //var y = intersects[ 0 ].point.y;
+         //var z = intersects[ 0 ].point.z;
 
          //x = Math.min(Math.max(0, Math.floor(x/sz)), worldWidth);
          // new terrain gen uses +x, -z
          //z = Math.max(Math.min(0, Math.floor(z/sz)), -worldDepth);
          // z = Math.min(Math.max(0, Math.floor(z/sz)), worldDepth);
-         return [x, y, z];
+         return intersects[0].point;
       }
       return false;
    }
