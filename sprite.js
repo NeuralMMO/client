@@ -12,6 +12,10 @@ class Overhead extends THREE.Object3D {
       this.stats.update(params);
    }
 
+   updateFast() {
+      this.stats.updateFast();
+   }
+
    initSpriteStats(params, engine) {
       this.stats = new SpriteStats(params, engine);
       this.add(this.stats);
@@ -42,6 +46,10 @@ class SpriteStats extends THREE.Object3D {
       this.food.update(params['food']);
    }
 
+   updateFast() {
+      this.quaternion.copy(this.engine.camera.quaternion);
+   }
+
    initBar(color, maxVal, heightOffset) {
       var bar = new StatBar(color, maxVal, this.engine);
       bar.position.y = heightOffset
@@ -49,7 +57,6 @@ class SpriteStats extends THREE.Object3D {
       return bar
    }
 }
-
 
 class StatBar extends THREE.Object3D {
    constructor(color, maxVal, engine) {
@@ -90,10 +97,10 @@ class StatBar extends THREE.Object3D {
    }
 
    update(val) {
-      this.sprite.quaternion.copy(this.engine.camera.quaternion);
       this.bar.scale.set(this.width, this.height, 1);
       this.material.uniforms.val.value = val;
       this.material.needsUpdate = true;
    }
+
 }
 

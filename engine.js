@@ -16,7 +16,8 @@ class Engine {
       this.camera.position.z = 10;
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-      this.renderer.setPixelRatio( window.devicePixelRatio );
+      //this.renderer.setPixelRatio( window.devicePixelRatio );
+      this.renderer.setPixelRatio(2); //Antialias x2
       this.renderer.setSize( window.innerWidth, window.innerHeight );
       this.renderer.shadowMap.enabled = true;
       //this.renderer.shadowMap.renderSingleSided = false;
@@ -34,6 +35,7 @@ class Engine {
 
       var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2 );
       pointLight.position.set( 64*40, 1500, 64*40 );
+      //pointLight.position.set( 0, 1500, 0 );
       pointLight.castShadow = true;
       pointLight.shadow.camera.far = 0;
       this.scene.add(pointLight);
