@@ -5,17 +5,18 @@ class EntityBox {
 
    constructor() {
       // HTML stuff
-      this.container = document.createElement("entity_container");
+      this.container = document.createElement("div");
+      this.container.id = "entity_container";
       this.container.style.cssText =
-		   'position:fixed;left:0;top:50%;opacity:0.5;z-index:10000';
+		   'position:fixed;left:0;top:66%;opacity:0.5;z-index:10000';
 
       this.panels = [];
 
 		var rp = new RenderedPanel();
-		//var fp = new FlatPanel();
+		var fp = new FlatPanel("INFORMATION", "#000000", "#ffffff");
 
 		this.addPanel(rp);
-		//this.addPanel(fp);
+		this.addPanel(fp);
 
       this.dom = this.container;
 		document.body.appendChild(this.dom);
@@ -49,41 +50,64 @@ class EntityBox {
 
 class FlatPanel {
    constructor(text, fgColor, bgColor) {
+      /* fgColor will be the color of the text.
+       * bgColor will be the color of the background, and possibly the color
+       * of the graph.
+       */
+      this.fgColor = fgColor;  // this shouldn't change
+      this.bgColor = bgColor;
 
 		var min = Infinity, max = 0, round = Math.round;
 		var PR = round( window.devicePixelRatio || 1 );
 
-		var WIDTH = 80 * PR, HEIGHT = 48 * PR,
-				TEXT_X = 3 * PR, TEXT_Y = 2 * PR,
-				GRAPH_X = 3 * PR, GRAPH_Y = 15 * PR,
+		this.WIDTH = window.innerWidth / 3 * PR;
+      this.HEIGHT = 200 * PR;
+		this.TEXT_X = 20 * PR;
+      this.TEXT_Y = 50 * PR;
+		var GRAPH_X = 300 * PR, GRAPH_Y = 150 * PR,
 				GRAPH_WIDTH = 74 * PR, GRAPH_HEIGHT = 30 * PR;
 
 		var canvas = document.createElement( 'canvas' );
-		canvas.width = WIDTH;
-		canvas.height = HEIGHT;
-		canvas.style.cssText = 'width:80px;height:48px';
+      canvas.id = "flat_panel";
+		canvas.width = this.WIDTH;
+		canvas.height = this.HEIGHT;
+		canvas.style.cssText = 'position:fixed;left:0;top:50%;width:'
+         + this.WIDTH/PR + 'px;height:' + this.HEIGHT/PR + 'px';
 		this.canvas = canvas;
 
-		var context = canvas.getContext( '2d' );
-		context.font = 'bold ' + ( 9 * PR ) + 'px Helvetica,Arial,sans-serif';
+		var context = this.canvas.getContext( '2d' );
+		context.font = 'bold ' + ( 50 * PR )
+            + 'px DragonSlapper';
 		context.textBaseline = 'top';
+      this.context = context;
 
-		context.fillStyle = bg;
-		context.fillRect( 0, 0, WIDTH, HEIGHT );
+      this.setText(text);
+      this.changeColor( this.bgColor );
 
-		context.fillStyle = fg;
-		context.fillText( name, TEXT_X, TEXT_Y );
-		context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
-
-		context.fillStyle = bg;
-		context.globalAlpha = 0.9;
-		context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
+		//context.fillStyle = bgColor;
+		//context.globalAlpha = 0.9;
+		//context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
 
 		this.dom = canvas;
 
 	}
 
+   setText( text ) {
+      this.text = text;
+      this.fillText();
+   }
+
+   fillText() {
+		this.context.fillStyle = this.fgColor;
+		this.context.fillText( this.text, this.TEXT_X, this.TEXT_Y );
+		// this.context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
+   }
+
 	changeColor( color ) {
+      this.bgColor = color;
+      this.context.fillStyle = this.bgColor;
+		this.context.fillRect( 0, 0, this.WIDTH, this.HEIGHT );
+      this.fillText();
 		// currently pass, maybe change FG color?
 	}
 
@@ -106,7 +130,7 @@ class RenderedPanel {
 
       this.renderer = new THREE.WebGLRenderer( { antialias: true } );
       this.renderer.setPixelRatio( window.devicePixelRatio );
-      this.renderer.setSize( window.innerWidth/2, window.innerHeight/2 );
+      this.renderer.setSize( window.innerWidth/3, window.innerHeight/3 );
       this.renderer.shadowMap.enabled = true;
 
       var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2);
