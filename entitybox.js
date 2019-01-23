@@ -13,10 +13,10 @@ class EntityBox {
       this.panels = [];
 
 		var rp = new RenderedPanel();
-		var fp = new FlatPanel("INFORMATION", "#000000", "#ffffff");
+		var fp = new FlatPanel("#000000");
 
-		this.addPanel(rp);
 		this.addPanel(fp);
+		this.addPanel(rp);
 
       this.dom = this.container;
 		document.body.appendChild(this.dom);
@@ -40,6 +40,12 @@ class EntityBox {
       }
    }
 
+   setText(text) {
+      for (var i = 0; i < this.panels.length; i++) {
+         this.panels[i].setText(text);
+      }
+   }
+
    update(delta) {
       // This will be replaced with something more complicated later
       for (var i = 0; i < this.panels.length; i++) {
@@ -48,14 +54,30 @@ class EntityBox {
    }
 }
 
-class FlatPanel {
-   constructor(text, fgColor, bgColor) {
+
+class Panel {
+
+   changeColor(color) {
+   }
+
+   setText(text) {
+   }
+
+   update(delta) {
+      // Do nothing
+   }
+}
+
+class FlatPanel extends Panel {
+
+   constructor(fgColor) {
       /* fgColor will be the color of the text.
        * bgColor will be the color of the background, and possibly the color
        * of the graph.
        */
+      super();
+
       this.fgColor = fgColor;  // this shouldn't change
-      this.bgColor = bgColor;
 
 		var min = Infinity, max = 0, round = Math.round;
 		var PR = round( window.devicePixelRatio || 1 );
@@ -80,9 +102,6 @@ class FlatPanel {
             + 'px DragonSlapper';
 		context.textBaseline = 'top';
       this.context = context;
-
-      this.setText(text);
-      this.changeColor( this.bgColor );
 
 		//context.fillStyle = bgColor;
 		//context.globalAlpha = 0.9;
@@ -119,9 +138,10 @@ class FlatPanel {
    }
 }
 
-class RenderedPanel {
+class RenderedPanel extends Panel {
 
    constructor() {
+      super();
       // engine stuff in a panel
       this.scene = new THREE.Scene();
 
