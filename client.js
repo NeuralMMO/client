@@ -205,7 +205,9 @@ class Counts extends AbstractClient {
          }
          this.counts.update(packet['map'], packet['counts']);
       }
-      this.counts.updateFast();
+      if (this.counts) {
+         this.counts.updateFast();
+      }
       this.engine.update(delta);
    }
 }
@@ -227,7 +229,9 @@ class Values extends AbstractClient {
          }
          this.values.update(packet['map'], packet['values']);
       }
-      this.values.updateFast();
+      if (this.values) {
+         this.values.updateFast();
+      }
       this.engine.update(delta);
    }
 }
@@ -241,13 +245,17 @@ function webglError() {
 
 function toggleVisualizers() {
    console.log(CURRENT_VIEW);
-   //CURRENT VIEW = (CURRENT_VIEW + 1) % 3;
+   CURRENT_VIEW = (CURRENT_VIEW + 1) % 3;
+   displayOnlyCurrent();
+}
+
+function displayOnlyCurrent() {
    client_container.style.display = "none";
-   //values_container.style.display = "none";
-   //counts_container.style.display = "none";
+   values_container.style.display = "none";
+   counts_container.style.display = "none";
 
    // now update the current view
-   switch ( CURRENT_VIEW) {
+   switch ( CURRENT_VIEW ) {
       case views.CLIENT:
          client_container.style.display = "block";
          break;
@@ -261,6 +269,7 @@ function toggleVisualizers() {
 }
 
 function onKeyDown(event) {
+   // TODO: this isn't working
    switch ( event.keyCode ) {
       case 84: // T
          toggleVisualizers();
@@ -280,14 +289,14 @@ function init() {
    var values_container = document.getElementById("values_container");
 
    client = new Client(client_container);
-   //counts = new Counts(client, counts_container);
-   //values = new Values(client, values_container);
+   counts = new Counts(client, counts_container);
+   values = new Values(client, values_container);
 
    stats  = new Stats();
    client_container.appendChild(stats.dom);
 
-   //values_container.style.display = "none";
-   //counts_container.style.display = "none";
+   // Start by setting these to none
+   displayOnlyCurrent();
 
    var blocker = document.getElementById("blocker");
    var instructions = document.getElementById("instructions");
@@ -309,7 +318,7 @@ function init() {
    }, false);
 
    window.addEventListener( 'resize', onWindowResize, false );
-   window.addEventListener( 'keyDown', onKeyDown, false );
+   client_container.addEventListener( 'keyDown', onKeyDown, false );
 
    animate();
 }
@@ -317,8 +326,8 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
-   if (counts) { counts.update();}
-   if (values) { values.update();}
+   if (counts && counts_container.style.display != "none") { counts.update();}
+   if (values && values_container.style.display != "none" ) { values.update();}
    if (stats) { stats.update();}
    if (box) { box.update();}
 }
