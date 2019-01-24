@@ -22,8 +22,8 @@ class Overhead extends THREE.Object3D {
    }
 
    initName(params) {
-      var sprite = textsprite.makeTextSprite(params['name'], "200", params['color']);
-      sprite.scale.set( 64, 30, 1 );
+      var sprite = textsprite.makeTextSprite(params['name'], "20", params['color']);
+      //sprite.scale.set( 64, 30, 1 );
       sprite.position.y = 32;
       this.add(sprite);
    }

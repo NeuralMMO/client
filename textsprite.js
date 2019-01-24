@@ -22,10 +22,12 @@ function makeTextSprite(message, fontsize, color) {
     ctx.fillText(message, 0, fontsize);
 
     texture = new THREE.Texture(canvas);
-    texture.minFilter = THREE.LinearFilter; // NearestFilter;
+    texture.minFilter = THREE.NearestFilter; // NearestFilter;
     texture.needsUpdate = true;
 
-    spriteMaterial = new THREE.SpriteMaterial({map : texture});
+    spriteMaterial = new THREE.SpriteMaterial({
+       map : texture, sizeAttenuation : false});
     sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(0.07, 0.03, 1);
     return sprite;
 }

@@ -74,8 +74,8 @@ class Move extends ProceduralAnimation {
 class Damage extends ProceduralAnimation {
    constructor(ent, damage) {
       super();
-      this.dmg = textsprite.makeTextSprite(damage, "200", '#ff0000');
-      this.dmg.scale.set( 10, 30, 1 );
+      this.dmg = textsprite.makeTextSprite(damage, "20", '#ff0000');
+      this.dmg.scale.set(0.007, 0.017, 1);
       this.height = 128
       this.dmg.position.y = this.height
       this.ent = ent;
@@ -160,7 +160,8 @@ class StatBar extends THREE.Object3D {
    }
 
    initSprite(hexColor) {
-      var material = new THREE.SpriteMaterial({color: hexColor});
+      var material = new THREE.SpriteMaterial({
+         color: hexColor, sizeAttenuation: false});
       var sprite = new THREE.Sprite(material)
       this.add(sprite)
       return sprite
