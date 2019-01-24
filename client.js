@@ -9,6 +9,7 @@ import * as textsprite from './textsprite.js';
 var client, counts, values, stats, box;
 var CURRENT_VIEW = views.CLIENT;
 
+
 class AbstractClient {
    // interface for client, viewer, and counts
    constructor (client, my_container) {
@@ -172,7 +173,7 @@ class Client extends AbstractClient {
          if (!box) {
             box = new entityM.EntityBox();
          }
-         box.setText("Info: Player #" + minPlayer.clientId);
+         box.setText("Player #" + minPlayer.clientId);
          box.changeColor(minPlayer.color);
 
          if (this.engine.mode == modes.SPECTATOR) {
@@ -244,7 +245,6 @@ function webglError() {
 }
 
 function toggleVisualizers() {
-   console.log(CURRENT_VIEW);
    CURRENT_VIEW = (CURRENT_VIEW + 1) % 3;
    displayOnlyCurrent();
 }
@@ -269,7 +269,6 @@ function displayOnlyCurrent() {
 }
 
 function onKeyDown(event) {
-   // TODO: this isn't working
    switch ( event.keyCode ) {
       case 84: // T
          toggleVisualizers();
@@ -318,7 +317,7 @@ function init() {
    }, false);
 
    window.addEventListener( 'resize', onWindowResize, false );
-   client_container.addEventListener( 'keyDown', onKeyDown, false );
+   window.addEventListener( 'keydown', onKeyDown, false );
 
    animate();
 }
