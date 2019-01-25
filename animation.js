@@ -74,7 +74,7 @@ class Move extends ProceduralAnimation {
 class Damage extends ProceduralAnimation {
    constructor(ent, damage) {
       super();
-      this.dmg = textsprite.makeTextSprite(damage, "20", '#ff0000');
+      this.dmg = textsprite.makeTextSprite(damage, "12", '#ff0000');
       this.dmg.scale.set(0.007, 0.017, 1);
       this.height = 128
       this.dmg.position.y = this.height

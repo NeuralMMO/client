@@ -7,19 +7,28 @@ class EntityBox {
       // HTML stuff
       this.container = document.createElement("div");
       this.container.id = "entity_container";
-      this.container.style.cssText =
-		   'position:fixed;left:0;top:66%;opacity:0.5;z-index:10000';
+      this.container.style.cssText =  // opacity:0.5. z-index puts this in front
+		   'position:fixed;left:0;top:66%;z-index:10000';
 
       this.panels = [];
 
-		var rp = new RenderedPanel();
+		//var rp = new RenderedPanel();
 		var fp = new FlatPanel("#000000");
 
 		this.addPanel(fp);
-		this.addPanel(rp);
+		//this.addPanel(rp);
 
       this.dom = this.container;
+      this.mode = -1;
 		document.body.appendChild(this.dom);
+
+      var scope = this;
+      function onMouseDown( event ) {scope.onClick(event);}
+      this.container.addEventListener( "click", onMouseDown, false);
+   }
+
+   onClick (event) {
+      this.container.style.display = "none";
    }
 
    addPanel (panel) {
@@ -27,11 +36,15 @@ class EntityBox {
 		this.panels.push(panel);
    }
 
+   showAll() {
+		this.container.style.display = 'block';
+   }
+
    showPanel( id ) {
 		for ( var i = 0; i < this.container.children.length; i ++ ) {
 			this.container.children[i].style.display = i === id ? 'block' : 'none';
 		}
-		mode = id;
+		this.mode = id;
 	}
 
    changeColor(color) {
@@ -68,6 +81,42 @@ class Panel {
    }
 }
 
+class TilePanel extends Panel {
+
+   constructor(i, j) {
+		this.TILESZ = 80;
+		var canvas = document.createElement( 'canvas' );
+      canvas.id = "tile_panel";
+		canvas.width = this.TILESZ;
+		canvas.height = this.TILESZ;
+		canvas.style.cssText = 'position:fixed;left:0;top:66%;width:'
+         + canvas.width + 'px;height:' + canvas.height + 'px';
+		this.canvas = canvas;
+	   this.context = this.canvas.getContext( '2d' );
+		this.dom = canvas;
+	}
+
+	drawTiles( tileMap ) {
+      // tileMap is array of R, G, B = n x 3 x d
+		for (var c = 0; c < map.cols; c++) {
+			for (var r = 0; r < map.rows; r++) {
+				var tile = map.getTile(c, r);
+
+				if (tile !== 0) { // 0 => empty tile
+					this.context.fillStyle = tileToColorMap[tile];
+					this.context.fillRect(
+						  c * map.tsize, // target x
+						  r * map.tsize, // target y
+						  map.tsize, // target width
+						  map.tsize // target height
+					);
+				}
+			}
+		}
+   }
+
+}
+
 class FlatPanel extends Panel {
 
    constructor(fgColor) {
@@ -82,7 +131,7 @@ class FlatPanel extends Panel {
 		var min = Infinity, max = 0, round = Math.round;
 		var PR = round( window.devicePixelRatio || 1 );
 
-		this.WIDTH = window.innerWidth / 3 * PR;
+		this.WIDTH = window.innerWidth / 4 * PR;
       this.HEIGHT = 200 * PR;
 		this.TEXT_X = 20 * PR;
       this.TEXT_Y = 50 * PR;
@@ -93,7 +142,7 @@ class FlatPanel extends Panel {
       canvas.id = "flat_panel";
 		canvas.width = this.WIDTH;
 		canvas.height = this.HEIGHT;
-		canvas.style.cssText = 'position:fixed;left:0;top:50%;width:'
+		canvas.style.cssText = 'position:fixed;left:0;top:66%;width:'
          + this.WIDTH/PR + 'px;height:' + this.HEIGHT/PR + 'px';
 		this.canvas = canvas;
 

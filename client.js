@@ -175,6 +175,7 @@ class Client extends AbstractClient {
          }
          box.setText("Player #" + minPlayer.clientId);
          box.changeColor(minPlayer.color);
+         box.showAll();
 
          if (this.engine.mode == modes.SPECTATOR) {
             // follow this player

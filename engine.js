@@ -6,7 +6,7 @@ class Engine {
       this.mode = mode;
       this.container = aContainer;
       this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color( 0x003333 );
+      this.scene.background = new THREE.Color( 0x4477aa );
 
       this.mesh = null; // we'll initialize from the server packet
 
