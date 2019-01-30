@@ -217,8 +217,8 @@ function init() {
    var viewer_container = document.getElementById("viewer_container");
 
    client = new Client(client_container);
-   counts = new Counts(client, counts_container);
-   values = new Values(client, values_container);
+   //counts = new Counts(client, counts_container);
+   //values = new Values(client, values_container);
    stats  = new Stats();
    client.setupSignals();
    client_container.appendChild(stats.dom);
@@ -228,10 +228,10 @@ function init() {
    instructions.addEventListener("click", function() {
 	   client.engine.controls.enabled = true;
 	   client.engine.controls.update();
-	   counts.engine.controls.enabled = true;
-	   counts.engine.controls.update();
-	   values.engine.controls.enabled = true;
-	   values.engine.controls.update();
+	   //counts.engine.controls.enabled = true;
+	   //counts.engine.controls.update();
+	   //values.engine.controls.enabled = true;
+	   //values.engine.controls.update();
 	   instructions.style.display = "none";
       blocker.style.display = "none";
    }, false);
@@ -242,8 +242,8 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
-   counts.update();
-   values.update();
+   //counts.update();
+   //values.update();
    stats.update();
 }
 
