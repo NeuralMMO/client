@@ -327,12 +327,14 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
+   counts.update();
+   values.update();
+   stats.update();
    if (counts && counts_container.style.display != "none") { counts.update();}
    if (values && values_container.style.display != "none" ) { values.update();}
    if (stats) { stats.update();}
    if (box) { box.update();}
 }
-
 
 // Main
 init();

@@ -3,6 +3,8 @@ import numpy as np
 
 import sys
 import json
+import ray
+import pickle
 
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
@@ -64,6 +66,12 @@ class EchoServerProtocol(WebSocketServerProtocol):
     def onClose(self, wasClean, code=None, reason=None):
         print('Connection closed')
 
+    def serverPacket(self):
+        data = self.realm.clientData.remote()
+        data = ray.get(data)
+        data = pickle.loads(data)
+        return data
+ 
     #Correct connection method?
     def onConnect(self, request):
         print("WebSocket connection request: {}".format(request))
@@ -71,12 +79,9 @@ class EchoServerProtocol(WebSocketServerProtocol):
         self.realm = realm
         self.frame += 1
 
-        gameTiles = realm.world.env.tiles
-        sz = gameTiles.shape[0]
-
-        ann = self.realm.sword.anns[0]
-        vals = ann.visVals()
-        self.vals = self.visVals(vals, sz)
+        data = self.serverPacket()
+        sz = data['environment'].shape[0]
+        self.vals = self.visVals(data['values'], sz)
 
         self.sendUpdate()
 
@@ -87,15 +92,17 @@ class EchoServerProtocol(WebSocketServerProtocol):
         #self.sendMessage(payload, isBinary)
         #packet = packet['0']
 
-        pos = packet['pos']
-        ent = self.packet['ent']
-        ent['0'] = {'pos': move(ent['0']['pos'], pos)}
+        #pos = packet['pos']
+        #ent = self.packet['ent']
+        #ent['0'] = {'pos': move(ent['0']['pos'], pos)}
 
 
     def sendUpdate(self):
         ent = {}
-        realm = self.realm
-        for id, e in realm.desciples.items():
+        data = self.serverPacket()
+        entities = data['entities']
+        environment = data['environment']
+        for id, e in entities.items():
            e = e.client
            pkt = {}
            pkt['pos']  = e.pos
@@ -109,6 +116,7 @@ class EchoServerProtocol(WebSocketServerProtocol):
            pkt['maxWater'] = e.maxWater
            pkt['maxHealth'] = e.maxHealth
            pkt['damage'] = e.damage
+           pkt['attackMap'] = e.attackMap
 
            pkt['attack'] = None
            pkt['target'] = None
@@ -116,14 +124,15 @@ class EchoServerProtocol(WebSocketServerProtocol):
               pkt['attack'] = e.attack.action.__name__
               pkt['target'] = e.attack.args.entID
            ent[id] = pkt
+
+        #What is this crap? Target ent?
         self.packet['ent'] = ent
 
-        gameMap = realm.env
-        self.packet['map'] = gameMap.tolist()
+        gameMap = environment.np().tolist()
+        self.packet['map'] = gameMap
 
-        gameTiles = realm.world.env.tiles
         tiles = []
-        for tileList in gameTiles:
+        for tileList in environment.tiles:
            tl = []
            for tile in tileList:
               tl.append(tile.counts.tolist())
@@ -149,10 +158,17 @@ class WSServerFactory(WebSocketServerFactory):
         self.realm, self.step = realm, step
         self.clients = []
 
+        self.tickRate = 0.6
+        self.tick = 0
+
         lc = LoopingCall(self.announce)
-        lc.start(0.6)
+        lc.start(self.tickRate)
 
     def announce(self):
+        self.tick += 1
+        uptime = np.round(self.tickRate*self.tick, 1)
+        print('Uptime: ', uptime, ', Tick: ', self.tick)
+
         self.step()
         for client in self.clients:
             client.sendUpdate()
