@@ -2,8 +2,10 @@
 <html>
     <head>
         <meta charset=utf-8>
-        <title>Projekt Godsword demo</title>
+        <title>Projekt Godsword: Working Demo</title>
         <link rel="preload" href="resources/dragonslapper.woff" as="font" type="font/woff" crossorigin>
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     </head>
 
     <style>
@@ -52,17 +54,19 @@
         <div id="blocker" style="display: block;">
             <div id="instructions">
 			    <span style="font-size:40px">Click to begin</span> <br>
-			    <span style="font-size:60px">PROJEKT GODSWORD.</span> <br>
+			    <span style="font-family:DragonSlapper;font-size:80px">PROJEKT GODSWORD.</span> <br>
         	    <b>WASD/middle mouse</b> pitch/yaw, <b>arrow keys</b> pan,
 			    <b>scroll wheel</b> zoom<br/>
             </div>
         </div>
 
-        <div id="entityBox"> </div>
 
-        <div id="client_container"><br />Game Client</div>
-        <div id="counts_container"><br />Counts Visualizer</div>
-        <div id="values_container"><br />Values Visualizer</div>
+        <div id="client_container" style="display: block;">
+         <br />Loading Game Client</div>
+        <div id="counts_container" style="display: block;">
+         <br />Loading Counts Visualizer</div>
+        <div id="values_container" style="display: block;">
+         <br />Loading Values Visualizer</div>
 
         <script src="three.js/build/three.js"></script>
         <script src="three.js/examples/js/utils/BufferGeometryUtils.js"></script>

@@ -80,14 +80,16 @@ class PlayerHandler {
 }
 
 class Player extends THREE.Object3D {
-   constructor(handler, id, params)  {
-      super()
+   constructor(handler, clientId, params)  {
+      super();
+      this.clientId = clientId;
       this.translateState = false;
       this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
       this.moveTarg = [0, 0];
       this.height = sz;    // above grass, below mountains
       this.entID = params['entID']
       this.engine = handler.engine
+      this.color = null
 
       this.initObj(params, handler);
       this.initOverhead(params);
@@ -96,7 +98,8 @@ class Player extends THREE.Object3D {
    initObj(params, handler) {
       var pos = params['pos'];
       //this.obj = OBJ.loadNN(params['color']);
-      this.obj = handler.nnObjs[params['color']].clone();
+      this.color = params['color']
+      this.obj = handler.nnObjs[this.color].clone();
       this.obj.position.y = this.height;
       this.obj.position.copy(this.coords(pos));
       this.target = this.obj.position.clone();

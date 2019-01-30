@@ -2,9 +2,8 @@ export {makeTextSprite};
 
 
 function makeTextSprite(message, fontsize, color) {
-    var ctx, texture, sprite, spriteMaterial;
     var canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
     ctx.font = fontsize + "px DragonSlapper";
 
     if (color == 'undefined') {
@@ -21,11 +20,13 @@ function makeTextSprite(message, fontsize, color) {
     ctx.fillStyle = color;
     ctx.fillText(message, 0, fontsize);
 
-    texture = new THREE.Texture(canvas);
-    texture.minFilter = THREE.LinearFilter; // NearestFilter;
+    var texture = new THREE.Texture(canvas);
+    texture.minFilter = THREE.NearestFilter; // NearestFilter;
     texture.needsUpdate = true;
 
-    spriteMaterial = new THREE.SpriteMaterial({map : texture});
-    sprite = new THREE.Sprite(spriteMaterial);
+    var spriteMaterial = new THREE.SpriteMaterial({
+       map : texture, sizeAttenuation : false});
+    var sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(0.08, 0.03, 1);
     return sprite;
 }

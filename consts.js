@@ -8,6 +8,7 @@ const tileSz = 64;
 const nTiles = 80;
 
 const modes = { ADMIN: 0, PLAYER: 1, SPECTATOR: 2};
+const views = { CLIENT: 0, COUNTS: 1, VALUES: 2 };
 
 const tiles = {
     0: "lava",

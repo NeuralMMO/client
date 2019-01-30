@@ -3,32 +3,49 @@ import * as playerM from './player.js';
 import * as terrainM from './terrain.js';
 import * as countsM from './counts.js';
 import * as valuesM from './values.js';
+import * as entityM from './entitybox.js';
 import * as textsprite from './textsprite.js';
 
-var client, counts, values, stats;
+var client, counts, values, stats, box;
+var CURRENT_VIEW = views.CLIENT;
 
 
-class Client {
-   constructor (client_container) {
-      this.engine = new engineM.Engine(modes.ADMIN, client_container);
+class AbstractClient {
+   // interface for client, viewer, and counts
+   constructor (client, my_container) {
+      this.engine = new engineM.Engine(modes.ADMIN, my_container);
+      my_container.innerHTML = ""; // get rid of the text after loading
+      my_container.appendChild( this.engine.renderer.domElement );
+
       this.handler = new playerM.PlayerHandler(this.engine);
+      this.client = client;
       this.init = true;
-      this.packet = null;
-      this.frame = 0;
-
-   }
-
-   // hook up signals
-   setupSignals() {
-      client_container.innerHTML = ""; // get rid of the text after loading
-      client_container.appendChild( this.engine.renderer.domElement );
 
       var scope = this; // javascript quirk... don't touch this
       function onMouseDown( event ) { scope.onMouseDown( event ); }
-      function onWindowResize() { scope.onWindowResize(); }
+      my_container.addEventListener( 'click', onMouseDown, false );
+   }
 
-      client_container.addEventListener( 'click', onMouseDown, false );
-      window.addEventListener( 'resize', onWindowResize, false );
+   onMouseDown(event) {
+      // optional
+   }
+
+   update () {
+      throw new Error("Must override abstract update method of AbstractClient.");
+   }
+
+   onWindowResize () {
+      this.engine.onWindowResize();
+   }
+
+}
+
+
+class Client extends AbstractClient {
+   constructor (my_container) {
+      super(null, my_container);
+      this.packet = null;
+      this.frame = 0;
    }
 
    updatePacket() {
@@ -122,37 +139,59 @@ class Client {
             */
 
          }
- 
          this.terrain.update(packet['map']);
       }
-      this.terrain.updateFast();
+      if (this.terrain) {
+         this.terrain.updateFast();
+      }
       this.handler.updateFast();
       this.engine.update(delta);
    }
 
-   onWindowResize () {
-      this.engine.onWindowResize();
-   }
-
    onMouseDown(event) {
-      //player.moveTarg = this.engine.raycast(event.clientX, event.clientY);
-      //player.sendMove();
+      // handle player event first
+      var minDistance = 1000000; // large number
+      var minPlayer = null;
 
-      //var pos = this.engine.raycast(event.clientX, event.clientY);
-      //this.engine.controls.target.set(pos[0], pos[1], pos[2]);
+      for (var id in this.handler.players) {
+         // Player subclasses Object3D
+         var player = this.handler.players[id];
+         var coords = this.engine.raycast(event.clientX, event.clientY,
+                 player);
+         if (coords) {
+            var distance = this.engine.camera.position.distanceTo(coords);
+            if (distance < minDistance) {
+               minDistance = distance;
+               minPlayer = player;
+            }
+         }
+      }
+
+      if (minPlayer) {
+         // now we've identified the closest player
+         console.log("Clicked player", minPlayer.clientId);
+         if (!box) {
+            box = new entityM.EntityBox();
+         }
+         box.setText("Player #" + minPlayer.clientId);
+         box.changeColor(minPlayer.color);
+         box.showAll();
+
+         if (this.engine.mode == modes.SPECTATOR) {
+            // follow this player
+         }
+      }
+
+      // then handle translate event (if self is player)
+      if (this.engine.mode == modes.PLAYER) {
+         //var pos = this.engine.raycast(event.clientX, event.clientY);
+         //this.engine.controls.target.set(pos);
+      }
    }
 }
 
-class Counts {
-   constructor (client, viewer_container) {
-      this.engine = new engineM.Engine(modes.ADMIN, viewer_container);
-      viewer_container.innerHTML = ""; // get rid of the text after loading
-      viewer_container.appendChild( this.engine.renderer.domElement );
-      this.handler = new playerM.PlayerHandler(this.engine);
-      this.client = client;
-      this.init = true;
-   }
 
+class Counts extends AbstractClient {
    update() {
       var delta = this.engine.clock.getDelta();
       if (this.client.packet) {
@@ -165,25 +204,18 @@ class Counts {
             var map = packet['map'];
             this.counts = new countsM.Counts(
                   packet['map'], packet['counts'], this.engine);
- 
          }
          this.counts.update(packet['map'], packet['counts']);
       }
-      this.counts.updateFast();
+      if (this.counts) {
+         this.counts.updateFast();
+      }
       this.engine.update(delta);
    }
 }
 
-class Values{
-   constructor (client, viewer_container) {
-      this.engine = new engineM.Engine(modes.ADMIN, viewer_container);
-      viewer_container.innerHTML = ""; // get rid of the text after loading
-      viewer_container.appendChild( this.engine.renderer.domElement );
-      this.handler = new playerM.PlayerHandler(this.engine);
-      this.client = client;
-      this.init = true;
-   }
 
+class Values extends AbstractClient {
    update() {
       var delta = this.engine.clock.getDelta();
       if (this.client.packet) {
@@ -199,7 +231,9 @@ class Values{
          }
          this.values.update(packet['map'], packet['values']);
       }
-      this.values.updateFast();
+      if (this.values) {
+         this.values.updateFast();
+      }
       this.engine.update(delta);
    }
 }
@@ -211,30 +245,80 @@ function webglError() {
    }
 }
 
+function toggleVisualizers() {
+   CURRENT_VIEW = (CURRENT_VIEW + 1) % 3;
+   displayOnlyCurrent();
+}
+
+function displayOnlyCurrent() {
+   client_container.style.display = "none";
+   values_container.style.display = "none";
+   counts_container.style.display = "none";
+
+   // now update the current view
+   switch ( CURRENT_VIEW ) {
+      case views.CLIENT:
+         client_container.style.display = "block";
+         break;
+      case views.COUNTS:
+         counts_container.style.display = "block";
+         break;
+      case views.VALUES:
+         values_container.style.display = "block";
+         break;
+   }
+}
+
+function onKeyDown(event) {
+   switch ( event.keyCode ) {
+      case 84: // T
+         toggleVisualizers();
+         break;
+   }
+}
+
+function onWindowResize() {
+   client.onWindowResize();
+   if (counts) {counts.onWindowResize();}
+   if (values) {values.onWindowResize();}
+}
+
 function init() {
    webglError();
    var client_container = document.getElementById("client_container");
-   var viewer_container = document.getElementById("viewer_container");
+   var values_container = document.getElementById("values_container");
 
    client = new Client(client_container);
-   //counts = new Counts(client, counts_container);
-   //values = new Values(client, values_container);
+   counts = new Counts(client, counts_container);
+   values = new Values(client, values_container);
+
    stats  = new Stats();
-   client.setupSignals();
    client_container.appendChild(stats.dom);
+
+   // Start by setting these to none
+   displayOnlyCurrent();
 
    var blocker = document.getElementById("blocker");
    var instructions = document.getElementById("instructions");
+
    instructions.addEventListener("click", function() {
 	   client.engine.controls.enabled = true;
 	   client.engine.controls.update();
-	   //counts.engine.controls.enabled = true;
-	   //counts.engine.controls.update();
-	   //values.engine.controls.enabled = true;
-	   //values.engine.controls.update();
+
+      if (counts) {
+	      counts.engine.controls.enabled = true;
+	      counts.engine.controls.update();
+      }
+	   if (values) {
+         values.engine.controls.enabled = true;
+	      values.engine.controls.update();
+      }
 	   instructions.style.display = "none";
       blocker.style.display = "none";
    }, false);
+
+   window.addEventListener( 'resize', onWindowResize, false );
+   window.addEventListener( 'keydown', onKeyDown, false );
 
    animate();
 }
@@ -242,11 +326,14 @@ function init() {
 function animate() {
    requestAnimationFrame( animate );
    client.update();
-   //counts.update();
-   //values.update();
+   counts.update();
+   values.update();
    stats.update();
+   if (counts && counts_container.style.display != "none") { counts.update();}
+   if (values && values_container.style.display != "none" ) { values.update();}
+   if (stats) { stats.update();}
+   if (box) { box.update();}
 }
-
 
 // Main
 init();

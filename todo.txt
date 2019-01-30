@@ -1,14 +1,15 @@
 @Taiyaki
-- load stuff after NNs are loaded
-- create entity info box, switched on by clicking on entity, colors itself
-  with entity color
 - lightbulb toggle switch, "let there be light"
 - playermode, admin mode, spectator mode
+- add attack map
 
 + Overhead names
 + ES6 imports working
-- Add wasd camera controls. Trackpads have no middle mouse.
-
++ Add wasd camera controls. Trackpads have no middle mouse.
++ load stuff after NNs are loaded
+- create entity info box, switched on by clicking on entity, colors itself
+  with entity color
++ create view toggle
 
 @Seal
 - Syncing data from server to client
