@@ -138,12 +138,12 @@ class Player extends THREE.Object3D {
 
       this.overhead.update(packet)
 
-      var targ = packet['target'];
-      if (targ != null) {
+      if (packet['attack'] != null) {
+         var targ = packet['attack']['target'];
          var targID = parseInt(targ, 10);
          if (this.entID != targID && targID in players) {
             var attk;
-            switch (packet['attack']) {
+            switch (packet['attack']['style']) {
                case 'Melee':
                   attk = new Animation.Melee(engine.scene, this, players[targID]);
                   break;

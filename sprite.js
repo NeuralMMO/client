@@ -35,15 +35,15 @@ class SpriteStats extends THREE.Object3D {
       this.barHeight = 8;
       this.engine = engine
 
-      this.health = this.initBar(0x00ff00, params['maxHealth'], 0)
-      this.water  = this.initBar(0x0000ff, params['maxWater'], 8)
-      this.food   = this.initBar(0xd4af37, params['maxFood'], 16)
+      this.health = this.initBar(0x00ff00, params['health']['max'], 0)
+      this.water  = this.initBar(0x0000ff, params['water']['max'], 8)
+      this.food   = this.initBar(0xd4af37, params['food']['max'], 16)
    }
 
    update(params) {
-      this.health.update(params['health']);
-      this.water.update(params['water']);
-      this.food.update(params['food']);
+      this.health.update(params['health']['val']);
+      this.water.update(params['water']['val']);
+      this.food.update(params['food']['val']);
    }
 
    updateFast() {
