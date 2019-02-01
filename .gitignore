@@ -5,3 +5,4 @@ __pycache__
 three.js
 three.js/*
 *.swp
+*.pyc

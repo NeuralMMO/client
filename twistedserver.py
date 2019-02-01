@@ -102,19 +102,19 @@ class EchoServerProtocol(WebSocketServerProtocol):
         data = self.serverPacket()
         entities = data['entities']
         environment = data['environment']
+        '''
         for id, e in entities.items():
-           e = e.client
            pkt = {}
            pkt['pos']  = e.pos
            pkt['entID'] = e.entID
            pkt['color'] = e.color.hex
-           pkt['name'] = 'Neural_' + str(e.entID)
-           pkt['food'] = e.food
-           pkt['water'] = e.water
-           pkt['health'] = e.health
-           pkt['maxFood'] = e.maxFood
-           pkt['maxWater'] = e.maxWater
-           pkt['maxHealth'] = e.maxHealth
+           pkt['name'] = e.name
+           pkt['food'] = e.food.val
+           pkt['water'] = e.water.val
+           pkt['health'] = e.health.val
+           pkt['maxFood'] = e.food.max
+           pkt['maxWater'] = e.water.max
+           pkt['maxHealth'] = e.health.max
            pkt['damage'] = e.damage
            pkt['attackMap'] = e.attackMap
 
@@ -124,9 +124,8 @@ class EchoServerProtocol(WebSocketServerProtocol):
               pkt['attack'] = e.attack.action.__name__
               pkt['target'] = e.attack.args.entID
            ent[id] = pkt
-
-        #What is this crap? Target ent?
-        self.packet['ent'] = ent
+        '''
+        self.packet['ent'] = entities
 
         gameMap = environment.np().tolist()
         self.packet['map'] = gameMap
