@@ -27,6 +27,6 @@ function makeTextSprite(message, fontsize, color) {
     var spriteMaterial = new THREE.SpriteMaterial({
        map : texture, sizeAttenuation : false});
     var sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(0.9, 0.03, 1);
+    sprite.scale.set(0.1, 0.03, 1);
     return sprite;
 }
