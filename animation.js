@@ -49,7 +49,7 @@ class ProceduralAnimation {
 class Move extends ProceduralAnimation {
    constructor(ent, targ) {
       super();
-      this.pos  = ent.userData.obj.position.clone();
+      this.pos  = ent.obj.position.clone();
       this.targ = ent.coords(targ);
       this.isTarget = false;
       this.ent = ent;
@@ -61,7 +61,7 @@ class Move extends ProceduralAnimation {
       var y = this.pos.y + moveFrac * (this.targ.y - this.pos.y);
       var z = this.pos.z + moveFrac * (this.targ.z - this.pos.z);
       var pos = new THREE.Vector3(x, y, z);
-      this.ent.userData.obj.position.copy(pos);
+      this.ent.obj.position.copy(pos);
 
       if (this.isTarget) {
          engine.camera.position.copy(pos);
@@ -79,7 +79,7 @@ class Damage extends ProceduralAnimation {
       this.height = 128
       this.dmg.position.y = this.height
       this.ent = ent;
-      ent.userData.obj.add(this.dmg)
+      ent.obj.add(this.dmg)
    }
 
    step(delta, elapsedTime) {
@@ -88,15 +88,15 @@ class Damage extends ProceduralAnimation {
    }
 
    finish() {
-      this.ent.userData.obj.remove(this.dmg);
+      this.ent.obj.remove(this.dmg);
    }
 }
 
 class Attack extends ProceduralAnimation {
    constructor(scene, orig, targ) {
       super();
-      this.orig = orig.userData.obj;
-      this.targ = targ.userData.obj;
+      this.orig = orig.obj;
+      this.targ = targ.obj;
       this.scene = scene;
 
       var attkMatl = new THREE.MeshBasicMaterial( {

@@ -80,57 +80,47 @@ class PlayerHandler {
 }
 
 class Player extends THREE.Object3D {
-
-   constructor(handler, params)  {
+   constructor(handler, clientId, params)  {
       super();
-      this.userData = {
-         translateState : false,
-         translateDir : new THREE.Vector3(0.0, 0.0, 0.0),
-         moveTarg : [0, 0],
-         height : sz,  // above grass, below mountains
-         entID : params['entID'],
-         engine : handler.engine,
-         target : null,
-         color : null,
-         obj : null,
-         anims : [],
-         handler : handler,
-         params : params
-      }
+      this.clientId = clientId;
+      this.translateState = false;
+      this.translateDir = new THREE.Vector3(0.0, 0.0, 0.0);
+      this.moveTarg = [0, 0];
+      this.height = sz;    // above grass, below mountains
+      this.entID = params['entID']
+      this.engine = handler.engine
+      this.color = null
+
       this.initObj(params, handler);
       this.initOverhead(params);
    }
 
-   clone() {
-      var copy = super.clone();
-      return new Player(this.userData.handler, this.userData.params);
-   }
-
    initObj(params, handler) {
       var pos = params['pos'];
-      this.userData.color = params['color']
-      this.userData.obj = handler.nnObjs[this.userData.color].clone();
-      this.userData.obj.position.y = this.userData.height;
-      this.userData.obj.position.copy(this.coords(pos));
-      this.userData.target = this.userData.obj.position.clone();
-      this.add(this.userData.obj)
+      //this.obj = OBJ.loadNN(params['color']);
+      this.color = params['color']
+      this.obj = handler.nnObjs[this.color].clone();
+      this.obj.position.y = this.height;
+      this.obj.position.copy(this.coords(pos));
+      this.target = this.obj.position.clone();
+      this.add(this.obj)
+      this.anims = [];
    }
 
    initOverhead(params) {
-      this.userData.overhead = new Sprite.Overhead(params, this.userData.engine);
-      this.userData.obj.add(this.userData.overhead)
-      this.userData.overhead.position.y = sz;
+      this.overhead = new Sprite.Overhead(params, this.engine);
+      this.obj.add(this.overhead)
+      this.overhead.position.y = sz;
    }
 
    //Format: pos = (r, c)
    coords(pos) {
-      return new THREE.Vector3(
-            pos[1]*sz+sz+sz/2, this.userData.height, pos[0]*sz+sz+sz/2);
+      return new THREE.Vector3(pos[1]*sz+sz+sz/2, this.height, pos[0]*sz+sz+sz/2);
    }
 
    cancelAnims() {
-      for (var anim in this.userData.anims) {
-         this.userData.anims[anim].cancel()
+      for (var anim in this.anims) {
+         this.anims[anim].cancel()
       }
    }
 
@@ -139,46 +129,43 @@ class Player extends THREE.Object3D {
 
       var move = packet['pos'];
       //console.log("Move: ", move)
-      this.userData.anims.push(new Animation.Move(this, move));
+      this.anims.push(new Animation.Move(this, move));
 
       var damage = packet['damage'];
       if (damage != null) {
-         this.userData.anims.push(new Animation.Damage(this, packet['damage']));
+         this.anims.push(new Animation.Damage(this, packet['damage']));
       }
 
-      this.userData.overhead.update(packet)
+      this.overhead.update(packet)
 
       var targ = packet['target'];
       if (targ != null) {
          var targID = parseInt(targ, 10);
-         if (this.userData.entID != targID && targID in players) {
+         if (this.entID != targID && targID in players) {
             var attk;
             switch (packet['attack']) {
                case 'Melee':
-                  attk = new Animation.Melee(
-                        engine.scene, this, players[targID]);
+                  attk = new Animation.Melee(engine.scene, this, players[targID]);
                   break;
                case 'Range':
-                  attk = new Animation.Range(
-                        engine.scene, this, players[targID]);
+                  attk = new Animation.Range(engine.scene, this, players[targID]);
                   break;
                case 'Mage':
-                  attk = new Animation.Mage(
-                        engine.scene, this, players[targID]);
+                  attk = new Animation.Mage(engine.scene, this, players[targID]);
                   break;
             }
-            this.userData.anims.push(attk);
+            this.anims.push(attk);
          }
       }
    }
 
    updateFast() {
-      this.userData.overhead.updateFast()
+      this.overhead.updateFast()
    }
 
    sendMove() {
       var packet = JSON.stringify({
-         "pos" : this.userData.moveTarg
+         "pos" : this.moveTarg
       });
       ws.send(packet);
    }

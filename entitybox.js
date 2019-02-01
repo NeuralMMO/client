@@ -266,10 +266,10 @@ class RenderedPanel extends Panel {
       this.scene.add(pointLight);
 
       this.controls = new THREE.OrbitControls(this.camera, this.canvas);
-      this.controls.lookVertical = true;
+      //this.controls.lookVertical = true;
       this.controls.enableZoom = true;
-      this.controls.update();
       //this.controls.autoRotate = true;
+      this.controls.update();
 		this.dom = this.canvas;
    }
 
@@ -289,14 +289,17 @@ class StatsPanel extends TilePanel {}
 class PlayerPanel extends RenderedPanel {
 
    setPlayer( player ) {
-      this.player = player.clone({recursive: true});
-      this.scene.add(player);
+      this.player = player.obj.clone({recursive: false});
+      this.scene.add(this.player);
+      this.player.position.set(0, 0, 0);
+      this.controls.target.copy(this.player.position);
+      this.camera.position.z -= 5;
+      this.camera.lookAt(this.player.position);
    }
 
    update(delta) {
       if (this.player) {
-         this.controls.target.set(this.player.position.clone());
-         //this.camera.lookAt(this.player.position.clone());
+         console.log(this.player.position, this.controls.object.position);
          this.controls.update();
       }
       super.update(delta);
