@@ -54,7 +54,19 @@ function loadNN(color) {
 	   obj.scale.y = 50;
 	   obj.scale.z = 50;
 	   obj.children[0].material.color.setHex(parseInt(color.substr(1), 16));
-	   contain.add(obj);
+      obj.children[0].castShadow = true;
+
+      obj.traverse( function ( child ) {
+
+          if ( child instanceof THREE.Mesh ) {
+
+              //child.material.map = texture;
+              child.castShadow = true;
+
+          }
+
+      } );
+         contain.add(obj);
        return new Promise( ( resolve, reject ) => {
           resolve( { myColor: color, obj: contain} );
        } ); // ugly but gets the job done

@@ -45,6 +45,7 @@ class PlayerHandler {
    addPlayer(id, params) {
       var player = new Player(this, id, params)
       this.players[id] = player;
+      player.castShadow = true;
       this.engine.scene.add(player);
    }
 
