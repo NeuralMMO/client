@@ -7,6 +7,9 @@ const sz = 64;
 const tileSz = 64;
 const nTiles = 80;
 
+const taiyaki_sky = 0x4477aa;
+const seal_sky = 0x003333;
+
 const modes = { ADMIN: 0, PLAYER: 1, SPECTATOR: 2};
 const views = { CLIENT: 0, COUNTS: 1, VALUES: 2 };
 

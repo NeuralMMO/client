@@ -6,7 +6,7 @@ class Engine {
       this.mode = mode;
       this.container = aContainer;
       this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color( 0x4477aa );
+      this.scene.background = new THREE.Color(seal_sky);
 
       this.mesh = null; // we'll initialize from the server packet
 
@@ -41,18 +41,16 @@ class Engine {
       //var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.25);
       //this.scene.add( ambientLight );
 
-      /*
-      var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2 );
+      var pointLight = new THREE.PointLight( 0xffffff, 1, 0, 0.5 );
       pointLight.position.set( 64*40, 500, 64*40 );
       //pointLight.position.set( 0, 1500, 0 );
       pointLight.castShadow = true;
       pointLight.shadow.camera.far = 0;
       this.scene.add(pointLight);
-      */
 
       var clip = 40*64;
 
-      var light = new THREE.DirectionalLight(0xffffff);
+      var light = new THREE.DirectionalLight(0xffffff, 0.75);
       light.position.set(clip,300,clip);
       light.target.position.set(clip, 0, clip)
       light.target.updateMatrixWorld()

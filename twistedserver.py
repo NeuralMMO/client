@@ -81,7 +81,10 @@ class EchoServerProtocol(WebSocketServerProtocol):
 
         data = self.serverPacket()
         sz = data['environment'].shape[0]
-        self.vals = self.visVals(data['values'], sz)
+
+        self.vals = None
+        if data['values'] is not None:
+           self.vals = self.visVals(data['values'], sz)
 
         self.sendUpdate()
 
@@ -138,7 +141,9 @@ class EchoServerProtocol(WebSocketServerProtocol):
            tiles.append(tl)
         self.packet['counts'] = tiles
 
-        self.packet['values'] = self.vals.tolist()
+        self.packet['values'] = self.vals
+        if self.vals is not None:
+           self.packet['values'] = self.vals.tolist()
  
         packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)
@@ -203,5 +208,6 @@ class Application:
 
         reactor.listenTCP(port, site)
         reactor.run()
+
 
 
