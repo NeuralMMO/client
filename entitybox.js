@@ -12,11 +12,34 @@ class EntityBox {
 
       this.panels = [];
 
-		//var rp = new RenderedPanel();
+      // tileMap is array of R, G, B = n x 3 x d
+      var tileMap = new TileMap(
+            [255, 255, 255,
+             128, 128, 190,
+             50, 255, 128,
+             0, 256, 0,
+             0, 256, 0,
+             0, 256, 0,
+             128, 128, 128,
+             128, 128, 128,
+             128, 128, 190,
+             50, 255, 128,
+             0, 256, 0,
+             0, 256, 0,
+             0, 256, 0,
+             128, 128, 128,
+             128, 128, 128,
+             128, 128, 128], 4, 4);
+
+
+		var pp = new PlayerPanel();
 		var fp = new FlatPanel("#000000");
+		var tp = new TilePanel(0, 0);
+      tp.drawTiles(tileMap);
 
 		this.addPanel(fp);
-		//this.addPanel(rp);
+		this.addPanel(tp);
+		this.addPanel(pp);
 
       this.dom = this.container;
       this.mode = -1;
@@ -47,9 +70,15 @@ class EntityBox {
 		this.mode = id;
 	}
 
-   changeColor(color) {
+   setPlayer( player ) {
       for (var i = 0; i < this.panels.length; i++) {
-         this.panels[i].changeColor(color);
+         this.panels[i].setPlayer(player);
+      }
+   }
+
+   setColor(color) {
+      for (var i = 0; i < this.panels.length; i++) {
+         this.panels[i].setColor(color);
       }
    }
 
@@ -60,7 +89,6 @@ class EntityBox {
    }
 
    update(delta) {
-      // This will be replaced with something more complicated later
       for (var i = 0; i < this.panels.length; i++) {
          this.panels[i].update(delta);
       }
@@ -70,10 +98,17 @@ class EntityBox {
 
 class Panel {
 
-   changeColor(color) {
+   constructor() {
+		this.PR = Math.round( window.devicePixelRatio || 1 );
+   }
+
+   setColor(color) {
    }
 
    setText(text) {
+   }
+
+   setPlayer(player) {
    }
 
    update(delta) {
@@ -84,12 +119,13 @@ class Panel {
 class TilePanel extends Panel {
 
    constructor(i, j) {
-		this.TILESZ = 80;
+      super();
+		this.TILESZ = 10;
 		var canvas = document.createElement( 'canvas' );
       canvas.id = "tile_panel";
-		canvas.width = this.TILESZ;
-		canvas.height = this.TILESZ;
-		canvas.style.cssText = 'position:fixed;left:0;top:66%;width:'
+		canvas.width = this.TILESZ * 10;
+		canvas.height = this.TILESZ * 10;
+		canvas.style.cssText = 'position:fixed;left:5%;top:80%;width:'
          + canvas.width + 'px;height:' + canvas.height + 'px';
 		this.canvas = canvas;
 	   this.context = this.canvas.getContext( '2d' );
@@ -97,25 +133,43 @@ class TilePanel extends Panel {
 	}
 
 	drawTiles( tileMap ) {
-      // tileMap is array of R, G, B = n x 3 x d
-		for (var c = 0; c < map.cols; c++) {
-			for (var r = 0; r < map.rows; r++) {
-				var tile = map.getTile(c, r);
+		for (var c = 0; c < tileMap.cols; c++) {
+			for (var r = 0; r < tileMap.rows; r++) {
+				var tile = tileMap.getTile(r, c);
 
-				if (tile !== 0) { // 0 => empty tile
-					this.context.fillStyle = tileToColorMap[tile];
+				if (tile.getHex() !== 0) { // 0 => empty tile
+					this.context.fillStyle = "#" + tile.getHexString();
 					this.context.fillRect(
-						  c * map.tsize, // target x
-						  r * map.tsize, // target y
-						  map.tsize, // target width
-						  map.tsize // target height
+						  c * this.TILESZ, // target x
+						  r * this.TILESZ, // target y
+						  this.TILESZ, // target width
+						  this.TILESZ // target height
 					);
 				}
 			}
 		}
    }
-
 }
+
+
+class TileMap {
+	constructor(array, rows, cols) {
+      /* Implements row-major tile map.
+       */
+		this.rows = rows;  // N
+		this.cols = cols;  // D
+      this.array = array; // array is N rows by 3xN cols
+	}
+
+   getTile(i, j) {
+      var r = this.array[i*this.cols*3 + 3*j];
+      var g = this.array[i*this.cols*3 + 3*j+1];
+      var b = this.array[i*this.cols*3 + 3*j+2];
+
+      return new THREE.Color(r/256.0, g/256.0, b/256.0);
+   }
+}
+
 
 class FlatPanel extends Panel {
 
@@ -128,56 +182,49 @@ class FlatPanel extends Panel {
 
       this.fgColor = fgColor;  // this shouldn't change
 
-		var min = Infinity, max = 0, round = Math.round;
-		var PR = round( window.devicePixelRatio || 1 );
-
-		this.WIDTH = window.innerWidth / 4 * PR;
-      this.HEIGHT = 200 * PR;
-		this.TEXT_X = 20 * PR;
-      this.TEXT_Y = 50 * PR;
-		var GRAPH_X = 300 * PR, GRAPH_Y = 150 * PR,
-				GRAPH_WIDTH = 74 * PR, GRAPH_HEIGHT = 30 * PR;
+		this.WIDTH = window.innerWidth / 4 * this.PR;
+      this.HEIGHT = window.innerHeight / 3 * this.PR;
+		this.TEXT_X = 20 * this.PR;
+      this.TEXT_Y = 50 * this.PR;
 
 		var canvas = document.createElement( 'canvas' );
       canvas.id = "flat_panel";
 		canvas.width = this.WIDTH;
 		canvas.height = this.HEIGHT;
-		canvas.style.cssText = 'position:fixed;left:0;top:66%;width:'
-         + this.WIDTH/PR + 'px;height:' + this.HEIGHT/PR + 'px';
+		canvas.style.cssText = 'position:fixed;left:0;top:67%;width:'
+         + this.WIDTH/this.PR + 'px;height:' + this.HEIGHT/this.PR + 'px';
 		this.canvas = canvas;
 
 		var context = this.canvas.getContext( '2d' );
-		context.font = 'bold ' + ( 50 * PR )
-            + 'px DragonSlapper';
+		context.font = ( 40 * this.PR ) + 'px DragonSlapper';
 		context.textBaseline = 'top';
       this.context = context;
 
-		//context.fillStyle = bgColor;
-		//context.globalAlpha = 0.9;
-		//context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
-
 		this.dom = canvas;
-
 	}
 
    setText( text ) {
       this.text = text;
-      this.fillText();
+      this.repaint();
    }
 
-   fillText() {
+	setColor( color ) {
+      this.bgColor = color;
+      this.repaint();
+	}
+
+   repaint() {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      var grd = this.context.createLinearGradient(0, 0, this.canvas.width, 0);
+      grd.addColorStop(0, "white"); //this.bgColor);
+      grd.addColorStop(0.5, this.bgColor);
+      grd.addColorStop(1, "transparent");
+      this.context.fillStyle = grd;
+		this.context.fillRect( 0, 0, this.WIDTH, this.HEIGHT );
 		this.context.fillStyle = this.fgColor;
 		this.context.fillText( this.text, this.TEXT_X, this.TEXT_Y );
-		// this.context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
    }
-
-	changeColor( color ) {
-      this.bgColor = color;
-      this.context.fillStyle = this.bgColor;
-		this.context.fillRect( 0, 0, this.WIDTH, this.HEIGHT );
-      this.fillText();
-		// currently pass, maybe change FG color?
-	}
 
    update ( delta ) {
 		// currently we do nothing
@@ -191,15 +238,25 @@ class RenderedPanel extends Panel {
 
    constructor() {
       super();
+		var canvas = document.createElement( 'canvas' );
+      canvas.id = "rendered_panel";
+		canvas.width = window.innerWidth/6 * this.PR;
+		canvas.height = window.innerHeight/6 * this.PR;
+		canvas.style.cssText = 'position:fixed;left:10%;top:80%;width:'
+         + canvas.width/this.PR + 'px;height:' + canvas.height/this.PR + 'px';
+		this.canvas = canvas;
+
       // engine stuff in a panel
       this.scene = new THREE.Scene();
 
       this.camera = new THREE.PerspectiveCamera(
               60, window.innerWidth / window.innerHeight, 1, 20000);
 
-      this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+      this.renderer = new THREE.WebGLRenderer( {
+         antialias: true, canvas: this.canvas, alpha: true} );
+      this.renderer.setClearColor( 0x000000, 0);
       this.renderer.setPixelRatio( window.devicePixelRatio );
-      this.renderer.setSize( window.innerWidth/3, window.innerHeight/3 );
+      this.renderer.setSize( window.innerWidth/6, window.innerHeight/6 );
       this.renderer.shadowMap.enabled = true;
 
       var pointLight = new THREE.PointLight( 0xffffff, 1.5, 0, 2);
@@ -208,14 +265,45 @@ class RenderedPanel extends Panel {
       pointLight.shadow.camera.far = 0;
       this.scene.add(pointLight);
 
-		this.dom = this.renderer.domElement;
+      this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+      //this.controls.lookVertical = true;
+      this.controls.enableZoom = true;
+      //this.controls.autoRotate = true;
+      this.controls.update();
+		this.dom = this.canvas;
    }
 
-   changeColor(color) {
-      this.scene.background = new THREE.Color( color );
+   setColor(color) {
+      //this.scene.background = new THREE.Color( color );
    }
 
    update(delta) {
       this.renderer.render( this.scene, this.camera );
    }
 }
+
+class AttackPanel extends TilePanel {}
+
+class StatsPanel extends TilePanel {}
+
+class PlayerPanel extends RenderedPanel {
+
+   setPlayer( player ) {
+      this.player = player.obj.clone({recursive: false});
+      this.scene.add(this.player);
+      this.player.position.set(0, 0, 0);
+      this.controls.target.copy(this.player.position);
+      this.camera.position.z -= 5;
+      this.camera.lookAt(this.player.position);
+   }
+
+   update(delta) {
+      if (this.player) {
+         console.log(this.player.position, this.controls.object.position);
+         this.controls.update();
+      }
+      super.update(delta);
+   }
+}
+
+

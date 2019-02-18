@@ -169,12 +169,13 @@ class Client extends AbstractClient {
 
       if (minPlayer) {
          // now we've identified the closest player
-         console.log("Clicked player", minPlayer.clientId);
+         console.log("Clicked player", minPlayer.entID);
          if (!box) {
             box = new entityM.EntityBox();
          }
-         box.setText("Player #" + minPlayer.clientId);
-         box.changeColor(minPlayer.color);
+         box.setPlayer(minPlayer);
+         box.setColor(minPlayer.color);
+         box.setText("Player #" + minPlayer.entID);
          box.showAll();
 
          if (this.engine.mode == modes.SPECTATOR) {

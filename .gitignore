@@ -1,5 +1,6 @@
 deprecated/*
 deprecated
+*.pyc
 __pycache__/*
 __pycache__
 three.js
