@@ -7,7 +7,7 @@ var height = 80;
 var resolution = 3;
 
 class Terrain {
-   constructor(map, engine) {
+   constructor(map, engine, axes=false) {
        /*
         * Adds terrain which shades water, grass, dirt, and mountains
         * based on a heightmap given by the server.
@@ -15,13 +15,25 @@ class Terrain {
       this.nTiles = map.length;
       this.mapSz = this.nTiles*tileSz;
 
+      this.vertShader = document.getElementById(
+            'phongVertexShader').textContent;
+      this.fragShader = document.getElementById(
+            'phongFragmentShader').textContent;
+
       this.loader = new THREE.TextureLoader();
-      //this.axes(engine)
-      //this.mesh(map, engine)
+      if (axes) {
+         this.axes(engine)
+      }
       this.water(map, engine)
-      //this.shades(map, engine)
       this.terr(map, engine)
-  }
+   }
+
+   reset() {
+      this.material.vertexShader   = this.vertShader   
+      this.material.fragmentShader = this.fragShader 
+      //this.material.uniforms = this.baseUniforms
+      this.material.needsUpdate = true
+   }
 
    terr(map, engine) {
       var bumpMap = this.generateHeight(map);
@@ -38,7 +50,7 @@ class Terrain {
       var grassTexture  = this.texture('resources/tiles/grass.png' );
 
       // use "this." to create global object
-      var custUniforms = {
+      var base = {
          bumpTexture:   { type: "t", value: bumpTexture },
          tileTexture:   { type: "t", value: tileTexture },
          tileScale:     { type: "f", value: tileSz},
@@ -49,16 +61,8 @@ class Terrain {
          scrubTexture:  { type: "t", value: scrubTexture},
          stoneTexture:  { type: "t", value: stoneTexture},
       };
-      //custUniforms[ "offsetRepeat" ].value.set( 0, 0, 2, 2 );
-      var customUniforms = Object.assign( 
-            custUniforms, THREE.ShaderLib.phong.uniforms);
-
-      var vertShader = document.getElementById(
-            'phongVertexShader').textContent;
-      var fragShader = document.getElementById(
-            'phongFragmentShader').textContent;
-      //var fragShader = THREE.ShaderChunk[ 'meshphong_frag' ]
- 
+      this.baseUniforms = Object.assign( 
+            base, THREE.ShaderLib.phong.uniforms);
 
       var defines = {};
       defines[ "USE_MAP" ] = "";
@@ -66,16 +70,14 @@ class Terrain {
       //defines: defines,
       var customMaterial = new THREE.ShaderMaterial(
       {
-         uniforms: customUniforms,
-         vertexShader: vertShader,   
-         fragmentShader: fragShader,
+         uniforms: this.baseUniforms,
+         vertexShader: this.vertShader,   
+         fragmentShader: this.fragShader,
          name: 'custom-material',
          lights: true,
       });
       customMaterial.shadowSide = THREE.BackSide;
-      //THREE.FrontSide;
-      this.customMaterial = customMaterial;
-      //customMaterial.needsUpdate = true;
+      this.material = customMaterial;
 
       var planeGeo = new THREE.PlaneGeometry(
             this.mapSz, this.mapSz, width*resolution, height*resolution);
@@ -85,7 +87,9 @@ class Terrain {
       plane.castShadow = true;
       plane.receiveShadow = true;
 
-
+      engine.scene.add( plane );
+      engine.mesh = plane;
+ 
       /*
       function replaceThreeChunkFn(a, b) {
           return THREE.ShaderChunk[b] + '\n';
@@ -106,9 +110,6 @@ class Terrain {
       //fragmentShader: THREE.ShaderLib.depthRGBA.fragmentShader,
       */
 
-
-      engine.scene.add( plane );
-      engine.mesh = plane;
       }
 
 
@@ -120,7 +121,6 @@ class Terrain {
  
       var waterGeo = new THREE.PlaneBufferGeometry(
             waterSz, waterSz);
-      //      waterSz, waterSz, waterTiles*resolution, waterTiles*resolution);
       var water = new THREE.Water(waterGeo, {
          textureWidth: 512,
          textureHeight: 512,
@@ -133,14 +133,6 @@ class Terrain {
          fog: engine.scene.fog !== undefined
       });
 
-      /*
-      var waterTex = this.loader.load( 'resources/tiles/water.png' );
-      waterTex.wrapS = waterTex.wrapT = THREE.RepeatWrapping;
-      waterTex.repeat.set(50,50);
-      var waterMat = new THREE.MeshPhongMaterial( {
-           map: waterTex, transparent:true, opacity:0.75} );
-      var water = new THREE.Mesh(   waterGeo, waterMat );
-      */
       water.rotation.x = -Math.PI / 2;
       water.position.y = 3*tileSz/4;
       water.position.x = this.mapSz / 2;
@@ -239,11 +231,12 @@ class Terrain {
                tileMap, width, height, THREE.RGBFormat);
       tileTexture.wrapS = tileTexture.wrapT = THREE.ClampToEdgeWrapping;
       tileTexture.needsUpdate = true;
-      this.customMaterial.uniforms.tileTexture.value = tileTexture;
-  }
+      this.material.uniforms.tileTexture.value = tileTexture;
+      //this.material.uniforms.tileTexture = tileTexture;
+   }
 
    updateFast(){
-      this.water.material.uniforms.time.value += 1.0 / 60.0;
+      this.water.material.uniforms.time.value += 3.0 / 60.0;
       this.water.needsUpdate = true;
    }
 

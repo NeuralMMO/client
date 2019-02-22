@@ -26,6 +26,8 @@ class Engine {
       //this.renderer.setPixelRatio( window.devicePixelRatio );
       this.renderer.setPixelRatio(2); //Antialias x2
       this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
       //this.renderer.shadowMap.renderSingleSided = false;
@@ -50,7 +52,7 @@ class Engine {
 
       var clip = 40*64;
 
-      var light = new THREE.DirectionalLight(0xffffff, 0.75);
+      var light = new THREE.DirectionalLight(0xffffff, 1.0);
       light.position.set(clip,300,clip);
       light.target.position.set(clip, 0, clip)
       light.target.updateMatrixWorld()

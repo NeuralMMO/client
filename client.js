@@ -10,15 +10,14 @@ var client, counts, values, stats, box;
 var CURRENT_VIEW = views.CLIENT;
 
 
-class AbstractClient {
+class Client{
    // interface for client, viewer, and counts
-   constructor (client, my_container) {
-      this.engine = new engineM.Engine(modes.ADMIN, my_container);
+   constructor (my_container) {
+      this.engine = new engineM.Engine(modes.ADMIN, client_container);
       my_container.innerHTML = ""; // get rid of the text after loading
       my_container.appendChild( this.engine.renderer.domElement );
 
       this.handler = new playerM.PlayerHandler(this.engine);
-      this.client = client;
       this.init = true;
 
       var scope = this; // javascript quirk... don't touch this
@@ -26,26 +25,44 @@ class AbstractClient {
       my_container.addEventListener( 'click', onMouseDown, false );
    }
 
-   onMouseDown(event) {
-      // optional
-   }
+   update() {
+      var delta = this.engine.clock.getDelta();
+      this.engine.update(delta);
+      this.handler.updateFast();
+      this.updatePacket();
 
-   update () {
-      throw new Error("Must override abstract update method of AbstractClient.");
+      var packet = this.packet;
+      if (packet) {
+         // Receive packet, begin translating based on the received position
+         packet = JSON.parse(packet);
+
+         var map = packet['map']
+         if (this.init) { 
+            this.terrain = new terrainM.Terrain(map, this.engine);
+            this.values = new valuesM.Values(this.terrain.material);
+            this.counts = new countsM.Counts(this.terrain.material)
+            displayOnlyCurrent(client.engine);
+            this.values.update(map, packet['values']);
+            this.counts.update(packet['counts']);
+            this.init = false;
+         }
+         this.handler.updateData(packet['ent']);
+         this.terrain.update(map)
+         if (CURRENT_VIEW == views.VALUES) {
+            this.values.update(map, packet['values']);
+         }
+         if (CURRENT_VIEW == views.COUNTS) {
+            this.counts.update(packet['counts']);
+         }
+      }
+
+      if (this.terrain) {
+         this.terrain.updateFast();
+      }
    }
 
    onWindowResize () {
       this.engine.onWindowResize();
-   }
-
-}
-
-
-class Client extends AbstractClient {
-   constructor (my_container) {
-      super(null, my_container);
-      this.packet = null;
-      this.frame = 0;
    }
 
    updatePacket() {
@@ -56,19 +73,132 @@ class Client extends AbstractClient {
       }
    }
 
-   update() {
-      var delta = this.engine.clock.getDelta();
-      this.updatePacket();
+   onMouseDown(event) {
+      // handle player event first
+      var minDistance = 1000000; // large number
+      var minPlayer = null;
 
-      if (this.packet) {
-         // Receive packet, begin translating based on the received position
-         var packet = JSON.parse(this.packet);
-         this.handler.updateData(packet['ent']);
-         this.frame += 1;
-         if (this.init) {
-            this.init = false;
-            var map = packet['map'];
-            this.terrain = new terrainM.Terrain(map, this.engine);
+      for (var id in this.handler.players) {
+         // Player subclasses Object3D
+         var player = this.handler.players[id];
+         var coords = this.engine.raycast(event.clientX, event.clientY,
+                 player);
+         if (coords) {
+            var distance = this.engine.camera.position.distanceTo(coords);
+            if (distance < minDistance) {
+               minDistance = distance;
+               minPlayer = player;
+            }
+         }
+      }
+
+      if (minPlayer) {
+         // now we've identified the closest player
+         console.log("Clicked player", minPlayer.entID);
+         if (!box) {
+            box = new entityM.EntityBox();
+         }
+         box.setPlayer(minPlayer);
+         box.setColor(minPlayer.color);
+         box.setText("Player #" + minPlayer.entID);
+         box.showAll();
+
+         if (this.engine.mode == modes.SPECTATOR) {
+            // follow this player
+         }
+      }
+
+      // then handle translate event (if self is player)
+      if (this.engine.mode == modes.PLAYER) {
+         //var pos = this.engine.raycast(event.clientX, event.clientY);
+         //this.engine.controls.target.set(pos);
+      }
+   }
+}
+
+function webglError() {
+   if ( WEBGL.isWebGLAvailable() === false ) {
+      document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+   }
+}
+
+function toggleVisualizers() {
+   CURRENT_VIEW = (CURRENT_VIEW + 1) % 3;
+   displayOnlyCurrent();
+}
+
+function displayOnlyCurrent() {
+   client_container.style.display = "block";
+
+   // now update the current view
+   switch ( CURRENT_VIEW ) {
+      case views.CLIENT:
+         client.terrain.reset()
+         break;
+      case views.COUNTS:
+         client.counts.reset()
+         break;
+      case views.VALUES:
+         client.values.reset()
+         break;
+   }
+}
+
+function onKeyDown(event) {
+   switch ( event.keyCode ) {
+      case 84: // T
+         toggleVisualizers();
+         break;
+   }
+}
+
+function onWindowResize() {
+   client.onWindowResize();
+   if (counts) {counts.onWindowResize();}
+   if (values) {values.onWindowResize();}
+}
+
+function init() {
+   webglError();
+   var client_container = document.getElementById("client_container");
+   var values_container = document.getElementById("values_container");
+
+   client = new Client(client_container);
+
+   stats  = new Stats();
+   client_container.appendChild(stats.dom);
+
+   // Start by setting these to none
+
+   var blocker = document.getElementById("blocker");
+   var instructions = document.getElementById("instructions");
+
+   instructions.addEventListener("click", function() {
+	   client.engine.controls.enabled = true;
+	   client.engine.controls.update();
+
+	   instructions.style.display = "none";
+      blocker.style.display = "none";
+   }, false);
+
+   window.addEventListener( 'resize', onWindowResize, false );
+   window.addEventListener( 'keydown', onKeyDown, false );
+
+   animate();
+}
+
+function animate() {
+   requestAnimationFrame( animate );
+   client.update();
+   stats.update();
+   if (stats) { stats.update();}
+   if (box) { box.update();}
+}
+
+// Main
+init();
+
+
 
             /*
             var pkt1 = {
@@ -138,203 +268,4 @@ class Client extends AbstractClient {
             this.engine.scene.add(dmg);
             */
 
-         }
-         this.terrain.update(packet['map']);
-      }
-      if (this.terrain) {
-         this.terrain.updateFast();
-      }
-      this.handler.updateFast();
-      this.engine.update(delta);
-   }
 
-   onMouseDown(event) {
-      // handle player event first
-      var minDistance = 1000000; // large number
-      var minPlayer = null;
-
-      for (var id in this.handler.players) {
-         // Player subclasses Object3D
-         var player = this.handler.players[id];
-         var coords = this.engine.raycast(event.clientX, event.clientY,
-                 player);
-         if (coords) {
-            var distance = this.engine.camera.position.distanceTo(coords);
-            if (distance < minDistance) {
-               minDistance = distance;
-               minPlayer = player;
-            }
-         }
-      }
-
-      if (minPlayer) {
-         // now we've identified the closest player
-         console.log("Clicked player", minPlayer.entID);
-         if (!box) {
-            box = new entityM.EntityBox();
-         }
-         box.setPlayer(minPlayer);
-         box.setColor(minPlayer.color);
-         box.setText("Player #" + minPlayer.entID);
-         box.showAll();
-
-         if (this.engine.mode == modes.SPECTATOR) {
-            // follow this player
-         }
-      }
-
-      // then handle translate event (if self is player)
-      if (this.engine.mode == modes.PLAYER) {
-         //var pos = this.engine.raycast(event.clientX, event.clientY);
-         //this.engine.controls.target.set(pos);
-      }
-   }
-}
-
-
-class Counts extends AbstractClient {
-   update() {
-      var delta = this.engine.clock.getDelta();
-      if (this.client.packet) {
-         // Receive packet, begin translating based on the received position
-         var packet = this.client.packet;
-         packet = JSON.parse(packet);
-         this.handler.updateData(packet['ent']);
-         if (this.init) {
-            this.init = false;
-            var map = packet['map'];
-            this.counts = new countsM.Counts(
-                  packet['map'], packet['counts'], this.engine);
-         }
-         this.counts.update(packet['map'], packet['counts']);
-      }
-      if (this.counts) {
-         this.counts.updateFast();
-      }
-      this.engine.update(delta);
-   }
-}
-
-
-class Values extends AbstractClient {
-   update() {
-      var delta = this.engine.clock.getDelta();
-      if (this.client.packet) {
-         // Receive packet, begin translating based on the received position
-         var packet = this.client.packet;
-         packet = JSON.parse(packet);
-         this.handler.updateData(packet['ent']);
-         if (this.init) {
-            this.init = false;
-            var map = packet['map'];
-            this.values = new valuesM.Values(
-                  packet['map'], packet['values'], this.engine);
-         }
-         this.values.update(packet['map'], packet['values']);
-      }
-      if (this.values) {
-         this.values.updateFast();
-      }
-      this.engine.update(delta);
-   }
-}
-
-
-function webglError() {
-   if ( WEBGL.isWebGLAvailable() === false ) {
-      document.body.appendChild( WEBGL.getWebGLErrorMessage() );
-   }
-}
-
-function toggleVisualizers() {
-   CURRENT_VIEW = (CURRENT_VIEW + 1) % 3;
-   displayOnlyCurrent();
-}
-
-function displayOnlyCurrent() {
-   client_container.style.display = "none";
-   values_container.style.display = "none";
-   counts_container.style.display = "none";
-
-   // now update the current view
-   switch ( CURRENT_VIEW ) {
-      case views.CLIENT:
-         client_container.style.display = "block";
-         break;
-      case views.COUNTS:
-         counts_container.style.display = "block";
-         break;
-      case views.VALUES:
-         values_container.style.display = "block";
-         break;
-   }
-}
-
-function onKeyDown(event) {
-   switch ( event.keyCode ) {
-      case 84: // T
-         toggleVisualizers();
-         break;
-   }
-}
-
-function onWindowResize() {
-   client.onWindowResize();
-   if (counts) {counts.onWindowResize();}
-   if (values) {values.onWindowResize();}
-}
-
-function init() {
-   webglError();
-   var client_container = document.getElementById("client_container");
-   var values_container = document.getElementById("values_container");
-
-   client = new Client(client_container);
-   counts = new Counts(client, counts_container);
-   values = new Values(client, values_container);
-
-   stats  = new Stats();
-   client_container.appendChild(stats.dom);
-
-   // Start by setting these to none
-   displayOnlyCurrent();
-
-   var blocker = document.getElementById("blocker");
-   var instructions = document.getElementById("instructions");
-
-   instructions.addEventListener("click", function() {
-	   client.engine.controls.enabled = true;
-	   client.engine.controls.update();
-
-      if (counts) {
-	      counts.engine.controls.enabled = true;
-	      counts.engine.controls.update();
-      }
-	   if (values) {
-         values.engine.controls.enabled = true;
-	      values.engine.controls.update();
-      }
-	   instructions.style.display = "none";
-      blocker.style.display = "none";
-   }, false);
-
-   window.addEventListener( 'resize', onWindowResize, false );
-   window.addEventListener( 'keydown', onKeyDown, false );
-
-   animate();
-}
-
-function animate() {
-   requestAnimationFrame( animate );
-   client.update();
-   counts.update();
-   values.update();
-   stats.update();
-   if (counts && counts_container.style.display != "none") { counts.update();}
-   if (values && values_container.style.display != "none" ) { values.update();}
-   if (stats) { stats.update();}
-   if (box) { box.update();}
-}
-
-// Main
-init();
