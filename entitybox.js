@@ -12,30 +12,9 @@ class EntityBox {
 
       this.panels = [];
 
-      // tileMap is array of R, G, B = n x 3 x d
-      var tileMap = new TileMap(
-            [255, 255, 255,
-             128, 128, 190,
-             50, 255, 128,
-             0, 256, 0,
-             0, 256, 0,
-             0, 256, 0,
-             128, 128, 128,
-             128, 128, 128,
-             128, 128, 190,
-             50, 255, 128,
-             0, 256, 0,
-             0, 256, 0,
-             0, 256, 0,
-             128, 128, 128,
-             128, 128, 128,
-             128, 128, 128], 4, 4);
-
-
 		var pp = new PlayerPanel();
 		var fp = new FlatPanel("#000000");
 		var tp = new TilePanel(0, 0);
-      tp.drawTiles(tileMap);
 
 		this.addPanel(fp);
 		this.addPanel(tp);
@@ -109,6 +88,9 @@ class Panel {
    }
 
    setPlayer(player) {
+      this.player = player;
+      this.setColor(player.color);
+      this.setText("Player #" + player.entID);
    }
 
    update(delta) {
@@ -120,23 +102,23 @@ class TilePanel extends Panel {
 
    constructor(i, j) {
       super();
-		this.TILESZ = 10;
+		this.TILESZ = 20;
 		var canvas = document.createElement( 'canvas' );
       canvas.id = "tile_panel";
-		canvas.width = this.TILESZ * 10;
-		canvas.height = this.TILESZ * 10;
+		canvas.width = this.TILESZ * 7;
+		canvas.height = this.TILESZ * 7;
 		canvas.style.cssText = 'position:fixed;left:5%;top:80%;width:'
          + canvas.width + 'px;height:' + canvas.height + 'px';
 		this.canvas = canvas;
 	   this.context = this.canvas.getContext( '2d' );
 		this.dom = canvas;
+      this.tileMap = new TileMap();
 	}
 
-	drawTiles( tileMap ) {
-		for (var c = 0; c < tileMap.cols; c++) {
-			for (var r = 0; r < tileMap.rows; r++) {
-				var tile = tileMap.getTile(r, c);
-
+	drawTiles() {
+		for (var c = 0; c < this.tileMap.cols; c++) {
+			for (var r = 0; r < this.tileMap.rows; r++) {
+				var tile = this.tileMap.getTile(r, c);
 				if (tile.getHex() !== 0) { // 0 => empty tile
 					this.context.fillStyle = "#" + tile.getHexString();
 					this.context.fillRect(
@@ -149,24 +131,49 @@ class TilePanel extends Panel {
 			}
 		}
    }
+
+   update( delta ) {
+      super.update(delta);
+      this.context.fillStyle = "#000000";
+		this.context.fillRect( 0, 0, this.canvas.width, this.canvas.height );
+
+      this.tileMap.setTiles(this.player.attackMap);
+      this.drawTiles();
+   }
 }
 
 
 class TileMap {
-	constructor(array, rows, cols) {
+	constructor() {
       /* Implements row-major tile map.
        */
-		this.rows = rows;  // N
-		this.cols = cols;  // D
-      this.array = array; // array is N rows by 3xN cols
-	}
+      this.array = null; // array is N rows by 3xN cols
+	   this.rows = 0;
+      this.cols = 0;
+      this.maxCount = 0;
+   }
+
+   setTiles(array) {
+      this.array = array;
+      var center = array[3][3];
+      array[3][3] = [0,0,0];
+      function getMax( a ) {
+         return Math.max(...a.map(e => Array.isArray(e) ? getMax(e) : e));
+      }
+      this.maxCount = getMax(array);
+      array[3][3] = center;
+      this.rows = array.length;
+      this.cols = array[0].length;
+      console.log(this.array);
+   }
 
    getTile(i, j) {
-      var r = this.array[i*this.cols*3 + 3*j];
-      var g = this.array[i*this.cols*3 + 3*j+1];
-      var b = this.array[i*this.cols*3 + 3*j+2];
-
-      return new THREE.Color(r/256.0, g/256.0, b/256.0);
+      var rgb = this.array[i][j];
+      var r = rgb[0]; var g = rgb[1]; var b = rgb[2];
+      return new THREE.Color(
+            Math.min(1.0, r/this.maxCount),
+            Math.min(1.0, g/this.maxCount),
+            Math.min(1.0, b/this.maxCount));
    }
 }
 
@@ -182,7 +189,7 @@ class FlatPanel extends Panel {
 
       this.fgColor = fgColor;  // this shouldn't change
 
-		this.WIDTH = window.innerWidth / 4 * this.PR;
+		this.WIDTH = window.innerWidth / 5 * this.PR;
       this.HEIGHT = window.innerHeight / 3 * this.PR;
 		this.TEXT_X = 20 * this.PR;
       this.TEXT_Y = 50 * this.PR;
@@ -217,8 +224,9 @@ class FlatPanel extends Panel {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       var grd = this.context.createLinearGradient(0, 0, this.canvas.width, 0);
-      grd.addColorStop(0, "white"); //this.bgColor);
-      grd.addColorStop(0.5, this.bgColor);
+      grd.addColorStop(0, this.bgColor);
+      var alphaColor = this.bgColor + "20";
+      grd.addColorStop(0.8, alphaColor);
       grd.addColorStop(1, "transparent");
       this.context.fillStyle = grd;
 		this.context.fillRect( 0, 0, this.WIDTH, this.HEIGHT );
@@ -289,6 +297,7 @@ class StatsPanel extends TilePanel {}
 class PlayerPanel extends RenderedPanel {
 
    setPlayer( player ) {
+      super.setPlayer(player);
       this.player = player.obj.clone({recursive: false});
       this.scene.add(this.player);
       this.player.position.set(0, 0, 0);
@@ -299,7 +308,6 @@ class PlayerPanel extends RenderedPanel {
 
    update(delta) {
       if (this.player) {
-         console.log(this.player.position, this.controls.object.position);
          this.controls.update();
       }
       super.update(delta);

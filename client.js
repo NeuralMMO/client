@@ -99,8 +99,6 @@ class Client{
             box = new entityM.EntityBox();
          }
          box.setPlayer(minPlayer);
-         box.setColor(minPlayer.color);
-         box.setText("Player #" + minPlayer.entID);
          box.showAll();
 
          if (this.engine.mode == modes.SPECTATOR) {
