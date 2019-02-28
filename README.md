@@ -11,6 +11,10 @@ This repository contains the THREE.js based 3D browser client for the main [Neur
 
 You don't need to clone this repo manually. Follow the install instructions in the [OpenAI Repo](https://docs.google.com/document/d/1_76rYTPtPysSh2_cFFz3Mfso-9VL3_tF5ziaIZ8qmS8/edit?usp=sharing). This will download THREE.js. You can do this manually if you do not want to download the whole source repo.
 
+## ![][ags] Performance
+
+Around 50-60 FPS with ~3s load on a high-end desktop, 30 FPS with ~10s load on my Razer laptop.
+
 ## ![][ags] Details
 
 I personally plan on continuing development on both the main environment and the client. Environment updates will most likely be released in larger chunks, potentially coupled to future publications. On the other hand, the client is under active and rapid development. You can expect most features, at least in so far as they are applicable to the current environment build, to be released as soon as they are stable. Feel free to contact me with ideas and feature requests.
