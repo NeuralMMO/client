@@ -68,12 +68,14 @@ class Client{
       this.updatePacket();
 
       //this.engine.scene.rotateAroundWorldAxis(this.p, this.ax, 0.0025)
+      /*
       if (this.tick > 200) {
          var x = this.axPos + this.r * Math.cos(this.rotateTime)
          var z = this.axPos + this.r * Math.sin(this.rotateTime)
          this.camera.position.set(x, 500, z)
          this.rotateTime += 0.0025
       }
+      */
 
       var packet = this.packet;
       if (packet) {
