@@ -28,3 +28,7 @@ This is because the research overlays are written as raw glsl shaders, which you
 ## ![][ags] Authorship
 
 This client is a collaboration between myself (Joseph Suarez) and Clare Zhu. It was originally created as follow-up work for the paper and blog post, but we ended up merging it in. This is also the reason that the project is split into two repositories.
+
+## ![][ags] License
+
+MIT License
