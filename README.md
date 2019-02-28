@@ -17,7 +17,7 @@ Around 50-60 FPS with ~3s load on a high-end desktop, 30 FPS with ~10s load on m
 
 ## ![][ags] Details
 
-I personally plan on continuing development on both the main environment and the client. Environment updates will most likely be released in larger chunks, potentially coupled to future publications. On the other hand, the client is under active and rapid development. You can expect most features, at least in so far as they are applicable to the current environment build, to be released as soon as they are stable. Feel free to contact me with ideas and feature requests.
+I personally plan on continuing development on both the main environment and the client. The environment repo is quite clean, but this one could use some restructuring -- I intend to refactor it sometime soon. Environment updates will most likely be released in larger chunks, potentially coupled to future publications. On the other hand, the client is under active and rapid development. You can expect most features, at least in so far as they are applicable to the current environment build, to be released as soon as they are stable. Feel free to contact me with ideas and feature requests.
 
 Please note: this is my personal agenda, and I do not speak for OpenAI.
 
