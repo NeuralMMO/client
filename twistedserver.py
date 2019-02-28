@@ -2,7 +2,7 @@ from pdb import set_trace as T
 import numpy as np
 
 from signal import signal, SIGINT
-import sys, os, json, pickle
+import sys, os, json, pickle, time
 import ray
 
 from twisted.internet import reactor
@@ -139,6 +139,9 @@ class WSServerFactory(WebSocketServerFactory):
         uptime = np.round(self.tickRate*self.tick, 1)
         print('Uptime: ', uptime, ', Tick: ', self.tick)
 
+        if self.tick == 5:
+           pass
+           #time.sleep(20)
         self.step()
         for client in self.clients:
             client.sendUpdate()

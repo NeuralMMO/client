@@ -10,6 +10,30 @@ var client, counts, values, stats, box;
 var CURRENT_VIEW = views.CLIENT;
 
 
+THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
+
+    // rotate object around axis in world space (the axis passes through point)
+    // axis is assumed to be normalized
+    // assumes object does not have a rotated parent
+
+    var q = new THREE.Quaternion();
+
+    return function rotateAroundWorldAxis( point, axis, angle ) {
+
+        q.setFromAxisAngle( axis, angle );
+
+        this.applyQuaternion( q );
+
+        this.position.sub( point );
+        this.position.applyQuaternion( q );
+        this.position.add( point );
+
+        return this;
+
+    }
+
+}();
+
 class Client{
    // interface for client, viewer, and counts
    constructor (my_container) {
@@ -23,6 +47,18 @@ class Client{
       var scope = this; // javascript quirk... don't touch this
       function onMouseDown( event ) { scope.onMouseDown( event ); }
       my_container.addEventListener( 'click', onMouseDown, false );
+
+      this.axPos = tileSz*nTiles/2
+      this.p = new THREE.Vector3(this.axPos, 0, this.axPos);
+      this.ax = new THREE.Vector3(0, 1, 0);
+      this.tick = 0
+      this.rotateTime = 0
+      this.r = 2750
+      
+      this.controls = this.engine.controls
+      this.camera   = this.engine.camera
+      this.camera.position.set(this.axPos, 4000, this.axPos)
+      this.controls.update()
    }
 
    update() {
@@ -31,8 +67,17 @@ class Client{
       this.handler.updateFast();
       this.updatePacket();
 
+      //this.engine.scene.rotateAroundWorldAxis(this.p, this.ax, 0.0025)
+      if (this.tick > 200) {
+         var x = this.axPos + this.r * Math.cos(this.rotateTime)
+         var z = this.axPos + this.r * Math.sin(this.rotateTime)
+         this.camera.position.set(x, 500, z)
+         this.rotateTime += 0.0025
+      }
+
       var packet = this.packet;
       if (packet) {
+         this.tick += 1
          // Receive packet, begin translating based on the received position
          packet = JSON.parse(packet);
 
