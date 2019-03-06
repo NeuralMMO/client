@@ -9,7 +9,7 @@ This repository contains the THREE.js based 3D browser client for the main [Neur
 
 ## ![][ags] Setup
 
-You don't need to clone this repo manually. Follow the install instructions in the [OpenAI Repo](https://docs.google.com/document/d/1_76rYTPtPysSh2_cFFz3Mfso-9VL3_tF5ziaIZ8qmS8/edit?usp=sharing). This will download THREE.js. You can do this manually if you do not want to download the whole source repo.
+You don't need to clone this repo manually. Follow the install instructions in the [OpenAI Repo](https://github.com/openai/neural-mmo). This will download THREE.js. You can do this manually if you do not want to download the whole source repo.
 
 ## ![][ags] Performance
 
