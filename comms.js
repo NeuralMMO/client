@@ -1,5 +1,5 @@
-var ws = new WebSocket("ws://127.0.0.1:8080/ws");
-//ws://127.0.0.1:8080
+// Technique used from here: https://github.com/openai/neural-mmo/issues/12#issuecomment-472621615
+var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
 var inbox = [], outbox = [];
 
 /*
