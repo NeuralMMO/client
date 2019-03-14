@@ -1,4 +1,5 @@
-// Technique used from here: https://github.com/openai/neural-mmo/issues/12#issuecomment-472621615
+// Technique used from here: 
+// https://stackoverflow.com/questions/10406930/how-to-construct-a-websocket-uri-relative-to-the-page-uri
 var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
 var inbox = [], outbox = [];
 
