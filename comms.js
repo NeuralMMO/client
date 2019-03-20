@@ -1,5 +1,6 @@
-var ws = new WebSocket("ws://127.0.0.1:8080/ws");
-//ws://127.0.0.1:8080
+// Technique used from here: 
+// https://stackoverflow.com/questions/10406930/how-to-construct-a-websocket-uri-relative-to-the-page-uri
+var ws = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
 var inbox = [], outbox = [];
 
 /*
