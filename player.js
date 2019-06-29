@@ -92,12 +92,17 @@ class Player extends THREE.Object3D {
       this.color = null;
       this.attackMap = null;
 
+      var r = params['r']['val']
+      var c = params['c']['val']
+      params['pos'] = [r, c]
+ 
       this.initObj(params, handler);
       this.initOverhead(params);
    }
 
    initObj(params, handler) {
       var pos = params['pos'];
+     
       //this.obj = OBJ.loadNN(params['color']);
       this.color = params['color']
       this.obj = handler.nnObjs[this.color].clone();
@@ -128,6 +133,10 @@ class Player extends THREE.Object3D {
    updateData(engine, packet, players) {
       this.cancelAnims();
 
+      var r = packet['r']['val']
+      var c = packet['c']['val']
+      packet['pos'] = [r, c]
+ 
       var move = packet['pos'];
       //console.log("Move: ", move)
       this.anims.push(new Animation.Move(this, move));

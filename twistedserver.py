@@ -57,7 +57,7 @@ class GodswordServerProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
         print("WebSocket connection request: {}".format(request))
-        realm = self.factory.realm.envs[0]
+        realm = self.factory.realm
         self.realm = realm
         self.frame += 1
 
@@ -71,9 +71,7 @@ class GodswordServerProtocol(WebSocketServerProtocol):
         self.sendUpdate()
 
     def serverPacket(self):
-        data = self.realm.clientData.remote()
-        data = ray.get(data)
-        data = pickle.loads(data)
+        data = self.realm.clientData()
         return data
 
     def sendUpdate(self):
@@ -156,7 +154,7 @@ class Application:
    def __init__(self, realm, step):
       signal(SIGINT, self.kill)
       self.realm = realm
-      #log.startLogging(sys.stdout)
+      log.startLogging(sys.stdout)
       port = 8080
 
       factory = WSServerFactory(u'ws://localhost:' + str(port), realm, step)
