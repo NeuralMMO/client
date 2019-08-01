@@ -1,0 +1,155 @@
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
+ 
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
+public class Environment: MonoBehaviour
+{
+    public static Dictionary<int, Vector2> TILES = new Dictionary<int, Vector2>();
+
+    public int TileWidth = 128;
+    public int TileHeight = 128;
+    public int NumTilesX = 8;
+    public int NumTilesZ = 8;
+    public int TileGridWidth = 64;
+    public int TileGridHeight = 64;
+    public int DefaultTileX = 0;
+    public int DefaultTileZ = 0;
+
+    public int tick = 0;
+    public Texture2D Tex1;
+    public Texture2D Tex2;
+
+    void OnEnable()
+    {
+       //Lava
+       TILES.Add(0, new Vector2(7, 7)); 
+
+       //Water. Actually sand
+       TILES.Add(1, new Vector2(4, 6)); 
+
+       //Grass
+       TILES.Add(2, new Vector2(1, 7)); 
+
+       //Scrub
+       TILES.Add(3, new Vector2(1, 5)); 
+
+       //Forest
+       TILES.Add(4, new Vector2(1, 6)); 
+
+       //Stone
+       TILES.Add(5, new Vector2(2, 7)); 
+
+       //Coal
+       TILES.Add(6, new Vector2(3, 7)); 
+
+
+       CreatePlane(TileWidth, TileHeight, TileGridWidth, TileGridHeight);
+    }
+
+    void Update()
+    {
+      Debug.Log("Updating terrain: " + tick.ToString());
+      tick++;
+    }
+
+    public void UpdateTerrain(Dictionary<string, object> packet)
+    {
+      var mesh = GetComponent<MeshFilter>().mesh;
+      var uvs = mesh.uv;
+
+      var tileSizeX = 1.0f / NumTilesX;
+      var tileSizeZ = 1.0f / NumTilesZ;
+ 
+      int r = 0;
+      List<object> map = (List<object>) packet["map"];
+      foreach (List<object> row in map)
+      {
+         int c = 0;
+         foreach (object col in row)
+         {
+            int val = System.Convert.ToInt32(col);
+            Vector2 gridIndex = new Vector2(c, r);
+            Vector2 tileIndex = TILES[val];
+   
+            uvs[(int)(TileGridWidth * c + r) * 4 + 0] = new Vector2(tileIndex.x * tileSizeX, tileIndex.y * tileSizeZ);
+            uvs[(int)(TileGridWidth * c + r) * 4 + 1] = new Vector2((tileIndex.x + 1) * tileSizeX, tileIndex.y * tileSizeZ);
+            uvs[(int)(TileGridWidth * c + r) * 4 + 2] = new Vector2((tileIndex.x + 1) * tileSizeX, (tileIndex.y + 1) * tileSizeZ);
+            uvs[(int)(TileGridWidth * c + r) * 4 + 3] = new Vector2(tileIndex.x * tileSizeX, (tileIndex.y + 1) * tileSizeZ);
+    
+            c++;
+         }
+         r++;
+         mesh.uv = uvs;
+      }
+    }
+
+    void CreatePlane(int tileHeight, int tileWidth, int gridHeight, int gridWidth)
+    {
+        var mesh = new Mesh();
+        var mf = GetComponent<MeshFilter>();
+        mf.GetComponent<Renderer>().material.SetTexture("_MainTex", Tex1);
+        mf.mesh = mesh;
+ 
+        var tileSizeX = 1.0f / NumTilesX;
+        var tileSizeZ = 1.0f / NumTilesZ;
+ 
+        var vertices = new List<Vector3>();
+        var triangles = new List<int>();
+        var normals = new List<Vector3>();
+        var uvs = new List<Vector2>();
+ 
+        var index = 0;
+        for (var x = 0; x < gridWidth; x++) {
+            for (var z = 0; z < gridHeight; z++) {
+                AddVertices(tileHeight, tileWidth, z, x, vertices);
+                index = AddTriangles(index, triangles);
+                AddNormals(normals);
+                AddUvs(DefaultTileX, tileSizeZ, tileSizeX, uvs, DefaultTileZ);
+            }
+        }
+ 
+        mesh.vertices = vertices.ToArray();
+        mesh.normals = normals.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.uv = uvs.ToArray();
+        mesh.RecalculateNormals();
+    }
+ 
+    private static void AddVertices(int tileHeight, int tileWidth, int z, int x, ICollection<Vector3> vertices)
+    {
+        vertices.Add(new Vector3((x * tileWidth), 0, (z * tileHeight)));
+        vertices.Add(new Vector3((x * tileWidth) + tileWidth, 0, (z * tileHeight)));
+        vertices.Add(new Vector3((x * tileWidth) + tileWidth, 0, (z * tileHeight) + tileHeight));
+        vertices.Add(new Vector3((x * tileWidth), 0, (z * tileHeight) + tileHeight));
+    }
+ 
+    private static int AddTriangles(int index, ICollection<int> triangles)
+    {
+        triangles.Add(index + 2);
+        triangles.Add(index + 1);
+        triangles.Add(index);
+        triangles.Add(index);
+        triangles.Add(index + 3);
+        triangles.Add(index + 2);
+        index += 4;
+        return index;
+    }
+ 
+    private static void AddNormals(ICollection<Vector3> normals)
+    {
+        normals.Add(Vector3.forward);
+        normals.Add(Vector3.forward);
+        normals.Add(Vector3.forward);
+        normals.Add(Vector3.forward);
+    }
+ 
+    private static void AddUvs(int tileRow, float tileSizeZ, float tileSizeX, ICollection<Vector2> uvs, int tileColumn)
+    {
+        uvs.Add(new Vector2(tileColumn * tileSizeX, tileRow * tileSizeZ));
+        uvs.Add(new Vector2((tileColumn + 1) * tileSizeX, tileRow * tileSizeZ));
+        uvs.Add(new Vector2((tileColumn + 1) * tileSizeX, (tileRow + 1) * tileSizeZ));
+        uvs.Add(new Vector2(tileColumn * tileSizeX, (tileRow + 1) * tileSizeZ));
+    }
+}

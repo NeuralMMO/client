@@ -1,0 +1,25 @@
+using UnityEngine;
+
+public static class TerrainExtension
+{
+
+    public int TileWidth = 128;
+    public int TileHeight = 128;
+    public int NumTilesX = 8;
+    public int NumTilesZ = 8;
+    public int TileGridWidth = 64;
+    public int TileGridHeight = 64;
+    public int DefaultTileX = 0;
+    public int DefaultTileZ = 0;
+    public Texture2D Tex1;
+    public Texture2D Tex2;
+
+   public static Object Instantiate(this Object self, Object args)
+   {
+      GameObject terrain = Object.Instantiate(arg1, arg2, message) as GameObject;
+      MessageBox scr = terrain.GetComponent<MessageBox>();
+      scr.OnCreated(message);
+      return terrain;
+   }
+}
+

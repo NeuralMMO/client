@@ -1,0 +1,21 @@
+The process for adding assets is currently a pain.
+1. In Blender, each cube needs to be UV mapped to the texture atlas
+	a) Open up cube.obj (in edit mode with render mode set to texture) and open the uv pane
+	b) control-a select all, press G in the uv panel (turn on pixel snapping and object alignment in bottom toolbar) and move textures to the new square)
+	c) save over cube.obj
+	d) export to .obj
+	e) Don't worry about the materials. We just need the uv coords, which are in the .obj (not .mtl) file
+2. In Unity, the assets need to be imported and fixed up
+	a) Import the .obj files from ./neural-mmo. Do NOT directly save from blender into this folder. A unity glitch will corrupt the project.
+	b) Click on the model asset. Enable read/write in settings
+	c) For each obj, drag it into the heirarchy. Right click -> unpack all. Then drag the "default" object out of the subtree. Delete the outer container. Rename "default" to the tile name.
+	d) Make a prefab out of the object. Apply the atlased material.
+	e) The object should now work with the loader and combiner
+3. Troubleshooting
+	a) If blender opens with small tool bars: edit -> system -> double dpi mode
+	b) If the texture is wrong once you get the file into unity, you forgot to save the obj before exporting
+	c) If you get a read/write error, import settings were not applied properly. If you applied them and still get the error, reload unity (bug)
+	d) If nothing shows up in the render screen (and objects are not in the heirarchy) reload unity...
+
+TL;DR: Unity is a buggy mess on linux
+
