@@ -67,8 +67,11 @@ public class Player : UnityModule {
       this.skills.UpdateUI();
       this.resources.UpdateUI();
 
-      GameObject UIName = GameObject.Find("UI/Canvas/Panel/Name");
-      UIName.GetComponent<TextMeshProUGUI>().text = this.overheads.name;
+      GameObject UIName      = GameObject.Find("UI/Canvas/Panel/Name");
+      TextMeshProUGUI uiName = UIName.GetComponent<TextMeshProUGUI>();
+
+      uiName.text  = this.overheads.name;
+      uiName.color = this.overheads.color;
    }
 
    public static void UpdateStaticUI() {

@@ -73,39 +73,39 @@ ScriptsOnlyBuild:
     - Class: 109
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 10880}
+      Script: {instanceID: 10886}
     - Class: 114
-      Script: {instanceID: 10954}
+      Script: {instanceID: 10960}
     - Class: 114
-      Script: {instanceID: 10974}
+      Script: {instanceID: 10980}
     - Class: 114
-      Script: {instanceID: 11062}
+      Script: {instanceID: 11068}
     - Class: 114
-      Script: {instanceID: 11102}
+      Script: {instanceID: 11108}
     - Class: 114
-      Script: {instanceID: 11296}
+      Script: {instanceID: 11298}
     - Class: 114
-      Script: {instanceID: 11336}
+      Script: {instanceID: 11338}
     - Class: 114
-      Script: {instanceID: 11526}
+      Script: {instanceID: 11528}
     - Class: 114
-      Script: {instanceID: 11548}
+      Script: {instanceID: 11550}
     - Class: 114
-      Script: {instanceID: 11654}
+      Script: {instanceID: 11656}
     - Class: 114
-      Script: {instanceID: 11790}
+      Script: {instanceID: 11792}
     - Class: 114
-      Script: {instanceID: 11860}
+      Script: {instanceID: 11862}
     - Class: 114
-      Script: {instanceID: 11912}
+      Script: {instanceID: 11914}
     - Class: 114
-      Script: {instanceID: 11930}
+      Script: {instanceID: 11932}
     - Class: 114
-      Script: {instanceID: 11974}
+      Script: {instanceID: 11976}
     - Class: 114
-      Script: {instanceID: 12142}
+      Script: {instanceID: 12144}
     - Class: 114
-      Script: {instanceID: 12152}
+      Script: {instanceID: 12154}
     - Class: 114
       Script: {instanceID: 12172}
     - Class: 114
@@ -119,19 +119,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12436}
     - Class: 114
-      Script: {instanceID: 12538}
+      Script: {instanceID: 12536}
     - Class: 114
-      Script: {instanceID: 12598}
+      Script: {instanceID: 12596}
     - Class: 114
-      Script: {instanceID: 12604}
+      Script: {instanceID: 12602}
     - Class: 114
-      Script: {instanceID: 12780}
+      Script: {instanceID: 12778}
     - Class: 114
-      Script: {instanceID: 12820}
+      Script: {instanceID: 12818}
     - Class: 114
-      Script: {instanceID: 12840}
+      Script: {instanceID: 12838}
     - Class: 114
-      Script: {instanceID: 12862}
+      Script: {instanceID: 12860}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 122
@@ -834,4 +834,4 @@ ScriptsOnlyBuild:
   platform: 24
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: /home/jsuarez/FileStruct/neural-mmo/build.x86_64
+  playerPath: /home/jsuarez/FileStruct/neural-mmo/neural-mmo.x86_64
