@@ -834,4 +834,4 @@ ScriptsOnlyBuild:
   platform: 24
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: /home/jsuarez/FileStruct/neural-mmo/neural-mmo.x86_64
+  playerPath: /home/jsuarez/FileStruct/Git/neural-mmo-client/UnityClient/neural-mmo.x86_64
