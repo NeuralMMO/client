@@ -2,6 +2,8 @@
 
 public class Client : MonoBehaviour
 {
+   public static float tickFrac;
+   public static float tickRate = 0.6f;
 
    public UI ui;
    public Comms comms;
@@ -26,6 +28,8 @@ public class Client : MonoBehaviour
    {
       this.deltaTime += (Time.unscaledDeltaTime - deltaTime) * this.delta;
 
+      tickFrac = Mathf.Clamp(tickFrac + Time.deltaTime / tickRate, 0, 1);
+
       //float timeDelta = Time.time - this.time;
       //this.time = Time.time;
       //Only available on server ticks
@@ -36,6 +40,7 @@ public class Client : MonoBehaviour
          return;
       }
 
+      tickFrac = 0;
       if(this.first) {
          this.environment.UpdateTerrain(packet);
          this.first = false;

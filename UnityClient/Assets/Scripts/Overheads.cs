@@ -53,8 +53,9 @@ public class Overheads: MonoBehaviour
 
    public void Update() {
       Vector3 orig = this.damage.transform.localPosition;
-      Vector3 targ = orig + new Vector3(0, 1.5f, 0);
-      this.damage.transform.localPosition = Vector3.Lerp(orig, targ, (float) 0.6);
+      Vector3 targ = orig + new Vector3(0, 2.0f, 0);
+      this.damage.transform.localPosition = Vector3.Lerp(orig, targ, Client.tickFrac);
+      this.damage.alpha = 2*(1 - Client.tickFrac);
    }
 
    //Every tick

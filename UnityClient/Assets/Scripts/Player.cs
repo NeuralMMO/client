@@ -29,11 +29,8 @@ public class Player : UnityModule {
 
    //Load the OBJ shader and materials
    public Color NNObj(Color color) {
-      Shader shader = Shader.Find("Legacy Shaders/Specular");
       MeshRenderer nn = this.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>();
       nn.materials[0].SetColor("_Color", color);
-      nn.materials[0].shader = shader;
-      nn.materials[1].shader = shader;
       return color;
    }
 
@@ -50,7 +47,6 @@ public class Player : UnityModule {
 
    public void Init(Dictionary<int, GameObject> players, int iden, object packet) {
       this.skills             = this.gameObject.AddComponent<PlayerSkills>();
-      this.transform.position = new Vector3(0, (float) 0, 0);
       this.orig               = this.transform.position;
       this.start              = Time.time;
       this.id                 = iden;
@@ -86,10 +82,10 @@ public class Player : UnityModule {
    }
  
    public void UpdatePos(bool smooth) {
-      Vector3 orig = this.transform.position;
-      Vector3 targ = new Vector3(this.r, orig.y, this.c);
+      Vector3 orig = new Vector3(this.rOld, 0, this.cOld);
+      Vector3 targ = new Vector3(this.r, 0, this.c);
       if (smooth) {
-        this.transform.position = Vector3.Lerp(orig, targ, (float) 0.1);
+        this.transform.position = Vector3.Lerp(orig, targ, Client.tickFrac);
       } else {
         this.transform.position = targ;
       }
@@ -100,9 +96,9 @@ public class Player : UnityModule {
          return;
       }
 
-      Vector3 orig = this.attack.transform.localPosition;
+      Vector3 orig = new Vector3(0, 0, 0);
       Vector3 targ = this.target.transform.position - this.transform.position + 3*Vector3.up/4; 
-      this.attack.transform.localPosition = Vector3.Lerp(orig, targ, (float) 0.1);
+      this.attack.transform.localPosition = Vector3.Lerp(orig, targ, Client.tickFrac);
    }
 
    public void UpdatePlayer(Dictionary<int, GameObject> players, object ent) {
@@ -156,7 +152,7 @@ public class Player : UnityModule {
       UnityEngine.Object prefab = Resources.Load("Prefabs/" + style + "Attack") as GameObject; 
       this.attack = GameObject.Instantiate(prefab) as GameObject;
       this.attack.transform.SetParent(this.transform);
-      this.attack.transform.position = this.transform.position + 3*Vector3.up/4;
+      this.attack.transform.localPosition = 3*Vector3.up/4;
    }
 
    public void Delete() {
