@@ -79,7 +79,7 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
    public void UpdateSelf(UI ui, Player player) {
       this.examine.UpdateSelf("Examine: " + player.name);
       this.follow.UpdateSelf("Follow: " + player.name);
-      this.transform.position = Input.mousePosition + new Vector3(-10, 10, 0);
+      this.transform.position = Input.mousePosition + new Vector3(-20, 20, 0);
 
       this.gameObject.SetActive(true);
       this.playerCache = player;

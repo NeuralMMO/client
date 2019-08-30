@@ -49,7 +49,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _FlowMap:
         m_Texture: {fileID: 2800000, guid: 6f69c6af0205556439ba73d144413aa2, type: 3}
-        m_Scale: {x: 100, y: 100}
+        m_Scale: {x: 30, y: 30}
         m_Offset: {x: 0, y: 0}
     - _Gradient:
         m_Texture: {fileID: 2800000, guid: 271f5ee3273dd7f4fae6e204d4f8c4bf, type: 3}
@@ -61,7 +61,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
         m_Texture: {fileID: 2800000, guid: ee6dc1be456732d48b3c7bfa74fa6eb0, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -91,7 +91,7 @@ Material:
     - _Dissolveamount: 0.42899
     - _DstBlend: 0
     - _EffectPower: 1.664951
-    - _EmmisionStrench: 3
+    - _EmmisionStrench: 2.53
     - _Frensnel: 0
     - _FrensnelStranch: 1
     - _FrensnelStrench: 1
@@ -119,9 +119,9 @@ Material:
     - _Strench: 0.1
     - _Strensh: 2
     - _Teseeellation: 1
-    - _TextureChangespeed: 0.01
+    - _TextureChangespeed: 0.015
     - _TextureDistanse: 0.5
-    - _TextureStrench: 0
+    - _TextureStrench: 0.34
     - _UVSec: 0
     - _U_Speed: 0.0001
     - _V_Speed: 0.0001

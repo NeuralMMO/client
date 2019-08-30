@@ -17,6 +17,7 @@ public class Player : UnityModule {
    public int cOld = 0;
 
    public string name;
+   public int level = 1;
 
    float start;
    Vector3 orig;
@@ -70,8 +71,8 @@ public class Player : UnityModule {
       GameObject UIName      = GameObject.Find("UI/Canvas/Panel/Name");
       TextMeshProUGUI uiName = UIName.GetComponent<TextMeshProUGUI>();
 
-      uiName.text  = this.overheads.name;
-      uiName.color = this.overheads.color;
+      uiName.color = this.overheads.playerName.color;
+      uiName.text  = this.overheads.playerName.text;
    }
 
    public static void UpdateStaticUI() {
@@ -123,6 +124,12 @@ public class Player : UnityModule {
       //Skills
       object skills = Unpack("skills", ent);
       this.skills.UpdateSkills(skills);
+      this.level = Convert.ToInt32(Unpack("level", skills));
+
+      //Status
+      object status = Unpack("status", ent);
+      this.overheads.UpdateStatus(status);
+
 
       //Attack
       if (this.attack != null) {
@@ -132,6 +139,7 @@ public class Player : UnityModule {
 
       Dictionary<string, object> hist = Unpack("history", ent) as Dictionary<string, object>;
       int damage = Convert.ToInt32(UnpackList(new List<string>{"damage", "val"}, hist));
+
       this.overheads.UpdateDamage(damage);
       
       //Handle attacks
