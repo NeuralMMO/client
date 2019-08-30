@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: eb9afa2b617031247ac6bc87e88c9b58
+timeCreated: 1531211380
+licenseType: Free
+ShaderImporter:
+  defaultTextures:
+  - _FlowMap: {fileID: 2800000, guid: 6f69c6af0205556439ba73d144413aa2, type: 3}
+  - _MainTexture: {fileID: 2800000, guid: ee6dc1be456732d48b3c7bfa74fa6eb0, type: 3}
+  - _UndoEffectTexture: {fileID: 2800000, guid: ee6dc1be456732d48b3c7bfa74fa6eb0,
+      type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
