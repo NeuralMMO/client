@@ -73,65 +73,65 @@ ScriptsOnlyBuild:
     - Class: 109
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 10886}
+      Script: {instanceID: 10890}
     - Class: 114
-      Script: {instanceID: 10960}
+      Script: {instanceID: 10964}
     - Class: 114
-      Script: {instanceID: 10980}
+      Script: {instanceID: 10984}
     - Class: 114
-      Script: {instanceID: 11068}
+      Script: {instanceID: 11072}
     - Class: 114
-      Script: {instanceID: 11108}
+      Script: {instanceID: 11112}
     - Class: 114
-      Script: {instanceID: 11298}
+      Script: {instanceID: 11302}
     - Class: 114
-      Script: {instanceID: 11338}
+      Script: {instanceID: 11342}
     - Class: 114
-      Script: {instanceID: 11528}
+      Script: {instanceID: 11532}
     - Class: 114
-      Script: {instanceID: 11550}
+      Script: {instanceID: 11554}
     - Class: 114
-      Script: {instanceID: 11656}
+      Script: {instanceID: 11660}
     - Class: 114
-      Script: {instanceID: 11792}
+      Script: {instanceID: 11796}
     - Class: 114
-      Script: {instanceID: 11862}
+      Script: {instanceID: 11866}
     - Class: 114
-      Script: {instanceID: 11914}
+      Script: {instanceID: 11918}
     - Class: 114
-      Script: {instanceID: 11932}
+      Script: {instanceID: 11936}
     - Class: 114
-      Script: {instanceID: 11976}
+      Script: {instanceID: 11980}
     - Class: 114
-      Script: {instanceID: 12144}
+      Script: {instanceID: 12148}
     - Class: 114
-      Script: {instanceID: 12154}
+      Script: {instanceID: 12158}
     - Class: 114
-      Script: {instanceID: 12172}
+      Script: {instanceID: 12176}
     - Class: 114
-      Script: {instanceID: 12186}
+      Script: {instanceID: 12190}
     - Class: 114
-      Script: {instanceID: 12336}
+      Script: {instanceID: 12340}
     - Class: 114
-      Script: {instanceID: 12364}
+      Script: {instanceID: 12368}
     - Class: 114
-      Script: {instanceID: 12386}
+      Script: {instanceID: 12390}
     - Class: 114
-      Script: {instanceID: 12436}
+      Script: {instanceID: 12440}
     - Class: 114
-      Script: {instanceID: 12536}
+      Script: {instanceID: 12540}
     - Class: 114
-      Script: {instanceID: 12596}
+      Script: {instanceID: 12600}
     - Class: 114
-      Script: {instanceID: 12602}
+      Script: {instanceID: 12606}
     - Class: 114
-      Script: {instanceID: 12778}
+      Script: {instanceID: 12782}
     - Class: 114
-      Script: {instanceID: 12818}
+      Script: {instanceID: 12822}
     - Class: 114
-      Script: {instanceID: 12838}
+      Script: {instanceID: 12842}
     - Class: 114
-      Script: {instanceID: 12860}
+      Script: {instanceID: 12864}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 122
@@ -209,7 +209,7 @@ ScriptsOnlyBuild:
     className: PlayerManager
   - hash:
       serializedVersion: 2
-      Hash: ef98aaf51dcad1504d09cacdf7409a2b
+      Hash: ccd583a3298d09a6287e54072f268291
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Player
@@ -497,7 +497,7 @@ ScriptsOnlyBuild:
     className: TMP_SpriteAnimator
   - hash:
       serializedVersion: 2
-      Hash: 4c1f3711a41b75da003e3677c8407f39
+      Hash: 4a588f83904b877edd6aa7714773b05d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerSkills
@@ -515,7 +515,7 @@ ScriptsOnlyBuild:
     className: RemoteTestResultSender
   - hash:
       serializedVersion: 2
-      Hash: bf8850d573a393f5b23c544d17f68b6d
+      Hash: 4a12ff223174d5e099a5916ce901c606
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Overheads
@@ -834,4 +834,4 @@ ScriptsOnlyBuild:
   platform: 24
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: /home/jsuarez/FileStruct/Git/neural-mmo-client/UnityClient/neural-mmo.x86_64
+  playerPath: /home/jsuarez/FileStruct/Git/neural-mmo/forge/embyr/UnityClient/neural-mmo.x86_64

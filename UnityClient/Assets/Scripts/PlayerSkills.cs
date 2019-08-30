@@ -11,11 +11,11 @@ public class PlayerSkills : UnityModule
 
    public Skill constitution;
    public Skill melee;
-   public Skill ranged;
+   public Skill range;
    public Skill mage;
    public Skill defense;
    public Skill fishing;
-   public Skill mining;
+   public Skill hunting;
    public Skill cooking;
    public Skill smithing;
 
@@ -31,11 +31,11 @@ public class PlayerSkills : UnityModule
 
       this.constitution = this.AddSkill("constitution");
       this.melee        = this.AddSkill("melee");
-      this.ranged       = this.AddSkill("ranged");
+      this.range        = this.AddSkill("range");
       this.mage         = this.AddSkill("mage");
       this.defense      = this.AddSkill("defense");
       this.fishing      = this.AddSkill("fishing");
-      this.mining       = this.AddSkill("mining");
+      this.hunting      = this.AddSkill("hunting");
       this.cooking      = this.AddSkill("cooking");
       this.smithing     = this.AddSkill("smithing");
    }
@@ -51,7 +51,7 @@ public class PlayerSkills : UnityModule
       foreach (KeyValuePair<string, Skill> skill in this.skills) {
          GameObject UISkill = GameObject.Find("UI/Canvas/Panel/" + char.ToUpper(skill.Key[0]) + skill.Key.Substring(1));
          TextMeshProUGUI tm = UISkill.GetComponent<TextMeshProUGUI>();
-         tm.text = skill.Value.level + " (" + skill.Value.experience + "XP)";
+         tm.text = char.ToUpper(skill.Key[0]) + skill.Key.Substring(1) + ": " + skill.Value.level + " (" + skill.Value.experience + "XP)";
       }
    }
 

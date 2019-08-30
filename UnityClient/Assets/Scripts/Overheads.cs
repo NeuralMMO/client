@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using MonoBehaviorExtension;
 using TMPro;
 
-public class Overheads: MonoBehaviour
+public class Overheads: UnityModule
 {
    public TextMeshPro tm;
    public TextContainer tc;
@@ -20,6 +23,8 @@ public class Overheads: MonoBehaviour
 
    public TMP_Text playerName;
    public TMP_Text damage;
+   public TMP_Text freeze;
+   public TMP_Text immune;
    public Vector3 worldPos;
    public Vector3 damageOrig;
 
@@ -43,6 +48,8 @@ public class Overheads: MonoBehaviour
        TMP_Text[] text  = this.GetComponentsInChildren<TMP_Text>();
        this.playerName  = text[0];
        this.damage      = text[1];
+       this.freeze      = text[2];
+       this.immune      = text[3];
        this.damageOrig  = this.damage.transform.localPosition;
        this.damage.text = "Damage";
  
@@ -68,6 +75,24 @@ public class Overheads: MonoBehaviour
       this.damage.transform.localPosition = this.damageOrig;
    }
 
+   public void UpdateStatus(object status) {
+      int immuneTicks = Convert.ToInt32(UnpackList(new List<string>{"immune", "val"}, status));
+      if (immuneTicks > 0) {
+         this.immune.text = immuneTicks.ToString();
+         this.immune.gameObject.SetActive(true);
+      } else {
+         this.immune.gameObject.SetActive(false);
+      }
+
+      int freeze = Convert.ToInt32(UnpackList(new List<string>{"freeze", "val"}, status));
+      if (freeze > 0) {
+         this.freeze.text = freeze.ToString();
+         this.freeze.gameObject.SetActive(true);
+      } else {
+         this.freeze.gameObject.SetActive(false);
+      }
+   }
+
    //Every frame
    public void UpdateOverheads(Player player)
    {
@@ -83,8 +108,8 @@ public class Overheads: MonoBehaviour
 
       Vector3 pos = player.transform.position;
 
-      this.playerName.text  = name;
       this.playerName.color = color;
+      this.playerName.text  = "<color=#00FF00>(Lvl " + player.level + ") </color>" + name;
 
       worldPos          = new Vector3(pos.x, pos.y + 1f, pos.z);
       Vector3 screenPos = this.camera.WorldToScreenPoint(worldPos);
