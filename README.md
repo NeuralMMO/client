@@ -1,6 +1,6 @@
 [ags]: LegacyWebClient/resources/ags.png?raw=true
 [fire]: LegacyWebClient/resources/fire_thumbnail.png
-[env]: LegacyWebClient/resources/env.jpg
+[env]: env.png
 
 # ![][fire] Neural-MMO-Client
 This repository contains the Unity3D client for the main [Neural MMO Project](https://github.com/jsuarez5341/neural-mmo). You should expect 50-60 FPS on a high end desktop. It's written in C# in a manner accessible to researchers and developers who work primarily in Python.
