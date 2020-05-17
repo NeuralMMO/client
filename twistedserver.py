@@ -129,6 +129,7 @@ class WSServerFactory(WebSocketServerFactory):
         self.tickRate = 0.6
         self.tick = 0
 
+        self.step()
         lc = LoopingCall(self.announce)
         lc.start(self.tickRate)
 
@@ -137,12 +138,9 @@ class WSServerFactory(WebSocketServerFactory):
         uptime = np.round(self.tickRate*self.tick, 1)
         print('Uptime: ', uptime, ', Tick: ', self.tick)
 
-        if self.tick == 5:
-           pass
-           #time.sleep(20)
-        self.step()
         for client in self.clients:
             client.sendUpdate()
+        self.step()
 
     def clientConnectionMade(self, client):
         self.clients.append(client)
