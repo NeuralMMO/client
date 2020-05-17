@@ -67,7 +67,7 @@ public class OrbitCamera: MonoBehaviour {
         {
             return;
         }
-
+        x += 0.1f;
         if (click) {
             x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
             y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
