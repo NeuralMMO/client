@@ -20,6 +20,7 @@ public class Environment: MonoBehaviour
 
     public Dictionary<string, GameObject>[,] env = new Dictionary<string, GameObject>[mapSz, mapSz];
     public int[,] vals = new int[mapSz, mapSz];
+    public Texture2D values;
 
     public static List<List<GameObject>> terrain = new List<List<GameObject>>();
     public static int mapSz = 80;
@@ -39,16 +40,23 @@ public class Environment: MonoBehaviour
     public Texture2D Tex1;
     public Texture2D Tex2;
 
+    string cmd = "";
+
     Shader shader;
 
     GameObject cubePrefab;
     GameObject forestPrefab;
     GameObject nuPrefab;
     GameObject resources;
+    Console    console;
 
     bool first = true;
 
     Material cubeMatl;
+    Material material;
+    Material overlayMatl;
+
+    MeshRenderer renderer;
 
     void addPair(string name, int idx) {
       GameObject prefab = this.addMat(name);
@@ -70,10 +78,11 @@ public class Environment: MonoBehaviour
       GameObject root   = GameObject.Find("Client/Environment/Terrain");
       this.resources    = GameObject.Find("Client/Environment/Terrain/Resources");
       this.cubeMatl     = Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
+      this.values       = new Texture2D(80, 80);
       this.cubePrefab   = Resources.Load("Prefabs/Cube") as GameObject;
       this.forestPrefab = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Reed") as GameObject;
-
-      this.shader = Shader.Find("Standard");
+      this.console      = GameObject.Find("Console").GetComponent<Console>();
+      this.shader       = Shader.Find("Standard");
 
       this.addPair("Lava", 0);
       this.addPair("Sand", 1);
@@ -121,10 +130,37 @@ public class Environment: MonoBehaviour
     }
 
     public void UpdateMap(Dictionary<string, object> packet) {
-      GameObject root = GameObject.Find("Environment");
+      GameObject root  = GameObject.Find("Environment");
+      List<object> map     = (List<object>) packet["map"];
 
-      List<object> map = (List<object>) packet["map"];
-      for(int r=0; r<mapSz; r++) {
+      string cmd = this.console.cmd;
+      this.cmd = cmd;
+      if (this.console.validateCommand(cmd))
+      {
+         int count = 0;
+         List<object> values = (List<object>) packet[cmd];
+         Color[] pixels = new Color[80 * 80];
+         for (int r = 0; r < mapSz; r++)
+         {
+            List<object> row = (List<object>)values[r];
+            for (int c = 0; c < mapSz; c++)
+            {
+               List<object> col = (List<object>)row[c];
+               Color value = new Color();
+               for (int i = 0; i < 3; i++)
+               {
+                  value[i] = System.Convert.ToSingle(col[i]);
+               }
+               value.a = 0f;
+               pixels[count] = value;
+               count++;
+            }
+        }
+        this.values.SetPixels(pixels);
+        this.values.Apply(false);
+      }
+
+      for (int r=0; r<mapSz; r++) {
          List<object> row = (List<object>) map[r];
          for(int c=0; c<mapSz; c++) {
             int val = System.Convert.ToInt32(row[c]);
@@ -135,6 +171,7 @@ public class Environment: MonoBehaviour
             }
          }
       }
+     //this.values = Texture2D.grayTexture;
     }
 
     public void UpdateTerrain(Dictionary<string, object> packet)
@@ -575,7 +612,14 @@ public class Environment: MonoBehaviour
       obj.transform.gameObject.AddComponent<MeshRenderer>();
       obj.transform.gameObject.AddComponent<MeshFilter>();
       obj.transform.GetComponent<MeshFilter>().mesh = mesh;
-      obj.transform.GetComponent<MeshRenderer>().material = mat;
+      MeshRenderer renderer = obj.transform.GetComponent<MeshRenderer>();
+      this.overlayMatl      = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
+      this.renderer = renderer;
+      Material[] materials = new Material[2];
+      materials[0] = mat;
+      materials[1] = this.overlayMatl;
+      this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
+      renderer.materials = materials;
       obj.transform.gameObject.SetActive(true);
     }
 
@@ -583,7 +627,19 @@ public class Environment: MonoBehaviour
     {
       //Debug.Log("Updating terrain: " + tick.ToString());
       tick++;
-
+      //GameObject plane = GameObject.Find("Plane");
+      //plane.GetComponent<MeshRenderer>().material.SetTexture("_Overlay", this.testMatl);
+      if (this.overlayMatl)
+      {
+         string cmd = this.cmd;
+         if (this.console.validateCommand(cmd))
+         {
+            this.overlayMatl.SetTexture("_Overlay", this.values);
+         } else if (cmd == "env")
+         {
+            this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
+         }
+      }
     }
 
 }

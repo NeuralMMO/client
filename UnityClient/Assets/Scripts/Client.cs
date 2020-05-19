@@ -41,9 +41,9 @@ public class Client : MonoBehaviour
       }
 
       tickFrac = 0;
-      if(this.first) {
+      if(this.comms.newConnection) {
          this.environment.UpdateTerrain(packet);
-         this.first = false;
+         this.comms.newConnection = false;
       }
 
       this.environment.UpdateMap(packet);

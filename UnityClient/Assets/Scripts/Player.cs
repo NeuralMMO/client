@@ -12,6 +12,7 @@ public class Player : UnityModule {
    public GameObject target;
    public GameObject attack;
    //public ResourceBars bars;
+   public Vector3 forward;
 
    public int rOld = 0;
    public int cOld = 0;
@@ -93,6 +94,12 @@ public class Player : UnityModule {
       } else {
         this.transform.position = targ;
       }
+
+      //Turn to target instead of move direction
+      if (this.target != null) {
+         targ = this.target.transform.position;
+      }
+      this.transform.forward  = Vector3.RotateTowards(this.forward, orig-targ, (float) Math.PI * Client.tickFrac, 0f);
    }
 
    public void UpdateAttack() {
@@ -100,13 +107,12 @@ public class Player : UnityModule {
          return;
       }
 
-      Vector3 orig = new Vector3(0, 0, 0);
-      Vector3 targ = this.target.transform.position - this.transform.position + 3*Vector3.up/4; 
-      this.attack.transform.localPosition = Vector3.Lerp(orig, targ, Client.tickFrac);
+      this.attack.transform.position = Vector3.Lerp(this.transform.position, this.target.transform.position, Client.tickFrac) + 3*Vector3.up/4;
    }
 
    public void UpdatePlayer(Dictionary<int, GameObject> players, object ent) {
-      this.orig  = this.transform.position;
+      this.orig    = this.transform.position;
+      this.forward = this.transform.forward;
       this.start = Time.time;
 
       //Position
@@ -147,8 +153,6 @@ public class Player : UnityModule {
          return;
       }
 
-      Debug.Log("Attack!");
-
       object attk   = Unpack("attack", hist);
       string style  = Unpack("style", attk) as string;
       object targ   = Unpack("target", attk);
@@ -162,8 +166,9 @@ public class Player : UnityModule {
       this.target = players[targs];
       UnityEngine.Object prefab = Resources.Load("Prefabs/" + style + "Attack") as GameObject; 
       this.attack = GameObject.Instantiate(prefab) as GameObject;
-      this.attack.transform.SetParent(this.transform);
-      this.attack.transform.localPosition = 3*Vector3.up/4;
+      //this.attack.transform.SetParent(this.transform);
+      //this.attack.transform.localPosition = 3*Vector3.up/4;
+      this.attack.transform.position = this.transform.position + 3*Vector3.up/4;
    }
 
    public void Delete() {

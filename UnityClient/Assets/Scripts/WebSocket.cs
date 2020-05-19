@@ -102,7 +102,7 @@ public class WebSocket
 #else
 	WebSocketSharp.WebSocket m_Socket;
 	Queue<byte[]> m_Messages = new Queue<byte[]>();
-	bool m_IsConnected = false;
+	public bool m_IsConnected = false;
 	string m_Error = null;
 
 	public IEnumerator Connect()
@@ -130,7 +130,7 @@ public class WebSocket
 
 	public void Close()
 	{
-		m_Socket.Close();
+		m_Socket.CloseAsync();
 	}
 
 	public string error
