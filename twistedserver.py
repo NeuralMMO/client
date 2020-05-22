@@ -18,6 +18,10 @@ from autobahn.twisted.resource import WebSocketResource
 def sign(x):
     return int(np.sign(x))
 
+def softmax(x):
+    exp = np.exp(x)
+    return exp / np.sum(exp)
+
 def move(orig, targ):
     ro, co = orig
     rt, ct = targ
@@ -62,16 +66,10 @@ class GodswordServerProtocol(WebSocketServerProtocol):
         self.frame += 1
 
         data = self.serverPacket()
-        sz = data['environment'].shape[0]
-
-        self.vals = None
-        if data['values'] is not None:
-           self.vals = self.visVals(data['values'], sz)
-
         self.sendUpdate()
 
     def serverPacket(self):
-        data = ray.get(self.realm).clientData()
+        data = self.realm.clientData()
         return data
 
     def sendUpdate(self):
@@ -84,41 +82,71 @@ class GodswordServerProtocol(WebSocketServerProtocol):
         gameMap = environment.np().tolist()
         self.packet['map'] = gameMap
 
-        tiles = []
+        counts, attention, values = [], [], []
+        countColors = []
         for tileList in environment.tiles:
-           tl = []
+           counts.append([])
+           countColors.append([])
+           attention.append([])
+           values.append([])
            for tile in tileList:
-              tl.append(tile.counts.tolist())
-           tiles.append(tl)
-        self.packet['counts'] = tiles
+              counts[-1].append(tile.count.value)
+              countColors[-1].append(tile.count.color)
+              
+              attention[-1].append(tile.attention.value)
+              values[-1].append(tile.value.value)
 
-        self.packet['values'] = self.vals
-        if self.vals is not None:
-           self.packet['values'] = self.vals.tolist()
- 
+        counts    = self.visCounts(counts, countColors)
+        attention = self.visVals(attention)
+        values    = self.visVals(values)
+        globalValues = self.visVals(data['globalValues'])
+
+        self.packet['counts']    = (counts / (np.max(counts))).tolist()
+        self.packet['attention'] = attention.tolist()
+        self.packet['values']    = values.tolist()
+        self.packet['globalValues'] = globalValues.tolist()
+
         packet = json.dumps(self.packet).encode('utf8')
         self.sendMessage(packet, False)
 
     #Todo: would be nicer to move this into the javascript,
     #But it would possibly have to go straight into the shader
-    def visVals(self, vals, sz):
-      ary = np.zeros((sz, sz, 3))
-      vMean = np.mean([e[1] for e in vals])
-      vStd  = np.std([e[1] for e in vals])
-      nStd, nTol = 4.0, 0.5
-      grayVal = int(255 / nStd * nTol)
-      for v in vals:
-         pos, mat = v
-         r, c = pos
-         mat = (mat - vMean) / vStd
-         color = np.clip(mat, -nStd, nStd)
-         color = int(color * 255.0 / nStd)
-         if color > 0:
-             color = (0, color, 128)
-         else:
-             color = (-color, 0, 128)
-         ary[r, c] = color
-      return ary.astype(np.uint8)
+    def visVals(self, vals, nStd=2):
+      vals = np.array(vals)
+      R, C = vals.shape
+      ary  = np.zeros((R, C, 3))
+      vStats = vals[vals != 0]
+      vMean = np.mean(vStats)
+      vStd  = np.std(vStats)
+      for r in range(R):
+        for c in range(C):
+           val = vals[r, c]
+           if val != 0:
+              val = (val - vMean) / (nStd * vStd)
+              val = np.clip(val+1, 0, 2)/2
+              ary[r, c] = [1-val, val, 0]
+      return ary
+
+    def visCounts(self, counts, colors, nStd=2):
+      counts = np.array(counts)
+      colors = np.array(colors)
+      R, C = counts.shape
+      ary  = np.zeros((R, C, 3))
+      vStats = counts[counts!= 0]
+      vMean = np.mean(vStats)
+      vStd  = np.std(vStats)
+      for r in range(R):
+        for c in range(C):
+           val = counts[r, c]
+           color = colors[r, c]
+           if val != 0:
+              val = (val - vMean) / (nStd * vStd)
+              val = np.clip(val+1, 0, 2)/2
+              mmax = np.max(color)
+              if mmax > 1:
+                  color = color / mmax
+              ary[r, c] = val * color
+      return ary
 
 class WSServerFactory(WebSocketServerFactory):
     def __init__(self, ip, realm, step):
@@ -129,6 +157,7 @@ class WSServerFactory(WebSocketServerFactory):
         self.tickRate = 0.6
         self.tick = 0
 
+        self.step()
         lc = LoopingCall(self.announce)
         lc.start(self.tickRate)
 
@@ -137,12 +166,10 @@ class WSServerFactory(WebSocketServerFactory):
         uptime = np.round(self.tickRate*self.tick, 1)
         print('Uptime: ', uptime, ', Tick: ', self.tick)
 
-        if self.tick == 5:
-           pass
-           #time.sleep(20)
-        self.step()
         for client in self.clients:
             client.sendUpdate()
+
+        self.step()
 
     def clientConnectionMade(self, client):
         self.clients.append(client)
