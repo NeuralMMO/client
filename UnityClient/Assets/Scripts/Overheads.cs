@@ -109,7 +109,7 @@ public class Overheads: UnityModule
       Vector3 pos = player.transform.position;
 
       this.playerName.color = color;
-      this.playerName.text  = "<color=#00FF00>(Lvl " + player.level + ") </color>" + name;
+      this.playerName.text  = "<color=#00bbbb>(Lvl " + player.level + ") </color>" + name;
 
       worldPos          = new Vector3(pos.x, pos.y + 1f, pos.z);
       Vector3 screenPos = this.camera.WorldToScreenPoint(worldPos);

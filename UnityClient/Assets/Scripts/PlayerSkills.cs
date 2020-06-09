@@ -16,8 +16,6 @@ public class PlayerSkills : UnityModule
    public Skill defense;
    public Skill fishing;
    public Skill hunting;
-   public Skill cooking;
-   public Skill smithing;
 
    Skill AddSkill(string name) {
       Skill skill = this.gameObject.AddComponent<Skill>();
@@ -36,8 +34,6 @@ public class PlayerSkills : UnityModule
       this.defense      = this.AddSkill("defense");
       this.fishing      = this.AddSkill("fishing");
       this.hunting      = this.AddSkill("hunting");
-      this.cooking      = this.AddSkill("cooking");
-      this.smithing     = this.AddSkill("smithing");
    }
 
    public void UpdateSkills(object skills) {
@@ -51,7 +47,7 @@ public class PlayerSkills : UnityModule
       foreach (KeyValuePair<string, Skill> skill in this.skills) {
          GameObject UISkill = GameObject.Find("UI/Canvas/Panel/" + char.ToUpper(skill.Key[0]) + skill.Key.Substring(1));
          TextMeshProUGUI tm = UISkill.GetComponent<TextMeshProUGUI>();
-         tm.text = char.ToUpper(skill.Key[0]) + skill.Key.Substring(1) + ": " + skill.Value.level + " (" + skill.Value.experience + "XP)";
+         tm.text = char.ToUpper(skill.Key[0]) + skill.Key.Substring(1) + ": " + skill.Value.level;// + " (" + skill.Value.experience + "XP)";
       }
    }
 
