@@ -21,6 +21,7 @@ public class Environment: MonoBehaviour
     public Dictionary<string, GameObject>[,] env = new Dictionary<string, GameObject>[mapSz, mapSz];
     public int[,] vals = new int[mapSz, mapSz];
     public Texture2D values;
+    Dictionary<string, object> overlays;
 
     public static List<List<GameObject>> terrain = new List<List<GameObject>>();
     public static int mapSz = 80;
@@ -131,14 +132,15 @@ public class Environment: MonoBehaviour
 
     public void UpdateMap(Dictionary<string, object> packet) {
       GameObject root  = GameObject.Find("Environment");
-      List<object> map     = (List<object>) packet["map"];
+      List<object> map = (List<object>) packet["map"];
+      this.overlays    = (Dictionary<string, object>) packet["overlay"];
 
       string cmd = this.console.cmd;
       this.cmd = cmd;
-      if (this.console.validateCommand(cmd))
+      if (this.overlays.ContainsKey(cmd))
       {
          int count = 0;
-         List<object> values = (List<object>) packet[cmd];
+         List<object> values = (List<object>) this.overlays[cmd];
          Color[] pixels = new Color[80 * 80];
          for (int r = 0; r < mapSz; r++)
          {
@@ -632,7 +634,8 @@ public class Environment: MonoBehaviour
       if (this.overlayMatl)
       {
          string cmd = this.cmd;
-         if (this.console.validateCommand(cmd))
+         Debug.Log(cmd);
+         if (this.overlays.ContainsKey(cmd))
          {
             this.overlayMatl.SetTexture("_Overlay", this.values);
          } else if (cmd == "env")

@@ -22,12 +22,6 @@ public class Console : MonoBehaviour
 		this.log        = GameObject.Find("Console/Container/Scroll View/Viewport/Content/Log").GetComponent<Text>();
 		this.container.SetActive(false);
 		this.cmd = "";
-
-		this.commands = new List<string>();
-		this.commands.Add("globalValues");
-		this.commands.Add("values");
-		this.commands.Add("counts");
-		this.commands.Add("attention");
 	}
 
 	// Update is called once per frame
@@ -91,7 +85,7 @@ public class Console : MonoBehaviour
 		{
 			return false;
 		}
-      return this.commands.Contains(cmd);
+      return true;
    }
 	
 	void SubmitText(string txt)

@@ -42,8 +42,8 @@ Shader "Unlit/OverlayShader"
             {
                 //pos = floor(i.worldPos * 20);
                 //checker = _Overlay * checker;
-                float4 pos = i.worldPos + 0.5;
-                pos.xz = floor(pos.xz) / 80;
+                float4 pos = i.worldPos;
+                pos.xz = (floor(pos.xz + 0.5) + 0.5) / 80;
 
                 //return fixed4(1.0, 0.0, 0.0, 1.0);
                 fixed4 tex = tex2Dlod(_Overlay, float4(pos.z, pos.x, 0, 0));
