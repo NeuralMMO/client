@@ -3863,8 +3863,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Neural MMO Debug Console\n\t> Commands: env/counts/attention/values/globalValues\n\t>
-    Press ` to toggle console"
+  m_Text: "Welcome to Neural MMO!\n\nControls:\n\tLeft mouse: Click agents to examine/follow\n\tMiddle
+    mouse: Zoom/rotate\n\tRight mouse: Pan\n\nThis is the console - Press tab to
+    toggle\n\t> Commands: env/counts/attention/values/globalValues"
 --- !u!222 &892883215
 CanvasRenderer:
   m_ObjectHideFlags: 0

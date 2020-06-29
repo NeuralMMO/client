@@ -12,6 +12,8 @@ public class Console : MonoBehaviour
 	GameObject container;
 	ScrollRect scrollRect;
 	public List<string> commands;
+	string toggle;
+
    // Start is called before the first frame update
    void Start()
    {
@@ -21,40 +23,44 @@ public class Console : MonoBehaviour
 		this.scrollRect = GameObject.Find("Console/Container/Scroll View").GetComponent<ScrollRect>();
 		this.log        = GameObject.Find("Console/Container/Scroll View/Viewport/Content/Log").GetComponent<Text>();
 		this.container.SetActive(false);
-		this.cmd = "";
+		this.toggle = "1";
+		this.cmd = "\t";
+
+		this.Activate();
+	}
+
+	void Activate()
+	{
+		this.container.SetActive(true);
+		this.prompt.ActivateInputField();
+		this.prompt.MoveTextEnd(false);
 	}
 
 	// Update is called once per frame
 	void Update()
     {
 		string text = this.prompt.text;
-
 		//Enable on enter
 		if (Input.GetKeyDown(KeyCode.Return))
-      {
+		{
 			if (!this.container.activeSelf)
 			{
-				this.container.SetActive(true);
-				this.prompt.ActivateInputField();
-				this.prompt.MoveTextEnd(false);
+				this.Activate();
 			}
-			this.prompt.text = text.Replace("`", "");
-      }
-
+			this.prompt.text = text.Replace(toggle, "");
+		}
 		//Toggle on back quote
-      if (Input.GetKeyDown(KeyCode.BackQuote))
-      {
+ 	    if (Input.GetKeyDown(KeyCode.Tab))
+  	    {
 			if (!this.container.activeSelf)
 			{
-				this.container.SetActive(true);
-				this.prompt.ActivateInputField();
-				this.prompt.MoveTextEnd(false);
+      			this.Activate();
 			} else
 			{
 				this.container.SetActive(false);
 			}
-			this.prompt.text = text.Replace("`", "");
-      }
+			this.prompt.text = text.Replace(toggle, "");
+      	}
 
 		//Process text
 		if (this.container.activeSelf)
