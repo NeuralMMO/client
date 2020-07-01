@@ -7,7 +7,7 @@
 |fire| Neural MMO Client
 ########################
 
-This repository contains the Unity3D client for the main [Neural MMO Project](https://github.com/jsuarez5341/neural-mmo). You should expect 50-60 FPS on a high end desktop. It's written in C# in a manner accessible to researchers and developers who work primarily in Python.
+This repository contains the Unity3D client for the main `[Neural MMO] <https://github.com/jsuarez5341/neural-mmo>`_ project. You should expect 50-60 FPS on a high end desktop. It's written in C# in a manner accessible to researchers and developers who work primarily in Python.
 
 |icon| Setup
 ############
