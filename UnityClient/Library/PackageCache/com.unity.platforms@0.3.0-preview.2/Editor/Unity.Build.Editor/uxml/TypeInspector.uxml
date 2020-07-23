@@ -1,0 +1,15 @@
+<UXML
+  xmlns="UnityEngine.UIElements"
+  xmlns:uie="UnityEditor.UIElements">
+  <VisualElement class="unity-base-field unity-enum-field">
+    <Label name="label" class="unity-base-field__label unity-enum-field__label"/>
+    <VisualElement name="input" class="unity-base-field__input unity-enum-field__input">
+      <TextElement name="text" class="unity-enum-field__text"/>
+      <VisualElement name="arrow" class="unity-enum-field__arrow"/>
+    </VisualElement>
+  </VisualElement>
+  <VisualElement name="helpbox" class="unity-base-field TypeInspector__helpbox">
+    <Image name="icon" class="TypeInspector__icon"/>
+    <Label name="message" class="TypeInspector__message"/>
+  </VisualElement>
+</UXML>

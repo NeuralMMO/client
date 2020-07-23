@@ -1,0 +1,22 @@
+.BuildConfiguration__asset-dependencies
+{
+    background-color: #222222;
+}
+
+.BuildConfiguration__add-component-button
+{
+    background-image: resource("Icons/d_CreateAddNew.png");
+}
+
+.BuildConfiguration__build-dropdown
+{
+    border-bottom-color: #242424;
+    border-right-color: #303030;
+    border-top-color: #303030;
+    border-left-color: #303030;
+}
+
+.BuildConfiguration__optional-components
+{
+    background-color: #222222;
+}

@@ -1,0 +1,83 @@
+#Container {
+    padding: 20px;
+    align-self: center;
+}
+
+#ContainerSizeProject {
+    flex-direction: Row;
+    margin-bottom: 5px;
+    align-self: center;
+}
+#ContainerSizeProject > .ToggleWithTitleAndDescription {
+    width: 150px;
+    height: 95px;
+}
+#ContainerIndex {
+    flex-direction: Row;
+    margin-bottom: 20px;
+    align-self: center;
+}
+#ContainerIndex > .ToggleWithTitleAndDescription {
+    width: 150px;
+    height: 140px;
+}
+.ToggleWithTitleAndDescription {
+    margin: 10px;
+    padding: 10px;
+    border-width: 1px;
+    border-radius: 5px;
+    background-color: var(--unity-colors-button-background);
+}
+.ToggleWithTitleAndDescription:hover {
+    background-color: var(--unity-colors-button-background-hover);
+}
+.ToggleWithTitleAndDescription:checked {
+    border-color: var(--unity-colors-button-background-checked);
+    background-color: var(--unity-colors-button-background-hover);
+    border-width: 2px;
+}
+.ToggleWithTitleAndDescription Label {
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+.ToggleWithTitleAndDescription > VisualElement {
+    flex-direction: column;
+}
+.ToggleWithTitleAndDescription #TitleLabel {
+    font-size: 15px;
+    height: 25px;
+    -unity-text-align: middle-center;
+}
+.ToggleWithTitleAndDescription #DescriptionLabel {
+    font-size: 10px;
+    white-space: normal;
+    -unity-text-align: upper-center;
+    padding: 3px;
+    flex-grow: 1;
+}
+
+#ContainerButtons {
+    flex-direction: Row;
+    flex-grow: 1;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+Button {
+    padding: 5px 10px;
+    height: 20px;
+}
+
+#Container > Label {
+    margin-left: 35px;
+    margin-right: 35px;
+    white-space: normal;
+    font-size: 13px;
+}
+
+#CancelButton {
+    margin-right: 35px;
+}
+
+#FinishButton {
+}

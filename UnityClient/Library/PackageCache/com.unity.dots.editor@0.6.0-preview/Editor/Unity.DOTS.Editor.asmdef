@@ -1,0 +1,32 @@
+{
+    "name": "Unity.DOTS.Editor",
+    "references": [
+        "Unity.Entities",
+        "Unity.Entities.Editor",
+        "Unity.Entities.Hybrid",
+        "Unity.Scenes.Hybrid",
+        "Unity.Scenes.Editor",
+        "Unity.InternalAPIEditorBridge.002",
+        "Unity.InternalAPIEngineBridge.002",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "Unity.Properties",
+        "Unity.Properties.UI.Editor",
+        "Unity.Serialization",
+        "Unity.Serialization.Editor",
+        "Unity.Collections",
+        "Unity.Jobs",
+        "Unity.Transforms"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,5 @@
+{
+	"displayName":"Type Search Provider",
+	"description": "Search unity obeject types",
+	"createSeparatePackage": false
+}

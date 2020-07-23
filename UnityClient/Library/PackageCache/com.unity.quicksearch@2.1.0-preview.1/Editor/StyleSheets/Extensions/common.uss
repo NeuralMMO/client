@@ -1,0 +1,113 @@
+
+.quick-search-item-background1 {
+    -unity-enable-hovering: --enable-style-hovering;
+}
+
+.quick-search-item-background2 {
+    -unity-enable-hovering: --enable-style-hovering;
+
+    background-color: --theme-background-color-alternate;
+}
+
+.quick-search-item-background1:hover,
+.quick-search-item-background2:hover {
+    background-color: --theme-line-selection-background-color-hover;
+}
+
+.quick-search-item-selected-background {
+    -unity-enable-hovering: --enable-style-hovering;
+    background-color: --theme-line-selection-background-color-focus;
+}
+
+.quick-search-item-selected-background:hover {
+    background-color: --theme-line-selection-background-color-focus;
+}
+
+.quick-search-border,
+.quick-search-filter-panel-border, .quick-search-preview-panel-border {
+    border: --theme-window-border;
+}
+
+.quick-search-selected-item-grid-background {
+   -unity-enable-hovering: --enable-style-hovering;
+    background-color: --theme-line-selection-background-color-focus;
+	border-radius: 4px;
+}
+
+.quick-search-action-button {
+    -unity-enable-hovering: --enable-style-hovering;
+}
+
+.quick-search-action-button-hovered {
+    background-color: --theme-toolbar-button-background-color-hover;
+}
+
+.quick-search-debug-toolbar {
+    height: --window-toolbar-height;
+    margin: 0 0 0 0;
+    padding: 0 0 0 1px;
+    border: --theme-toolbar-border;
+    border-top-width: 1px;
+    border-right-width: 0;
+    border-bottom-width: 1px;
+    background-color: --theme-toolbar-background-color;
+}
+
+.quick-search-debug-toolbarbutton {
+    left: -1;
+
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: --unity-toolbar-padding-top;
+    padding-bottom: --unity-toolbar-padding-bottom;
+    margin: 0 0 0 0;
+
+    height: --window-toolbar-button-height;
+
+    color: --theme-toolbar-button-text-color;
+    background-color: --theme-toolbar-button-background-color;
+    -unity-content-image-offset-y: --unity-toolbar-button-icon-offset-y;
+    border: --theme-toolbar-button-border-2;
+    border-top-width: 1px;
+    border-right-width: 0;
+    border-bottom-width: 0;
+
+    -unity-enable-hovering: --enable-style-hovering;
+    font-size: --unity-font-size;
+}
+
+.quick-search-debug-toolbarbutton:active,
+.quick-search-debug-toolbarbutton:checked {
+    color: --theme-toolbar-button-text-color-checked;
+    background-color: --theme-toolbar-button-background-color-checked;
+    border: --theme-toolbar-button-border-2;
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+
+.quick-search-debug-toolbarbutton:hover {
+    color: --theme-toolbar-button-text-color-hover;
+    background-color: --theme-toolbar-button-background-color-hover;
+}
+
+.quick-search-status-bar-background {
+    background-color: --theme-header-box-background-color;
+}
+
+.quick-search-auto-complete-item-label {
+    -unity-enable-hovering: --enable-style-hovering;
+    background-color: #252526;
+}
+
+.quick-search-auto-complete-item-selected-label {
+    -unity-enable-hovering: --enable-style-hovering;
+    background-color: #2C5D87;
+}
+
+.quick-search-auto-complete-item-label:hover {
+    background-color: #454545;
+}
+
+.quick-search-auto-complete-item-selected-label:hover {
+    background-color: #3C6D97;
+}

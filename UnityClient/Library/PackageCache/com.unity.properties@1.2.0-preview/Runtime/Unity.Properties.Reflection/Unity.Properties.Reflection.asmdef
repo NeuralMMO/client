@@ -1,0 +1,13 @@
+{
+    "name": "Unity.Properties.Reflection",
+    "references": [
+        "Unity.Properties"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

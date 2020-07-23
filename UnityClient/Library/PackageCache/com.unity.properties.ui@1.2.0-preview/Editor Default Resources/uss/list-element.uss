@@ -1,0 +1,52 @@
+.unity-properties__list-element__toggle-input
+{
+  align-self:center;
+  flex-grow:0;
+  min-width:165px;
+}
+
+.unity-toggle__input
+{
+  align-self:center;
+}
+
+.unity-properties__list-element__size
+{
+  margin-left: -1px;
+}
+
+.unity-properties__list-element__add-item-button
+{
+  align-self: flex-end;
+  background-color: transparent;
+  border-width: 0;
+}
+
+.unity-properties__list-element__size
+{
+  width:80px;
+}
+
+.unity-properties__list-element__item-no-foldout
+{
+  flex-grow: 1;
+}
+
+.unity-properties__list-element__item-foldout
+{
+}
+
+.unity-properties__list-element__item-content
+{
+  flex-grow:1;
+}
+
+.unity-properties__list-element__remove-item-button
+{
+  align-self: center;
+  background-color: transparent;
+  background-image: var(--remove-button);
+  border-width: 0;
+  height: 16px;
+  width: 16px;
+}

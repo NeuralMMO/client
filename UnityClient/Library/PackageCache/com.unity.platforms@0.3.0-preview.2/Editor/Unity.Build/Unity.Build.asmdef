@@ -1,0 +1,21 @@
+{
+    "name": "Unity.Build",
+    "references": [
+        "Unity.InternalAPIEditorBridge.012",
+        "Unity.Properties",
+        "Unity.Properties.Editor",
+        "Unity.Serialization",
+        "Unity.Serialization.Properties"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

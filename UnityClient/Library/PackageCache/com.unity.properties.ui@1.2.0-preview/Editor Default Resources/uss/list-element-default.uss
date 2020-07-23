@@ -1,0 +1,23 @@
+.unity-properties__list-element__item-container
+{
+    background-color: var(--collection-item__top-line-color);
+    border-color: var(--collection-item__border);
+    border-radius: 5px;
+    border-width: 1px;
+    margin-bottom: 3px;
+    margin-left: -15px;
+    padding-bottom:2px;
+    padding-left: 15px;
+    padding-top:0px;
+}
+
+.unity-properties__list-element__item-content
+{
+    background-color: var(--collection-item__content);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin-left: -18px;
+    margin-right: -2px;
+    margin-bottom:-2px;
+    padding: 2px 3px 3px 15px;
+}

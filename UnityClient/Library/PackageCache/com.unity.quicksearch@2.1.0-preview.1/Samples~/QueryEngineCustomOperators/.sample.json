@@ -1,0 +1,5 @@
+{
+	"displayName":"QueryEngine Custom Operators",
+	"description": "Customisation of the Query Engine for your specific needs.",
+	"createSeparatePackage": false
+}

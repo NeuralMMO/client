@@ -1,0 +1,23 @@
+.unity-properties__variables
+{
+     /* Textures */
+    --remove-button--selected: resource("Packages/com.unity.properties.ui/Editor Default Resources/icons/selected/Close S.png");
+    --previous-button--selected: resource("Packages/com.unity.properties.ui/Editor Default Resources/icons/selected/PreviousButton.png");
+    --next-button--selected: resource("Packages/com.unity.properties.ui/Editor Default Resources/icons/selected/NextButton.png");
+    --circular-reference-icon--selected: resource("Packages/com.unity.properties.ui/Editor Default Resources/icons/selected/CircularReference.png");
+}
+
+.unity-properties__row
+{
+    flex-direction: row;
+}
+
+.unity-properties__column
+{
+    flex-direction: column;
+}
+
+.unity-properties__expand
+{
+    flex-grow: 1;
+}

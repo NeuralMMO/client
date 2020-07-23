@@ -1,0 +1,9 @@
+﻿{
+    "name": "MockTests",
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

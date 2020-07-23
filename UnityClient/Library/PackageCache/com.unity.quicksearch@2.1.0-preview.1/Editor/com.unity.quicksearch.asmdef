@@ -1,0 +1,29 @@
+{
+    "name": "com.unity.quicksearch",
+    "references": [
+        "GUID:343deaaf83e0cee4ca978e7df0b80d21",
+        "GUID:ee25bd4c5770f7147b2e7abfba78d26e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "1.0.0",
+            "define": "PACKAGE_UGUI"
+        },
+        {
+            "name": "com.unity.performance-tracking",
+            "expression": "0.0.0",
+            "define": "PACKAGE_PERFORMANCE_TRACKING"
+        }
+    ],
+    "noEngineReferences": false
+}

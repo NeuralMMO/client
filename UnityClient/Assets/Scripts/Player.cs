@@ -48,10 +48,10 @@ public class Player : UnityModule {
    }
 
    public void Init(Dictionary<int, GameObject> players, int iden, object packet) {
-      this.skills             = this.gameObject.AddComponent<PlayerSkills>();
-      this.orig               = this.transform.position;
-      this.start              = Time.time;
-      this.id                 = iden;
+      this.skills       = this.gameObject.AddComponent<PlayerSkills>();
+      this.orig         = this.transform.position;
+      this.start        = Time.time;
+      this.id           = iden;
 
       object basePacket = Unpack("base", packet);
       string name       = (string) Unpack("name", basePacket);
@@ -120,8 +120,8 @@ public class Player : UnityModule {
       this.rOld = this.r;
       this.cOld = this.c;
 
-      this.r  = Convert.ToInt32(UnpackList(new List<string>{"r", "val"}, entBase));
-      this.c  = Convert.ToInt32(UnpackList(new List<string>{"c", "val"}, entBase));
+      this.r  = Convert.ToInt32(UnpackList(new List<string>{"r"}, entBase));
+      this.c  = Convert.ToInt32(UnpackList(new List<string>{"c"}, entBase));
 
       //Resources
       object resources = Unpack("resource", ent);
@@ -144,7 +144,7 @@ public class Player : UnityModule {
       }
 
       Dictionary<string, object> hist = Unpack("history", ent) as Dictionary<string, object>;
-      int damage = Convert.ToInt32(UnpackList(new List<string>{"damage", "val"}, hist));
+      int damage = Convert.ToInt32(UnpackList(new List<string>{"damage"}, hist));
 
       this.overheads.UpdateDamage(damage);
       

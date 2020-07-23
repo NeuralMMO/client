@@ -1,0 +1,8 @@
+<UXML
+  xmlns="UnityEngine.UIElements"
+  xmlns:uie="UnityEditor.UIElements">
+  <VisualElement class="unity-base-field unity-object-field">
+    <Label name="label" class="unity-base-field__label unity-object-field__label"/>
+    <uie:ObjectField name="input" class="unity-properties__lazy-load-reference__input"/>
+  </VisualElement>
+</UXML>

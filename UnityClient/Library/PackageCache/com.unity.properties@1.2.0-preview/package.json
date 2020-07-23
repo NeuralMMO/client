@@ -1,0 +1,22 @@
+{
+  "name": "com.unity.properties",
+  "displayName": "Properties",
+  "version": "1.2.0-preview",
+  "unity": "2019.3",
+  "unityRelease": "0f1",
+  "description": "Interfaces and utilities to describe and visit data containers.",
+  "keywords": [
+    "properties",
+    "unity"
+  ],
+  "dependencies": {
+    "nuget.mono-cecil": "0.1.5-preview",
+    "com.unity.test-framework.performance": "1.3.3-preview"
+  },
+  "repository": {
+    "footprint": "dc55cf34a15463da682efc47a33dd08bfee60c07",
+    "type": "git",
+    "url": "https://github.com/Unity-Technologies/com.unity.properties.git",
+    "revision": "405a6f7ef406d62af3207044f2983017e1ec9517"
+  }
+}

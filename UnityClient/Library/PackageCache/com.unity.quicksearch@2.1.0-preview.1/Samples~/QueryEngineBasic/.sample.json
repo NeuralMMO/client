@@ -1,0 +1,5 @@
+{
+	"displayName":"QueryEngine Basic",
+	"description": "Basic usage of the Query Engine, which should cover most needs.",
+	"createSeparatePackage": false
+}

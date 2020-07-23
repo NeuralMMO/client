@@ -17,6 +17,7 @@ public class Client : MonoBehaviour
    // Start is called before the first frame update
    void Start()
    {
+         Debug.Log("yeet");
       this.ui            = GameObject.Find("UI").GetComponent<UI>();
       this.comms         = GameObject.Find("WebSocket").GetComponent<Comms>();
       this.environment   = GameObject.Find("Environment").GetComponent<Environment>();
@@ -42,8 +43,8 @@ public class Client : MonoBehaviour
 
       tickFrac = 0;
       if(this.comms.newConnection) {
-         this.environment.UpdateTerrain(packet);
          this.comms.newConnection = false;
+         this.environment.initTerrain(packet);
       }
 
       this.environment.UpdateMap(packet);

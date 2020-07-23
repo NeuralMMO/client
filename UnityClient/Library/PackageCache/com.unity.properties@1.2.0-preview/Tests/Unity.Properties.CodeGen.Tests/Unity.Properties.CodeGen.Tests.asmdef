@@ -1,0 +1,25 @@
+{
+  "name": "Unity.Properties.CodeGen.Tests",
+  "references": [
+    "Unity.Properties",
+    "Unity.Properties.CodeGen",
+    "Unity.Properties.CodeGen.Tests.Types"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "Mono.Cecil.dll",
+    "Mono.Cecil.Rocks.dll",
+    "Mono.Cecil.Pdb.dll",
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "versionDefines": []
+}

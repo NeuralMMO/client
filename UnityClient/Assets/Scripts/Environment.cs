@@ -1,139 +1,298 @@
+using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
+using Unity.Entities;
+using Unity.Transforms;
+using Unity.Rendering;
+using Unity.Mathematics;
 
-/*
-Nothing works. At all. But it's not because it's wrong. Just slow and
-glitching the editor. Need to either port all this into a new project
-or start reducing stuff from this project. Probably latter first quickly
-The tile packer map is maybe? part of this... but I think it's just unity */
+public struct Matrix4x4Component : IComponentData
+{
+   public Matrix4x4 Value;
+}
+
+public class Chunk
+{
+   private bool active = true;
+   private Dictionary<Tuple<int, int>, Entity> tiles;
+   public Entity terrain;
+
+   public Chunk(Entity terrain, int r, int c)
+   {
+      this.tiles   = new Dictionary<Tuple<int, int>, Entity>();
+      this.terrain = terrain;
+
+      //this.terrain.transform.SetParent(root.transform);
+      //this.terrain.name = "Chunk-R" + r.ToString() + "-C" + c.ToString();
+   }
+
+   public Entity GetTile(int tileR, int tileC)
+   {
+      Tuple<int, int> key = Tuple.Create(tileR, tileC);
+      return this.tiles[key];
+   }
+
+   public bool ContainsTile(int tileR, int tileC) {
+      Tuple<int, int> key = Tuple.Create(tileR, tileC);
+      return this.tiles.ContainsKey(key);
+   }
  
+   public void SetTile(int tileR, int tileC, Entity ent)
+   {
+      Tuple<int, int> key = Tuple.Create(tileR, tileC);
+      this.tiles[key] = ent;
+   }
+
+   public bool GetIsActive()
+   {
+      return this.active;
+   }
+
+   public void SetActive(EntityManager manager, bool active)
+   {
+      this.active = active;
+      manager.SetEnabled(this.terrain, active); 
+      foreach(Entity e in this.tiles.Values)
+      {
+         manager.SetEnabled(e, active); 
+      }
+   }
+}
+
+public class Env
+{
+   private Dictionary<Tuple<int, int>, Chunk> chunks;
+
+   public Env()
+   {
+      this.chunks = new Dictionary<Tuple<int, int>, Chunk>();
+   }
+
+   public Chunk GetChunk(int chunkR, int chunkC)
+   {
+      Tuple<int, int> key = Tuple.Create(chunkR, chunkC);
+      return this.chunks[key];
+   }
+   public void SetChunk(Chunk chunk, int chunkR, int chunkC)
+   {
+      Tuple<int, int> key = Tuple.Create(chunkR, chunkC);
+      this.chunks[key] = chunk;
+   }
+   public bool ContainsChunk(int chunkR, int chunkC)
+   {
+      Tuple<int, int> key = Tuple.Create(chunkR, chunkC);
+      return this.chunks.ContainsKey(key);
+   }
+ 
+   public Entity GetTile(int tileR, int tileC)
+   {
+      int chunkR = (int) Math.Floor((float) tileR / Consts.CHUNK_SIZE);
+      int chunkC = (int) Math.Floor((float) tileC / Consts.CHUNK_SIZE);
+
+      return this.GetChunk(chunkR, chunkC).GetTile(tileR, tileC);
+   }
+   public bool ContainsTile(int tileR, int tileC) {
+      int chunkR = (int) Math.Floor((float) tileR / Consts.CHUNK_SIZE);
+      int chunkC = (int) Math.Floor((float) tileC / Consts.CHUNK_SIZE);
+
+      if (!this.ContainsChunk(chunkR, chunkC))
+      {
+         return false;
+      }
+      return this.GetChunk(chunkR, chunkC).ContainsTile(tileR, tileC);
+   }
+ 
+}
+
+public class EnvMaterials : MonoBehaviour
+{
+    public  Dictionary<int, string> idxStrs;
+    private Dictionary<int, GameObject> idxObjs;
+    private Dictionary<string, GameObject> strObjs;
+
+   public EnvMaterials()
+   {
+    this.idxStrs = new Dictionary<int, string>();
+    this.idxObjs = new Dictionary<int, GameObject>();
+    this.strObjs = new Dictionary<string, GameObject>();
+
+    this.AddBlock("Lava", 0, 0);
+    this.idxStrs.Add(1, "Sand");
+    this.AddBlock("Grass", 0, 2);
+    this.AddBlock("Scrub", 0, 3);
+    this.AddBlock("Forest", 0, 4);
+    this.idxStrs.Add(5, "Stone");
+
+    string matKeys = "0a 1a 2a 2b 2c 3a 3b 3c 4a 4b 4c 4d 4e 4f";
+    foreach(string key in matKeys.Split(' '))
+    {
+         this.AddBlock("Stone" + key, 0);
+         this.AddBlock("Sand" + key, 0);
+    }
+   }
+    public void AddBlock(string name, float rotation, int idx=-1) {
+         GameObject prefab = Resources.Load("Prefabs/Tiles/" + name) as GameObject;
+         GameObject obj = Instantiate(prefab) as GameObject;
+         obj.transform.eulerAngles = new Vector3(0, rotation, 0);
+         if (!this.strObjs.ContainsKey(name))
+         {
+            this.strObjs.Add(name, obj);
+         }
+         if (idx != -1)
+         {
+            this.idxObjs.Add(idx, obj);
+         print("Add String: " + name);
+         this.idxStrs.Add(idx, name);
+         }
+    }
+
+   public GameObject GetObj(string key)
+   {
+      return this.strObjs[key];
+   }
+
+   public GameObject GetObj(int key)
+   {
+      return this.idxObjs[key];
+   }
+   public string GetName(int key)
+   {
+      return this.idxStrs[key];
+   }
+}
+
+public class Tile
+{
+   public string name;
+   public int rot;
+   public bool flip;
+
+   public Tile(string name, int rot, bool flip)
+   {
+      this.name = name;
+      this.rot  = rot;
+      this.flip = flip;
+   }
+}
+
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 public class Environment: MonoBehaviour
 {
     //public static Dictionary<int, Texture2D> tiles   = new Dictionary<int, Texture2D>();
-    public Dictionary<string, int> matIdxs           = new Dictionary<string, int>();
-    public Dictionary<int, string> idxMats           = new Dictionary<int, string>();
-    public Dictionary<int, GameObject> idxPrefabs    = new Dictionary<int, GameObject>();
-    public Dictionary<string, GameObject> matPrefabs = new Dictionary<string, GameObject>();
-
-    public Dictionary<string, GameObject>[,] env = new Dictionary<string, GameObject>[mapSz, mapSz];
-    public int[,] vals = new int[mapSz, mapSz];
+    GameObject root;
+    GameObject cameraAnchor;
+    public Env env = new Env();
+    public int[,] vals;
     public Texture2D values;
     Dictionary<string, object> overlays;
+    Dictionary<byte, Tile> meshHash;
+
+    public EnvMaterials envMaterials;
+
+    EntityManager entityManager;
+    EntityArchetype chunkArchetype;
+    EntityArchetype scrubArchetype;
 
     public static List<List<GameObject>> terrain = new List<List<GameObject>>();
-    public static int mapSz = 80;
-    public int[,] oldPacket = new int[mapSz, mapSz];
-    public GameObject[,] objs = new GameObject[mapSz, mapSz];
+    public int[,] oldPacket = new int[Consts.MAP_SIZE, Consts.MAP_SIZE];
+    public GameObject[,] objs = new GameObject[Consts.MAP_SIZE, Consts.MAP_SIZE];
 
-    public int TileWidth = 128;
-    public int TileHeight = 128;
-    public int NumTilesX = 8;
-    public int NumTilesZ = 8;
-    public int TileGridWidth = 64;
-    public int TileGridHeight = 64;
-    public int DefaultTileX = 0;
-    public int DefaultTileZ = 0;
+    Dictionary<Tuple<int, int>, GameObject> chunks = new Dictionary<Tuple<int, int>, GameObject>();
+    Queue<Tuple<int, int>> loadedChunks   = new Queue<Tuple<int, int>>();
+    Queue<Tuple<int, int>> unloadedChunks = new Queue<Tuple<int, int>>();
 
     public int tick = 0;
-    public Texture2D Tex1;
-    public Texture2D Tex2;
-
     string cmd = "";
 
     Shader shader;
 
     GameObject cubePrefab;
     GameObject forestPrefab;
-    GameObject nuPrefab;
     GameObject resources;
     Console    console;
 
     bool first = true;
 
     Material cubeMatl;
-    Material material;
     Material overlayMatl;
 
     MeshRenderer renderer;
 
-    void addPair(string name, int idx) {
-      GameObject prefab = this.addMat(name);
-      this.matIdxs[name] = idx;
-      this.idxMats[idx]  = name;
-      this.idxPrefabs[idx]  = prefab;
-      this.addMat(name);
-    }
-
-    GameObject addMat(string name) {
-      GameObject prefab = Resources.Load("Prefabs/Tiles/" + name) as GameObject;
-      this.matPrefabs[name]  = prefab;
-      return prefab;
-    }
+   GameObject forest;
+   Material scrubMaterial;
+   Mesh scrubMesh;
 
 
     void OnEnable()
     {
-      GameObject root   = GameObject.Find("Client/Environment/Terrain");
+      this.root         = GameObject.Find("Environment/Terrain");
       this.resources    = GameObject.Find("Client/Environment/Terrain/Resources");
       this.cubeMatl     = Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
-      this.values       = new Texture2D(80, 80);
+      this.values       = new Texture2D(2*Consts.TILE_RADIUS, 2*Consts.TILE_RADIUS);
       this.cubePrefab   = Resources.Load("Prefabs/Cube") as GameObject;
       this.forestPrefab = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Reed") as GameObject;
       this.console      = GameObject.Find("Console").GetComponent<Console>();
       this.shader       = Shader.Find("Standard");
+      this.cameraAnchor = GameObject.Find("CameraAnchor");
 
-      this.addPair("Lava", 0);
-      this.addPair("Sand", 1);
-      this.addPair("Grass", 2);
-      this.addPair("Scrub", 3);
-      this.addPair("Forest", 4);
-      this.addPair("Stone0a", 5);
+      this.envMaterials = new EnvMaterials();
 
-      this.addMat("Stone0a");
-      this.addMat("Stone1a");
-      this.addMat("Stone2a");
-      this.addMat("Stone2b");
-      this.addMat("Stone2c");
-      this.addMat("Stone3a");
-      this.addMat("Stone3b");
-      this.addMat("Stone3c");
-      this.addMat("Stone4a");
-      this.addMat("Stone4b");
-      this.addMat("Stone4c");
-      this.addMat("Stone4d");
-      this.addMat("Stone4e");
-      this.addMat("Stone4f");
+      this.entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+      this.scrubArchetype = this.entityManager.CreateArchetype(
+         typeof(Translation),
+         typeof(Rotation),
+         typeof(NonUniformScale),
+         typeof(RenderMesh),
+         typeof(RenderBounds),
+         typeof(LocalToWorld)
+      );
 
-      this.addMat("Sand0a");
-      this.addMat("Sand1a");
-      this.addMat("Sand2a");
-      this.addMat("Sand2b");
-      this.addMat("Sand2c");
-      this.addMat("Sand3a");
-      this.addMat("Sand3b");
-      this.addMat("Sand3c");
-      this.addMat("Sand4a");
-      this.addMat("Sand4b");
-      this.addMat("Sand4c");
-      this.addMat("Sand4d");
-      this.addMat("Sand4e");
-      this.addMat("Sand4f");
+      this.chunkArchetype = this.entityManager.CreateArchetype(
+         typeof(Translation),
+         typeof(RenderMesh),
+         typeof(RenderBounds),
+         typeof(LocalToWorld)
+      );
 
-      for(int r=0; r<mapSz; r++) {
-         for(int c=0; c<mapSz; c++) {
-            this.env[r, c] = new Dictionary<string, GameObject>();            
+
+      this.forest = Instantiate(this.forestPrefab) as GameObject;
+      this.scrubMaterial = forest.GetComponent<MeshRenderer>().material;
+      this.scrubMesh = forest.GetComponent<MeshFilter>().sharedMesh;
+
+      int R = Consts.CHUNKS / 2;
+      int x = 0;
+      int y = 0;
+      int temp = 0;
+      int dx = 0;
+      int dy = -1;
+      for (int i = 0; i < (Consts.CHUNKS+1)*(Consts.CHUNKS+1); i++)
+      {
+         //Debug.Log(y.ToString() + ", " + x.ToString());
+         if (-R <= x && x < R && -R <= y && y < R)
+         {
+            unloadedChunks.Enqueue(Tuple.Create(y+R, x+R));
          }
+         if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y))
+         {
+            temp = dx;
+            dx = -dy;
+            dy = temp;
+         }
+         x = x + dx;
+         y = y + dy;
       }
- 
-    }
+
+      this.makeMeshHash();
+
+   }
 
     public void UpdateMap(Dictionary<string, object> packet) {
       GameObject root  = GameObject.Find("Environment");
       List<object> map = (List<object>) packet["map"];
       this.overlays    = (Dictionary<string, object>) packet["overlay"];
+      this.overlayMatl = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
+      this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
 
       string cmd = this.console.cmd;
       this.cmd = cmd;
@@ -141,11 +300,11 @@ public class Environment: MonoBehaviour
       {
          int count = 0;
          List<object> values = (List<object>) this.overlays[cmd];
-         Color[] pixels = new Color[80 * 80];
-         for (int r = 0; r < mapSz; r++)
+         Color[] pixels = new Color[2*2*Consts.TILE_RADIUS*Consts.TILE_RADIUS];
+         for (int r = 0; r < 2*Consts.TILE_RADIUS; r++)
          {
             List<object> row = (List<object>)values[r];
-            for (int c = 0; c < mapSz; c++)
+            for (int c = 0; c < 2*Consts.TILE_RADIUS; c++)
             {
                List<object> col = (List<object>)row[c];
                Color value = new Color();
@@ -162,471 +321,389 @@ public class Environment: MonoBehaviour
         this.values.Apply(false);
       }
 
-      for (int r=0; r<mapSz; r++) {
-         List<object> row = (List<object>) map[r];
-         for(int c=0; c<mapSz; c++) {
-            int val = System.Convert.ToInt32(row[c]);
-            if (this.idxMats[val] == "Forest") {
-               this.env[r, c]["Forest"].SetActive(true);
-            } else if (this.idxMats[val] == "Scrub") {
-               this.env[r, c]["Forest"].SetActive(false);
+      int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
+      int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
+
+      for (int r=0; r<2*Consts.TILE_RADIUS; r++) {
+         List<object> row = (List<object>) map[r+cameraR];
+         for(int c=0; c<2*Consts.TILE_RADIUS; c++) {
+            int val = System.Convert.ToInt32(row[c+cameraC]);
+            if (!this.env.ContainsTile(r+cameraR, c+cameraC))
+            {
+               continue;
+            }
+            Entity tile = this.env.GetTile(r + cameraR, c + cameraC);
+            string name = this.envMaterials.idxStrs[val];
+            if (name == "Forest" ) {
+               this.entityManager.SetEnabled(tile, true);
+            } else if (name == "Scrub") {
+               this.entityManager.SetEnabled(tile, false);
             }
          }
       }
-     //this.values = Texture2D.grayTexture;
     }
 
-    public void UpdateTerrain(Dictionary<string, object> packet)
+   byte makeByteRepr(
+           int r0c0, int r0c1, int r0c2,
+           int r1c0,           int r1c2,
+           int r2c0, int r2c1, int r2c2) { 
+        byte byteRepr = 0;
+        byteRepr += (byte) (r0c0 << 7);
+        byteRepr += (byte) (r0c1 << 6);
+        byteRepr += (byte) (r0c2 << 5);
+        byteRepr += (byte) (r1c0 << 4);
+        byteRepr += (byte) (r1c2 << 3);
+        byteRepr += (byte) (r2c0 << 2);
+        byteRepr += (byte) (r2c1 << 1);
+        byteRepr += (byte) (r2c2 << 0);
+        return byteRepr;
+   }
+ 
+    void makeMeshHash()
     {
-      List<object> map = (List<object>) packet["map"];
-      //makeMap(map, 20, 4);
-      makeMap(map, mapSz/8, 8);
+        this.meshHash = new Dictionary<byte, Tile>();
+
+        this.addTemplate(meshHash, "0a", false, true, false, false, false,
+             -1, -1, -1,
+             -1, -1, -1,
+             -1, -1, -1);
+     
+        this.addTemplate(meshHash, "4f", false,
+            true, false, false, false,
+             1,  1,  1, 
+             1,  1,  1, 
+             1,  1,  1);
+
+        this.addTemplate(meshHash, "4e", false,
+            true, true, true, true,
+             1,  1,  1, 
+             1,  1,  1, 
+             1,  1,  0);
+
+        this.addTemplate(meshHash, "4d", false,
+            true, true, false, false,
+             0,  1,  1, 
+             1,  1,  1, 
+             1,  1,  0);
+
+        this.addTemplate(meshHash, "4c", false,
+            true, true, true, true,
+             1,  1,  1, 
+             1,  1,  1, 
+             0,  1,  0);
+
+        this.addTemplate(meshHash, "4b", false,
+            true, true, true, true,
+             0,  1,  1, 
+             1,  1,  1, 
+             0,  1,  0);
+
+        this.addTemplate(meshHash, "4a", false,
+            true, false, false, false,
+             0,  1,  0, 
+             1,  1,  1, 
+             0,  1,  0);
+
+        this.addTemplate(meshHash, "3b", false,
+            true, true, true, true,
+             1,  1, -1, 
+             1,  1,  1, 
+            -1,  0, -1);
+
+        this.addTemplate(meshHash, "3b", true,
+            true, true, true, true,
+             0,  1,  1, 
+             1,  1,  1, 
+            -1,  0, -1);
+
+        this.addTemplate(meshHash, "3c", false,
+            true, true, true, true,
+             1,  1,  1, 
+             1,  1,  1, 
+            -1,  0, -1);
+
+        this.addTemplate(meshHash, "3a", false,
+            true, true, true, true,
+             0,  1,  0, 
+             1,  1,  1, 
+            -1,  0, -1);
+
+        this.addTemplate(meshHash, "2c", false,
+            true, true, true, true,
+             1,  1, -1,
+             1,  1,  0,
+            -1,  0, -1);
+
+        this.addTemplate(meshHash, "2b", false,
+            true, true, false, false,
+            -1,  0, -1, 
+             1,  1,  1, 
+            -1,  0, -1);
+
+        this.addTemplate(meshHash, "2a", false,
+            true, true, true, true,
+             0,  1, -1,
+             1,  1,  0,
+            -1,  0, -1); 
+
+        this.addTemplate(meshHash, "1a", false,
+            true, true, true, true,
+            -1,  1, -1,
+             0,  1,  0,
+            -1,  0, -1);
+
+      this.meshHash = meshHash;
     }
 
-    void makeMap(List<object> map, int sz, int n) {
-      for(int r=0; r<mapSz; r++) {
-        List<object> row = (List<object>) map[r];
-        for(int c=0; c<mapSz; c++) {
-            this.vals[r, c] = System.Convert.ToInt32(row[c]);
-        }
+   void addTemplate(Dictionary<byte, Tile> meshHash, string meshName, bool flip,
+            bool rot0, bool rot90, bool rot180, bool rot270,
+            int r0c0, int r0c1, int r0c2, 
+            int r1c0, int r1c1, int r1c2, 
+            int r2c0, int r2c1, int r2c2) {
+
+      if (rot0) {
+         this.addWildcards(meshHash, meshName, 0, flip, new List<int>{
+            r0c0, r0c1, r0c2,
+            r1c0,       r1c2, 
+            r2c0, r2c1, r2c2});
       }
- 
-      GameObject root = GameObject.Find("Environment/Terrain");
-      for(int r=0; r<n; r++) {
-         for(int c=0; c<n; c++) {
-            makeChunk(root, sz, r*sz, c*sz);
-         }
+      if (rot90) {
+         this.addWildcards(meshHash, meshName, 90, flip, new List<int>{
+            r2c0, r1c0, r0c0,
+            r2c1,       r0c1, 
+            r2c2, r1c2, r0c2});
+      }
+      if (rot180) {
+         this.addWildcards(meshHash, meshName, 180, flip, new List<int>{
+            r2c2, r2c1, r2c0,
+            r1c2,       r1c0, 
+            r0c2, r0c1, r0c0});
+      }
+      if (rot270) {
+         this.addWildcards(meshHash, meshName, 270, flip, new List<int>{
+            r0c2, r1c2, r2c2,
+            r0c1,       r2c1, 
+            r0c0, r1c0, r2c0});
       }
     }
 
-    //-1 = idc, 0 = false, 1 = true
-    bool bounds(int val, int r, int c, 
-         int r0c0, int r0c1, int r0c2, 
-         int r1c0, int r1c1, int r1c2, 
-         int r2c0, int r2c1, int r2c2) {
+    Tuple<Mesh, Matrix4x4> mapBlock(int rOff, int cOff, int r, int c, int val)
+    {
+         Entity cube;
+         int rot = 0;
+         bool flip = false;
 
-       if (r0c0 != -1 && this.vals[r-1, c-1] != val == (r0c0 != 0)) {
-          return false; 
-       }
-       if (r0c1 != -1 && this.vals[r-1, c] != val == (r0c1 != 0)) {
-          return false; 
-       }
-       if (r0c2 != -1 && this.vals[r-1, c+1] != val == (r0c2 != 0)) {
-          return false; 
-       }
-       if (r1c0 != -1 && this.vals[r, c-1] != val == (r1c0 != 0)) {
-          return false; 
-       }
-       if (r1c1 != -1 && this.vals[r, c] != val == (r1c1 != 0)) {
-          return false; 
-       }
-       if (r1c2 != -1 && this.vals[r, c+1] != val == (r1c2 != 0)) {
-          return false; 
-       }
-       if (r2c0 != -1 && this.vals[r+1, c-1] != val == (r2c0 != 0)) {
-          return false; 
-       }
-       if (r2c1 != -1 && this.vals[r+1, c] != val == (r2c1 != 0)) {
-          return false; 
-       }
-       if (r2c2 != -1 && this.vals[r+1, c+1] != val == (r2c2 != 0)) {
-          return false; 
-       }
+         string name = this.envMaterials.idxStrs[val];
+         if (name == "Stone" || name == "Sand") {
+            byte byteRepr = makeByteRepr(
+               (val == this.vals[r - 1, c - 1]) ? 1 : 0,
+               (val == this.vals[r - 1, c])     ? 1 : 0,
+               (val == this.vals[r - 1, c + 1]) ? 1 : 0,
+               (val == this.vals[r, c - 1])     ? 1 : 0,
+               (val == this.vals[r, c + 1])     ? 1 : 0,
+               (val == this.vals[r + 1, c - 1]) ? 1 : 0,
+               (val == this.vals[r + 1, c])     ? 1 : 0,
+               (val == this.vals[r + 1, c + 1]) ? 1 : 0);
 
-       return true;
+            Tile tile = this.meshHash[byteRepr];
+            rot = tile.rot;
+            flip = tile.flip;
+            string suffix = tile.name;
+            name += suffix;
+         }
+
+         GameObject obj = this.envMaterials.GetObj(name);
+
+         Vector3    translate = new Vector3(rOff, 0, cOff);
+         Quaternion rotate    = Quaternion.Euler(new Vector3(0, rot, 0));
+         Vector3    scale     = new Vector3(1, 1, 1);
+         
+         Mesh mesh = obj.GetComponentInChildren<MeshFilter>().sharedMesh;
+
+         if (flip) {
+            scale = new Vector3(1, 1, -1);
+         }
+
+         Matrix4x4 transform = Matrix4x4.TRS(translate, rotate, scale);
+         Tuple<Mesh, Matrix4x4> ret = Tuple.Create(mesh, transform);
+         return ret;
+
     }
 
-    GameObject initBlock(string name, float rotation) {
-         GameObject obj = Instantiate(this.matPrefabs[name]) as GameObject;
-         obj.transform.eulerAngles = new Vector3(0, rotation, 0);
-         return obj;
+    //Recursively fill wilcards with 0s or 1s, adding all possible binary strings to meshHash
+    void addWildcards(Dictionary<byte, Tile> meshHash, string meshName, int rot, bool flip, List<int> repr) {
+         int wildcard = repr.IndexOf(-1);
+         if (wildcard == -1) {
+            byte byteRepr = makeByteRepr(repr[0], repr[1], repr[2], repr[3], repr[4], repr[5], repr[6], repr[7]);
+            if (meshHash.ContainsKey(byteRepr))
+            {
+               meshHash.Remove(byteRepr);
+            }
+            Tile meshRepr = new Tile(meshName, rot, flip);
+            meshHash.Add(byteRepr, meshRepr);
+            return;
+         }
+
+         List<int> replaceZero = new List<int>(repr);
+         replaceZero[wildcard] = 0;
+         this.addWildcards(meshHash, meshName, rot, flip, replaceZero);
+
+         List<int> replaceOne = new List<int>(repr);
+         replaceOne[wildcard] = 1;
+         this.addWildcards(meshHash, meshName, rot, flip, replaceOne);
     }
-
-    GameObject getBlock(int r, int c, string name, int val) {
-         if (r == 0 || c == 0 || r == mapSz-1 || c == mapSz-1) {
-            return Instantiate(this.matPrefabs[name + "4f"]) as GameObject;
-         }
-
-         if (this.bounds(val, r, c, 
-               -1, 1, -1, 
-               0, 1, 0, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "1a", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               0, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "1a", 90);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               0, 1, 0, 
-               -1, 1, -1)) {
-            return this.initBlock(name + "1a", 180);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 0, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "1a", 270);
-         }
-
-         if (this.bounds(val, r, c, 
-               0, 1, -1, 
-               1, 1, 0, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "2a", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, 0, 
-               0, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "2a", 90);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               0, 1, 1, 
-               -1, 1, 0)) {
-            return this.initBlock(name + "2a", 180);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 0, 
-               0, 1, -1)) {
-            return this.initBlock(name + "2a", 270);
-         }
  
-
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "2b", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, -1, 
-               0, 1, 0, 
-               -1, 1, -1)) {
-            return this.initBlock(name + "2b", 90);
-         }
-
-
-         if (this.bounds(val, r, c, 
-               1, 1, -1, 
-               1, 1, 0, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "2c", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, 1, 
-               0, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "2c", 90);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               0, 1, 1, 
-               -1, 1, 1)) {
-            return this.initBlock(name + "2c", 180);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 0, 
-               1, 1, -1)) {
-            return this.initBlock(name + "2c", 270);
-         }
- 
-
-         if (this.bounds(val, r, c, 
-               0, 1, 0, 
-               1, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "3a", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, 0, 
-               0, 1, 1, 
-               -1, 1, 0)) {
-            return this.initBlock(name + "3a", 90);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 1, 
-               0, 1, 0)) {
-            return this.initBlock(name + "3a", 180);
-         }
-         if (this.bounds(val, r, c, 
-               0, 1, -1, 
-               1, 1, 0, 
-               0, 1, -1)) {
-            return this.initBlock(name + "3a", 270);
-         }
-
-         if (this.bounds(val, r, c, 
-               1, 1, 1, 
-               1, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "3c", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, 1, 
-               0, 1, 1, 
-               -1, 1, 1)) {
-            return this.initBlock(name + "3c", 90);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 1, 
-               1, 1, 1)) {
-            return this.initBlock(name + "3c", 180);
-         }
-         if (this.bounds(val, r, c, 
-               1, 1, -1, 
-               1, 1, 0, 
-               1, 1, -1)) {
-            return this.initBlock(name + "3c", 270);
-         }
-
-
-         if (this.bounds(val, r, c, 
-               1, 1, -1, 
-               1, 1, 1, 
-               -1, 0, -1)) {
-            return this.initBlock(name + "3b", 0);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, 1, 
-               0, 1, 1, 
-               -1, 1, -1)) {
-            return this.initBlock(name + "3b", 90);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 1, 
-               -1, 1, 1)) {
-            return this.initBlock(name + "3b", 180);
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, -1, 
-               1, 1, 0, 
-               1, 1, -1)) {
-            return this.initBlock(name + "3b", 270);
-         }
-
-
-         if (this.bounds(val, r, c, 
-               0, 1, 1, 
-               1, 1, 1, 
-               -1, 0, -1)) {
-            GameObject obj = this.initBlock(name + "3b", 0);
-            obj.transform.localScale  = new Vector3(1, 1, -1);
-            return obj;
-         }
-         if (this.bounds(val, r, c, 
-               -1, 1, 0, 
-               0, 1, 1, 
-               -1, 1, 1)) {
-            GameObject obj = this.initBlock(name + "3b", 90);
-            obj.transform.localScale  = new Vector3(1, 1, -1);
-            return obj;
-         }
-         if (this.bounds(val, r, c, 
-               -1, 0, -1, 
-               1, 1, 1, 
-               1, 1, 0)) {
-            GameObject obj = this.initBlock(name + "3b", 180);
-            obj.transform.localScale  = new Vector3(1, 1, -1);
-            return obj;
-         }
-         if (this.bounds(val, r, c, 
-               1, 1, -1, 
-               1, 1, 0, 
-               0, 1, -1)) {
-            GameObject obj = this.initBlock(name + "3b", 270);
-            obj.transform.localScale  = new Vector3(1, 1, -1);
-            return obj;
-         }
-
-
-        if (this.bounds(val, r, c, 
-               0, 1, 0, 
-               1, 1, 1, 
-               0, 1, 0)) {
-            return this.initBlock(name + "4a", 0);
-        }
-
-
-         if (this.bounds(val, r, c, 
-               0, 1, 1, 
-               1, 1, 1, 
-               0, 1, 0)) {
-            return this.initBlock(name + "4b", 0);
-         }
-         if (this.bounds(val, r, c, 
-               0, 1, 0, 
-               1, 1, 1, 
-               0, 1, 1)) {
-            return this.initBlock(name + "4b", 90);
-         }
-         if (this.bounds(val, r, c, 
-               0, 1, 0, 
-               1, 1, 1, 
-               1, 1, 0)) {
-            return this.initBlock(name + "4b", 180);
-         }
-        if (this.bounds(val, r, c, 
-               1, 1, 0, 
-               1, 1, 1, 
-               0, 1, 0)) {
-            return this.initBlock(name + "4b", 270);
-         }
-
-
-         if (this.bounds(val, r, c, 
-               0, 1, 1, 
-               1, 1, 1, 
-               0, 1, 1)) {
-            return this.initBlock(name + "4c", 90);
-         }
-         if (this.bounds(val, r, c, 
-               0, 1, 0, 
-               1, 1, 1, 
-               1, 1, 1)) {
-            return this.initBlock(name + "4c", 180);
-         }
-         if (this.bounds(val, r, c, 
-               1, 1, 0, 
-               1, 1, 1, 
-               1, 1, 0)) {
-            return this.initBlock(name + "4c", 270);
-         }
-        if (this.bounds(val, r, c, 
-               1, 1, 1, 
-               1, 1, 1, 
-               0, 1, 0)) {
-            return this.initBlock(name + "4c", 0);
-         }
- 
-
-         if (this.bounds(val, r, c, 
-               0, 1, 1, 
-               1, 1, 1, 
-               1, 1, 0)) {
-            return this.initBlock(name + "4d", 0);
-         }
-         if (this.bounds(val, r, c, 
-               1, 1, 0, 
-               1, 1, 1, 
-               0, 1, 1)) {
-            return this.initBlock(name + "4d", 90);
-         }
-
-
-         if (this.bounds(val, r, c, 
-               0, 1, 1, 
-               1, 1, 1, 
-               1, 1, 1)) {
-            return this.initBlock(name + "4e", 180);
-         }
-         if (this.bounds(val, r, c, 
-               1, 1, 0, 
-               1, 1, 1, 
-               1, 1, 1)) {
-            return this.initBlock(name + "4e", 270);
-         }
-         if (this.bounds(val, r, c, 
-               1, 1, 1, 
-               1, 1, 1, 
-               1, 1, 0)) {
-            return this.initBlock(name + "4e", 0);
-         }
-        if (this.bounds(val, r, c, 
-               1, 1, 1, 
-               1, 1, 1, 
-               0, 1, 1)) {
-            return this.initBlock(name + "4e", 90);
-         }
-
-        if (this.bounds(val, r, c, 
-               1, 1, 1, 
-               1, 1, 1, 
-               1, 1, 1)) {
-            return this.initBlock(name + "4f", 0);
-         }
-
-         return Instantiate(this.idxPrefabs[val]) as GameObject;
-    }
-
    void makeChunk(GameObject root, int sz, int R, int C) {
-      GameObject chunk = new GameObject();
-      chunk.transform.SetParent(root.transform);
-      chunk.name = "Chunk-R" + R.ToString() + "-C" + C.ToString();
+      R = R * sz;
+      C = C * sz;
 
+      int flatIdx = 0;
+      Tuple<Mesh, Matrix4x4>[] cubes = new Tuple<Mesh, Matrix4x4>[256];
       for(int r=0; r<sz; r++) {
         for(int c=0; c<sz; c++) {
             int val = System.Convert.ToInt32(this.vals[R+r, C+c]);
 
             //stone
-            GameObject cube;
-            if (val == 5) {
-               cube = this.getBlock(R+r, C+c, "Stone", val);
-            } else if (val == 0 || val == 1) {
-               cube = this.getBlock(R+r, C+c, "Sand", val);
-            } else {
-               cube = Instantiate(this.idxPrefabs[val]) as GameObject;
-            }
+            //cube.transform.position = new Vector3(R+r, 0, C+c);
+            //cube.transform.SetParent(chunk.GetTransform());
+            cubes[flatIdx] = this.mapBlock(r, c, R+r, C+c, val);
+            flatIdx++;
 
-            cube.transform.position = new Vector3(R+r, 0, C+c);
-            cube.transform.SetParent(chunk.transform);
-            this.env[R+r, C+c]["block"] = cube;
+        }
+      }
+      Entity terrain = combineMeshes(cubes, this.cubeMatl, R, C);
+      Chunk chunk = new Chunk(terrain, R, C);
+      this.env.SetChunk(chunk, R/sz, C/sz);
+ 
+      for (int r = 0; r < sz; r++)
+      {
+         for (int c = 0; c < sz; c++)
+         {
+            Entity entity = this.entityManager.CreateEntity(this.scrubArchetype);
+            this.entityManager.SetEnabled(entity, false);
+            int val = System.Convert.ToInt32(this.vals[R + r, C + c]);
+            string name = this.envMaterials.idxStrs[val];
+            if (name == "Forest" || name == "Scrub") { 
+               this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
+               this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.9f, 0.2f, 0.9f)} );
+               this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = scrubMesh, material = scrubMaterial} );
 
-            if (this.idxMats[val] == "Forest" || this.idxMats[val] == "Scrub") { 
-               GameObject forest = Instantiate(this.forestPrefab) as GameObject;
-               forest.transform.position = cube.transform.position;
-               forest.transform.localScale    = new Vector3(0.9f, 0.20f, 0.9f);
-               forest.transform.eulerAngles   = new Vector3(0, Random.Range(0, 360), 0);
-               forest.transform.SetParent(this.resources.transform);
-               this.env[R+r, C+c]["Forest"] = forest;
+               chunk.SetTile(R + r, C + c, entity);
             }
          }
       }
-      //StaticBatchingUtility.Combine(chunk);
-      combineMeshes(chunk, this.cubeMatl);
+      chunk.SetActive(this.entityManager, false); 
     }
 
-    void combineMeshes(GameObject obj, Material mat) {
-      MeshFilter[] meshFilters  = obj.GetComponentsInChildren<MeshFilter>();
-      CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+    Entity combineMeshes(Tuple<Mesh, Matrix4x4>[] ents, Material mat, int R, int C) {
+      CombineInstance[] combine = new CombineInstance[ents.Length];
+
 
       int i = 0;
-      while (i < meshFilters.Length)
+      while (i < ents.Length)
       {
-         combine[i].mesh = meshFilters[i].sharedMesh;
-         combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-         meshFilters[i].gameObject.SetActive(false);
+         Tuple<Mesh, Matrix4x4> ent = ents[i];
 
+         combine[i].mesh = ent.Item1;
+         combine[i].transform = ent.Item2;
+         //meshFilters[i].gameObject.SetActive(false);
+         //Destroy(meshFilters[i].gameObject);
+         //Destroy(cubes[i]);
          i++;
       }
 
+
       Mesh mesh = new Mesh();
       mesh.CombineMeshes(combine, true, true);
-      obj.transform.gameObject.AddComponent<MeshRenderer>();
-      obj.transform.gameObject.AddComponent<MeshFilter>();
-      obj.transform.GetComponent<MeshFilter>().mesh = mesh;
-      MeshRenderer renderer = obj.transform.GetComponent<MeshRenderer>();
-      this.overlayMatl      = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
+
+      /*
+      Transform transform = obj.GetTransform();
+      transform.gameObject.AddComponent<MeshRenderer>();
+      transform.gameObject.AddComponent<MeshFilter>();
+      transform.GetComponent<MeshFilter>().mesh = mesh;
+      MeshRenderer renderer = transform.GetComponent<MeshRenderer>();
       this.renderer = renderer;
       Material[] materials = new Material[2];
       materials[0] = mat;
       materials[1] = this.overlayMatl;
-      this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
       renderer.materials = materials;
-      obj.transform.gameObject.SetActive(true);
+      */
+
+      float3 translation = transform.position;
+      translation = new float3(R, 0, C);
+      Entity chunk = this.entityManager.CreateEntity(this.chunkArchetype);
+      this.entityManager.SetName(chunk, "Chunk-R"+R.ToString()+"-C"+C.ToString());
+      this.entityManager.AddComponentData(chunk, new Translation      { Value = translation} );
+      this.entityManager.AddSharedComponentData(chunk, new RenderMesh {mesh = mesh, material = mat} );
+      return chunk;
+
     }
+    public void initTerrain(Dictionary<string, object> packet)
+   {
+      List<object> map = (List<object>) packet["map"];
+
+      if (this.vals == null)
+      {
+         this.vals = new int[Consts.MAP_SIZE, Consts.MAP_SIZE];
+         Debug.Log("Setting val map");
+         for(int r=0; r<Consts.MAP_SIZE; r++) {
+           List<object> row = (List<object>) map[r];
+           for(int c=0; c<Consts.MAP_SIZE; c++) {
+               this.vals[r, c] = System.Convert.ToInt32(row[c]);
+           }
+         }
+      }
+   }
+
+    public void loadNextChunk()
+   {
+      Tuple<int, int> pos = unloadedChunks.Dequeue();
+      loadedChunks.Enqueue(pos);
+      int r = pos.Item1;
+      int c = pos.Item2;
+
+      //Debug.Log(r.ToString() + ", " + c.ToString());
+      makeChunk(this.root, Consts.CHUNK_SIZE, r, c);
+   }
 
     void Update()
     {
+     if (this.vals != null && unloadedChunks.Count != 0){
+         this.loadNextChunk();
+      }
+
+
+      int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE);
+      int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE);
+
+      for (int r = 0; r<Consts.CHUNKS; r++)
+      {
+      for (int c = 0; c<Consts.CHUNKS; c++)
+         {
+            if (!this.env.ContainsChunk(r, c))
+            {
+               continue;
+            }
+            Chunk chunk = this.env.GetChunk(r, c);
+            if (Math.Abs(cameraR - r) <= Consts.CHUNK_RADIUS && Math.Abs(cameraC - c) <= Consts.CHUNK_RADIUS)
+            {
+               //if(!chunk.GetIsActive()) {
+               chunk.SetActive(this.entityManager, true);
+               //}
+            }
+            else
+            {
+
+               chunk.SetActive(this.entityManager, false);
+            }
+
+            //if (chunk.GetIsActive())
+            //{
+            //}
+         }
+      }
+
       //Debug.Log("Updating terrain: " + tick.ToString());
       tick++;
       //GameObject plane = GameObject.Find("Plane");
@@ -634,7 +711,6 @@ public class Environment: MonoBehaviour
       if (this.overlayMatl)
       {
          string cmd = this.cmd;
-         Debug.Log(cmd);
          if (this.overlays.ContainsKey(cmd))
          {
             this.overlayMatl.SetTexture("_Overlay", this.values);

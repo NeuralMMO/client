@@ -76,7 +76,7 @@ public class Overheads: UnityModule
    }
 
    public void UpdateStatus(object status) {
-      int immuneTicks = Convert.ToInt32(UnpackList(new List<string>{"immune", "val"}, status));
+      int immuneTicks = Convert.ToInt32(UnpackList(new List<string>{"immune"}, status));
       if (immuneTicks > 0) {
          this.immune.text = immuneTicks.ToString();
          this.immune.gameObject.SetActive(true);
@@ -84,7 +84,7 @@ public class Overheads: UnityModule
          this.immune.gameObject.SetActive(false);
       }
 
-      int freeze = Convert.ToInt32(UnpackList(new List<string>{"freeze", "val"}, status));
+      int freeze = Convert.ToInt32(UnpackList(new List<string>{"freeze"}, status));
       if (freeze > 0) {
          this.freeze.text = freeze.ToString();
          this.freeze.gameObject.SetActive(true);

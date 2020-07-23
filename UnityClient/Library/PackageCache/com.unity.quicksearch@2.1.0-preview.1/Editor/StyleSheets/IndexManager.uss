@@ -1,0 +1,168 @@
+#Footer {
+    flex-grow: 1;
+}
+#AddRemoveButtons {
+    background-color: var(--unity-colors-tab-background-checked);
+    border-width: 1px;
+    border-top-width: 0;
+    border-color: var(--unity-colors-default-border);
+    border-bottom-left-radius: var(--unity-metrics-default-border_radius);
+    border-bottom-right-radius: var(--unity-metrics-default-border_radius);
+    width: 60px;
+    height: 20px;
+    top: -1px;
+    margin-right: 10px;
+}
+#AddRemoveButtons > #AddButton {
+    margin: 1px 6px 3px 6px;
+    width: 16px;
+    height: 16px;
+}
+#AddRemoveButtons > #RemoveButton {
+    margin: 1px 4px 3px 6px;
+    width: 16px;
+    height: 16px;
+}
+#ListViewIndexSettingsContent {
+    background-color: var(--unity-colors-tab-background-checked);
+    border-width: 1px;
+    border-color: var(--unity-colors-default-border);
+    border-radius: var(--unity-metrics-default-border_radius);
+    border-top-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+#ListViewIndexSettingsContent > ListView > ScrollView {
+    padding-top: 3px;
+}
+#ListViewIndexSettingsContent > Label {
+    padding: 6px 0 5px 20px;
+}
+#IndexListView {
+    width: 250px;
+    min-width: 250px;
+}
+#IndexListView .unity-list-view__item {
+    border-bottom-color: var(--unity-colors-default-border);
+    border-bottom-width: 1px;
+    top:1px;
+}
+ListViewIndexSettings #IndexName {
+    flex-grow: 1;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+#IndexListView .unity-base-field__label {
+    min-width: 0;
+}
+#BasicDataContainer {
+    margin-bottom: 2px;
+}
+#IndexSize {
+    flex-grow: 1;
+    margin-right: 3px;
+}
+#IndexNumber {
+    margin-left: 2px;
+    flex-grow: 1;
+    -unity-text-align: upper-right;
+    margin-right: 3px;
+}
+#FilePathTextField Label {
+    margin-right: 2px;
+}
+Toggle Label {
+    margin-right: 2px;
+}
+#NameTextField Label {
+    margin-right: 2px;
+}
+#IndexTypeIcon {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+}
+#IndexScore Label {
+    margin-right: 2px;
+}
+Foldout > Toggle {
+    margin-left: 1px;
+}
+Foldout > Toggle > VisualElement > Label {
+    padding-top: 0;
+}
+#PathTextField {
+    flex-grow: 1;
+}
+#RootObjectField {
+    flex-grow: 1;
+}
+#Splitter {
+    background-color: var(--unity-colors-default-border);
+    width: 1px;
+    margin-right: 2px;
+    left: -1px;
+}
+#Details {
+    min-width: 250px;
+}
+.title {
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
+#AddRemoveButtons > #AddButton {
+    background-image: var(--button-add-image);
+}
+#AddRemoveButtons > #RemoveButton {
+    background-image: var(--button-remove-image);
+}
+#RootButton {
+    background-image: var(--folder-icon);
+}
+#SavedIndexDataNotLoadedYet {
+    margin: 10px;
+}
+#IndexPreviewTabs {
+    position: absolute;
+    flex-direction: row;
+    flex-shrink: 0;
+    top: 1px;
+}
+#IndexPreviewTabs > Button {
+    border-bottom-width: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+    padding: 3px 5px;
+    border-color: var(--unity-colors-default-border);
+}
+.IndexPreviewNotSelectedTab {
+     background-color: var(--unity-colors-tab-background);
+}
+.IndexPreviewSelectedTab {
+    background-color: var(--unity-colors-tab-background-checked);
+}
+.PreviewListView {
+    background-color: var(--unity-colors-tab-background-checked);
+    flex-grow: 1;
+    min-height: 100px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border-width: 1px;
+    border-color: var(--unity-colors-default-border);
+    border-radius: var(--unity-metrics-default-border_radius);
+    border-top-left-radius: 0;
+}
+.PreviewListView #unity-content-container {
+    margin-left: 3px;
+}
+
+#SaveButton {
+    padding: 5px 10px;
+    margin: 10px;
+}
+#CreateButton {
+    padding: 5px 10px;
+    margin: 10px;
+}

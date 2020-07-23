@@ -10,8 +10,9 @@ public class Comms: MonoBehaviour
 	public int NetworkSpeed = 5;
 	public string ip = "localhost";
 	public string port = "8080";
-    public Dictionary<string, object> packet;
+   public Dictionary<string, object> packet;
 
+	GameObject cameraAnchor;
 	int numPackets = 0;
 	Thread thread;
 	string reply;
@@ -50,38 +51,37 @@ public class Comms: MonoBehaviour
 		}
       this.newConnection = true;
       Debug.Log("Connected");
-      this.w.SendString("START");
+      //this.w.SendString("START");
       yield break;
 	}
 
 	IEnumerator Start ()
 	{
+      this.cameraAnchor = GameObject.Find("CameraAnchor");
 		while (true) {
 			//m_IsConnected does not become false upon server crash
 			//However, w.error will become non-null
 			if (this.w == null || !this.w.m_IsConnected || w.error != null) {
 				this.w = new WebSocket (new Uri ("ws://" + ip + ":" + port + "/ws"));
-				yield return Connect(5f);
+				yield return Connect(15f);
 			}
 
 			//Packet from server
 			this.reply = w.RecvString();
 
-			if (reply != null) {
+			if (reply != null && (this.thread == null || !this.thread.IsAlive)) {
 				//The client is stateless; do not
 				//queue up packets from the server
-				if (this.thread != null) {
-					this.thread.Abort();
-				}
 
 				//Async unpack server data
 				this.thread = new Thread(Unpack);
 				this.thread.Start();
 				this.numPackets++;
 
-				//Message back to server. Can use this to
-				//implement client control in the future
-				string msg = "Recieved packet " + numPackets.ToString() + " from Server";
+				//Message camera pos back to server
+				int r = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
+				int c = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
+				string msg = "Recieved packet " + numPackets.ToString() + " from Server;" + r.ToString() + " " + c.ToString();
 				w.SendString(msg);
 				Debug.Log(msg);
 			}

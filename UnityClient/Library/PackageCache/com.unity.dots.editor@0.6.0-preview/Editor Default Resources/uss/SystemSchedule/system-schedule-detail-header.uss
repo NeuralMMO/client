@@ -1,0 +1,62 @@
+
+/**********************************************************************************************************************/
+/* System Details Header Icons                                                                                        */
+/**********************************************************************************************************************/
+
+.system-schedule-detail__header-system-icon
+{
+    width:16px;
+    height:16px;
+}
+
+.system-schedule-detail__header-scripts-icon
+{
+    width:16px;
+    height:16px;
+}
+
+.system-schedule-detail__header-close-icon
+{
+    width:16px;
+    height:16px;
+}
+
+.system-schedule-detail__icon--system
+{
+    background-image: var(--system-icon);
+}
+
+.system-schedule-detail__icon--command-buffer
+{
+    background-image: var(--buffer-icon);
+}
+
+.system-schedule-detail__icon--scripts
+{
+    background-image: var(--scripts-icon);
+}
+
+.system-schedule-detail__icon--close
+{
+    background-image: var(--close-icon);
+}
+
+
+/**********************************************************************************************************************/
+/* System Details Header Styles                                                                                       */
+/**********************************************************************************************************************/
+
+.system-schedule-detail__header-left {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.system-schedule-detail_header-right {
+    flex-direction: row;
+    align-items: center;
+}
+
+.system-schedule__detail-content-container {
+    padding: 4px 4px 4px 4px;
+}

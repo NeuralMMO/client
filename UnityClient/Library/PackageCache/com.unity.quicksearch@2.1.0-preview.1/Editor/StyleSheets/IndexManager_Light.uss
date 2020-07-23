@@ -1,0 +1,12 @@
+.index-manager-variables {
+    /* 2020.2 variables */
+    --unity-colors-default-border: #999999;
+    --unity-theme-background-color-10: #B6B6B6;
+    --unity-colors-tab-background-checked: #CBCBCB;
+    --unity-metrics-default-border_radius: 3px;
+    /* **************** */
+
+    --button-add-image: resource("Toolbar Plus");
+    --button-remove-image: resource("Toolbar Minus");
+    --folder-icon: resource("Folder Icon");
+}

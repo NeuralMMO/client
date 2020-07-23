@@ -1,0 +1,20 @@
+{
+    "name": "Unity.Properties.CodeGen",
+    "references": [
+        "Unity.Properties"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Mono.Cecil.dll",
+        "Mono.Cecil.Rocks.dll",
+        "Mono.Cecil.Pdb.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": ["!NET_DOTS"],
+    "versionDefines": []
+}

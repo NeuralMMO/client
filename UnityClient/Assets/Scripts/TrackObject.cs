@@ -5,11 +5,13 @@ using System.Collections;
 public class TrackObject: MonoBehaviour {
     public float speed = -0.15f;
     public bool click = false;
+    OrbitCamera camera;
 
 
     // Use this for initialization
     void Start () 
     {
+      this.camera = GameObject.Find("CameraAnchor/OrbitCamera").GetComponent<OrbitCamera>();
     }
 
     void LateUpdate () 
@@ -23,8 +25,9 @@ public class TrackObject: MonoBehaviour {
         }
 
         if (click) {
-            float x = Input.GetAxis("Mouse X") * speed;
-            float y = Input.GetAxis("Mouse Y") * speed;
+            float distance = this.camera.distance;
+            float x = 0.5f * Input.GetAxis("Mouse X") * speed * distance;
+            float y = 0.5f * Input.GetAxis("Mouse Y") * speed * distance;
 
             Vector3 movement = new Vector3(x, 0, y);
             Vector3 target   = Camera.main.transform.TransformDirection(movement);

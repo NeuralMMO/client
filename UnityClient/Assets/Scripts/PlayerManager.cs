@@ -11,8 +11,10 @@ public class PlayerManager : UnityModule
    public GameObject anchor;
    public Camera camera;
 
+   Consts consts;
    GameObject prefab;
    GameObject root;
+   GameObject cameraAnchor;
 
    HashSet<int> idens;
    HashSet<int> newEnts;
@@ -20,9 +22,10 @@ public class PlayerManager : UnityModule
    void Start() {
       this.camera = Camera.main;
 
-      this.anchor = GameObject.Find("Client/CameraAnchor");
-      this.prefab = Resources.Load("Prefabs/Player") as GameObject; 
-      this.root   = GameObject.Find("Client/Environment/Players");
+      this.anchor       = GameObject.Find("Client/CameraAnchor");
+      this.prefab       = Resources.Load("Prefabs/Player") as GameObject; 
+      this.root         = GameObject.Find("Client/Environment/Players");
+      this.cameraAnchor = GameObject.Find("CameraAnchor");
 
       this.idens   = new HashSet<int>();
       this.newEnts = new HashSet<int>();
@@ -39,20 +42,43 @@ public class PlayerManager : UnityModule
       this.newEnts.Clear();
    }
 
+   bool inRenderDist(Player player)
+   {
+         int r = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
+         int c = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
+         if(player.r < r - Consts.TILE_RADIUS || player.r > r + Consts.TILE_RADIUS)
+         {
+            return false;
+         }
+         if(player.c < c - Consts.TILE_RADIUS || player.c > c + Consts.TILE_RADIUS)
+         {
+            return false;
+         }
+         return true;
+   }
+
    void Init(Dictionary<string, object> ents){
       foreach (KeyValuePair<string, object> ent in ents) {
          int id = Convert.ToInt32(ent.Key);
          if (players.ContainsKey(id)) {
+
             continue;
          }
 
-         GameObject player      = GameObject.Instantiate(this.prefab) as GameObject;
-         Player playerComponent = player.AddComponent<Player>();
+         GameObject playerObj   = GameObject.Instantiate(this.prefab) as GameObject;
+         Player playerComponent = playerObj.AddComponent<Player>();
 
-         player.transform.SetParent(root.transform, true);
-         player.GetComponent<Player>().Init(this.players, id, ent.Value);
+         playerObj.transform.SetParent(root.transform, true);
+         Player player = playerObj.GetComponent<Player>();
+         player.Init(this.players, id, ent.Value);
 
-         players.Add(id, player);
+         if (!inRenderDist(player))
+         {
+            Destroy(player);
+            Destroy(playerObj);
+         }
+
+         players.Add(id, playerObj);
          newEnts.Add(id);
       }
    }
@@ -60,9 +86,13 @@ public class PlayerManager : UnityModule
    void Step(Dictionary<string, object> ents){
       foreach (KeyValuePair<string, object> ent in ents) {
          int id = Convert.ToInt32(ent.Key);
-         idens.Add(id);
+         Player player = players[id].GetComponent<Player>();
+         if (inRenderDist(player))
+         {
+            idens.Add(id);
+         }
 
-         players[id].GetComponent<Player>().UpdatePlayer(this.players, ent.Value);
+         player.UpdatePlayer(this.players, ent.Value);
       }
    }
 

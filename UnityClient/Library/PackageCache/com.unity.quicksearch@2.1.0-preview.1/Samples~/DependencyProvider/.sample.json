@@ -1,0 +1,5 @@
+{
+	"displayName":"Dependency Search Provider",
+	"description": "Index project dependencies",
+	"createSeparatePackage": false
+}

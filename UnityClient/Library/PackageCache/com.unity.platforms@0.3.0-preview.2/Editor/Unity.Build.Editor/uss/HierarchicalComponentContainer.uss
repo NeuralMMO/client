@@ -1,0 +1,58 @@
+.HierarchicalComponentContainer
+{
+    padding-bottom: 2px;
+}
+
+.HierarchicalComponentContainer__component
+{
+    margin-left: 0;
+    padding: 5px 5px 5px 21px;
+    border-radius: 5px;
+}
+
+.HierarchicalComponentContainer__component-header
+{
+    height: 18px;
+    font-size: 12px;
+    -unity-font-style:bold;
+}
+
+.HierarchicalComponentContainer__component-fields
+{
+    padding-left: 16px;
+    margin-left: 0;
+}
+
+.HierarchicalComponentContainer__component-header .unity-toggle__checkmark
+{
+    align-self: center;
+}
+
+.HierarchicalComponentContainer__inherited-component .unity-label
+{
+}
+
+.HierarchicalComponentContainer__overridden-component .HierarchicalComponentContainer__component
+{
+    border-left-color: #0cb4cc;
+    border-left-width: 2px;
+    padding-left: 18px;
+}
+
+.HierarchicalComponentContainer__add-component-button
+{
+    align-self: flex-end;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.HierarchicalComponentContainer__remove-component-button
+{
+    align-self: flex-end;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border-width: 0;
+}

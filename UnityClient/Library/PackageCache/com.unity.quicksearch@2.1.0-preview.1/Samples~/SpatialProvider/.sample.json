@@ -1,0 +1,5 @@
+{
+	"displayName":"Spatial Provider",
+	"description": "Spatial Provider example using the QueryEngine.",
+	"createSeparatePackage": false
+}

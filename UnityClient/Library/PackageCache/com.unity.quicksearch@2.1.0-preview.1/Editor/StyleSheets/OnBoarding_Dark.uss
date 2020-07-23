@@ -1,0 +1,7 @@
+.index-manager-variables {
+    /* 2020.2 variables */
+    --unity-colors-button-background: #585858;
+    --unity-colors-button-background-hover: #464646;
+    /* **************** */
+    --unity-colors-button-background-checked: #3A79BB;
+}

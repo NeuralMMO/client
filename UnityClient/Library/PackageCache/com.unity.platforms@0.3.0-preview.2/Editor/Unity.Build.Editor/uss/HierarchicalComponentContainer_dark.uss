@@ -1,0 +1,26 @@
+.HierarchicalComponentContainer__component
+{
+    background-color: #222222;
+}
+
+.HierarchicalComponentContainer__add-component-button
+{
+    background-image: resource("Icons/d_CreateAddNew.png");
+}
+
+.HierarchicalComponentContainer__remove-component-button
+{
+    background-image: resource("Icons/d_winbtn_win_close@2x.png");
+}
+
+.HierarchicalComponentContainer__inherited-component .unity-label
+{
+    color: #666666;
+}
+
+.HierarchicalComponentContainer__overridden-component .HierarchicalComponentContainer__component
+{
+    border-left-color: #0cb4cc;
+}
+
+

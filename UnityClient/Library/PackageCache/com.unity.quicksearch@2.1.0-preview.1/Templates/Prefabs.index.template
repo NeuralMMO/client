@@ -1,0 +1,13 @@
+{
+  "type": "prefab",
+  "roots": [],
+  "includes": [],
+  "excludes": [],
+  "options": {
+    "fstats": true,
+    "types": true,
+    "properties": true,
+    "dependencies": false
+  },
+  "baseScore": 150
+}

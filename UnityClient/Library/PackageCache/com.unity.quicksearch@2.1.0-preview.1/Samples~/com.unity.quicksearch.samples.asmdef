@@ -1,0 +1,18 @@
+{
+    "name": "com.unity.quicksearch.samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:388060bf34f9a6a40bafbac77240e259"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
