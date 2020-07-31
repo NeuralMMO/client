@@ -5,6 +5,8 @@ Shader "Unlit/OverlayShader"
     Properties
     {
         [NoScaleOffset] _Overlay("Base (RGB) Trans (A)", 2D) = "white" {}
+        _PanParams("PanParams", Vector) = (0, 0, 0, 0)
+        _SizeParams ("SizeParams", Vector) = (0, 0, 0, 0)
     }
         SubShader
     {
@@ -29,6 +31,8 @@ Shader "Unlit/OverlayShader"
             };
 
             sampler2D _Overlay;
+            float4 _PanParams;
+            float4 _SizeParams;
 
             v2f vert(float4 pos : POSITION, float2 uv : TEXCOORD0)
             {
@@ -41,8 +45,19 @@ Shader "Unlit/OverlayShader"
             fixed4 frag(v2f i) : SV_Target
             {
                 float4 pos = i.worldPos;
-                pos.xz = pos.xz - 512 + 64;
-                pos.xz = (floor(pos.xz + 0.5) + 0.5) / 128;
+
+                //_CameraParams.x
+
+                //pos.x = pos.x - 512 + _CameraParams.z;
+                //pos.z = pos.z - 512 + _CameraParams.z;
+
+                pos.x = pos.x - _PanParams.z + _SizeParams.x;
+                pos.z = pos.z - _PanParams.w + _SizeParams.x;
+
+
+                //pos.xz = pos.xz - 512 + 64;
+                //pos.xz = (floor(pos.xz + 0.5) + 0.5) / 128;
+                pos.xz = (floor(pos.xz + 0.5) + 0.5) / (2*_SizeParams.x);
 
                 //Don't wrap around
                 if (pos.x <= 0 || pos.x >= 1.0 || pos.z <= 0 || pos.z >= 1.0)

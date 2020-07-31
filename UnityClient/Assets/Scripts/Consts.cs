@@ -6,7 +6,6 @@ public class Consts : MonoBehaviour
 {
     public static int MAP_SIZE = 1024;
     public static int CHUNK_SIZE = 16;
-    //public static int CHUNK_RADIUS = 4;
     public static int CHUNK_RADIUS = 8;
 
     public static int TILE_RADIUS = CHUNK_RADIUS * CHUNK_SIZE;

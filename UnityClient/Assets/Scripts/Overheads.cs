@@ -24,7 +24,7 @@ public class Overheads: UnityModule
    public TMP_Text playerName;
    public TMP_Text damage;
    public TMP_Text freeze;
-   public TMP_Text immune;
+   public TMP_Text wilderness;
    public Vector3 worldPos;
    public Vector3 damageOrig;
 
@@ -49,7 +49,7 @@ public class Overheads: UnityModule
        this.playerName  = text[0];
        this.damage      = text[1];
        this.freeze      = text[2];
-       this.immune      = text[3];
+       this.wilderness  = text[3];
        this.damageOrig  = this.damage.transform.localPosition;
        this.damage.text = "Damage";
  
@@ -76,12 +76,12 @@ public class Overheads: UnityModule
    }
 
    public void UpdateStatus(object status) {
-      int immuneTicks = Convert.ToInt32(UnpackList(new List<string>{"immune"}, status));
-      if (immuneTicks > 0) {
-         this.immune.text = immuneTicks.ToString();
-         this.immune.gameObject.SetActive(true);
+      int wildernessLevel = Convert.ToInt32(UnpackList(new List<string>{"wilderness"}, status));
+      if (wildernessLevel >= 0) {
+         this.wilderness.text = wildernessLevel.ToString();
+         this.wilderness.gameObject.SetActive(true);
       } else {
-         this.immune.gameObject.SetActive(false);
+         this.wilderness.gameObject.SetActive(false);
       }
 
       int freeze = Convert.ToInt32(UnpackList(new List<string>{"freeze"}, status));

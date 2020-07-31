@@ -1,6 +1,0 @@
-<UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns:properties="Unity.Properties.UI" id="KeyValueElement">
-    <ui:VisualElement class="unity-base-field">
-        <ui:Label class="unity-base-field__label"/>
-        <ui:Button text="Null (string)" class="null-string-field__button"/>
-    </ui:VisualElement>
-</UXML>

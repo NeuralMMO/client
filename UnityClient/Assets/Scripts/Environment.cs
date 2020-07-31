@@ -5,6 +5,8 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Mathematics;
+using Unity.Entities.UniversalDelegates;
+using System.Linq;
 
 public struct Matrix4x4Component : IComponentData
 {
@@ -13,14 +15,16 @@ public struct Matrix4x4Component : IComponentData
 
 public class Chunk
 {
-   private bool active = true;
+   public bool active = true;
+   private Tuple<int, int> key;
    private Dictionary<Tuple<int, int>, Entity> tiles;
    public Entity terrain;
 
-   public Chunk(Entity terrain, int r, int c)
+   public Chunk(Env env, Entity terrain, int r, int c)
    {
-      this.tiles   = new Dictionary<Tuple<int, int>, Entity>();
-      this.terrain = terrain;
+      this.tiles      = new Dictionary<Tuple<int, int>, Entity>();
+      this.key        = Tuple.Create(r, c);
+      this.terrain    = terrain;
 
       //this.terrain.transform.SetParent(root.transform);
       //this.terrain.name = "Chunk-R" + r.ToString() + "-C" + c.ToString();
@@ -43,11 +47,6 @@ public class Chunk
       this.tiles[key] = ent;
    }
 
-   public bool GetIsActive()
-   {
-      return this.active;
-   }
-
    public void SetActive(EntityManager manager, bool active)
    {
       this.active = active;
@@ -57,15 +56,23 @@ public class Chunk
          manager.SetEnabled(e, active); 
       }
    }
+
+   public bool GetIsActive()
+   {
+      return this.active;
+   }
+
 }
 
 public class Env
 {
    private Dictionary<Tuple<int, int>, Chunk> chunks;
+   public  HashSet<Tuple<int, int>> activeChunks;
 
    public Env()
    {
-      this.chunks = new Dictionary<Tuple<int, int>, Chunk>();
+      this.chunks       = new Dictionary<Tuple<int, int>, Chunk>();
+      this.activeChunks = new HashSet<Tuple<int, int>>();
    }
 
    public Chunk GetChunk(int chunkR, int chunkC)
@@ -73,11 +80,21 @@ public class Env
       Tuple<int, int> key = Tuple.Create(chunkR, chunkC);
       return this.chunks[key];
    }
+   public Chunk GetChunk(Tuple<int, int> key)
+   {
+      return this.chunks[key];
+   }
+ 
    public void SetChunk(Chunk chunk, int chunkR, int chunkC)
    {
       Tuple<int, int> key = Tuple.Create(chunkR, chunkC);
       this.chunks[key] = chunk;
    }
+   public void SetChunk(Chunk chunk, Tuple<int, int> key)
+   {
+      this.chunks[key] = chunk;
+   }
+ 
    public bool ContainsChunk(int chunkR, int chunkC)
    {
       Tuple<int, int> key = Tuple.Create(chunkR, chunkC);
@@ -101,6 +118,44 @@ public class Env
       }
       return this.GetChunk(chunkR, chunkC).ContainsTile(tileR, tileC);
    }
+   public void SetActive(EntityManager manager, int r, int c, bool active)
+   {
+      Tuple<int, int> key = Tuple.Create(r, c);
+      this.SetActive(manager, key, active);
+  }
+
+   public void SetActive(EntityManager manager, Tuple<int, int> key, bool active)
+   {
+      Chunk chunk = this.GetChunk(key);
+      //Check if already in desired state
+      if (chunk.active == active)
+      {
+         return;
+      }
+
+      if (active)
+      {
+         this.activeChunks.Add(key);
+      } else
+      {
+         this.activeChunks.Remove(key);
+      }
+
+      chunk.SetActive(manager, active);
+   }
+ 
+   public void UpdateActive(Tuple<int, int> key, bool active)
+   {
+      bool containsKey = this.activeChunks.Contains(key);
+      if (active && !containsKey)
+      {
+         this.activeChunks.Add(key);
+      } else if (!active && containsKey)
+      {
+         this.activeChunks.Remove(key);
+      }
+   }
+      
  
 }
 
@@ -116,7 +171,8 @@ public class EnvMaterials : MonoBehaviour
     this.idxObjs = new Dictionary<int, GameObject>();
     this.strObjs = new Dictionary<string, GameObject>();
 
-    this.AddBlock("Lava", 0, 0);
+    //this.AddBlock("Lava", 0, 0);
+    this.idxStrs.Add(0, "Sand");
     this.idxStrs.Add(1, "Sand");
     this.AddBlock("Grass", 0, 2);
     this.AddBlock("Scrub", 0, 3);
@@ -187,12 +243,16 @@ public class Environment: MonoBehaviour
     public Texture2D values;
     Dictionary<string, object> overlays;
     Dictionary<byte, Tile> meshHash;
+    int overlayR;
+    int overlayC;
+
 
     public EnvMaterials envMaterials;
 
     EntityManager entityManager;
     EntityArchetype chunkArchetype;
     EntityArchetype scrubArchetype;
+    EntityArchetype containerArchetype;
 
     public static List<List<GameObject>> terrain = new List<List<GameObject>>();
     public int[,] oldPacket = new int[Consts.MAP_SIZE, Consts.MAP_SIZE];
@@ -255,6 +315,11 @@ public class Environment: MonoBehaviour
          typeof(LocalToWorld)
       );
 
+      this.containerArchetype = this.entityManager.CreateArchetype(
+         typeof(Child),
+         typeof(Translation),
+         typeof(LocalToWorld)
+      ); ;
 
       this.forest = Instantiate(this.forestPrefab) as GameObject;
       this.scrubMaterial = forest.GetComponent<MeshRenderer>().material;
@@ -266,12 +331,15 @@ public class Environment: MonoBehaviour
       int temp = 0;
       int dx = 0;
       int dy = -1;
-      for (int i = 0; i < (Consts.CHUNKS+1)*(Consts.CHUNKS+1); i++)
+      //for (int i = 0; i < (Consts.CHUNKS+1)*(Consts.CHUNKS+1); i++)
+      for (int i = 0; i < Consts.CHUNKS*Consts.CHUNKS; i++)
       {
          //Debug.Log(y.ToString() + ", " + x.ToString());
-         if (-R <= x && x < R && -R <= y && y < R)
+         if (-R <= x && x <= R && -R <= y && y <= R)
          {
-            unloadedChunks.Enqueue(Tuple.Create(y+R, x+R));
+            int RR = y + R - 1;
+            int CC = x + R - 1;
+            unloadedChunks.Enqueue(Tuple.Create(y+R-1, x+R-1));
          }
          if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y))
          {
@@ -293,6 +361,7 @@ public class Environment: MonoBehaviour
       this.overlays    = (Dictionary<string, object>) packet["overlay"];
       this.overlayMatl = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
       this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
+      List<object> overlayPos = (List<object>) packet["pos"];
 
       string cmd = this.console.cmd;
       this.cmd = cmd;
@@ -324,14 +393,27 @@ public class Environment: MonoBehaviour
       int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
       int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
 
-      for (int r=0; r<2*Consts.TILE_RADIUS; r++) {
-         List<object> row = (List<object>) map[r+cameraR];
-         for(int c=0; c<2*Consts.TILE_RADIUS; c++) {
-            int val = System.Convert.ToInt32(row[c+cameraC]);
+      this.overlayR = System.Convert.ToInt32(overlayPos[0]);
+      this.overlayC = System.Convert.ToInt32(overlayPos[1]);
+
+      for (int r=-Consts.TILE_RADIUS; r<Consts.TILE_RADIUS; r++) {
+         if (r + cameraR < 0 || r + cameraR >= Consts.MAP_SIZE)
+         {
+            continue;
+         }
+         //List<object> row = (List<object>) map[r+cameraR];
+         List<object> row = (List<object>) map[r+Consts.TILE_RADIUS];
+         for (int c=-Consts.TILE_RADIUS; c<Consts.TILE_RADIUS; c++) {
+            if (c + cameraC < 0 || c + cameraC >= Consts.MAP_SIZE)
+            {
+               continue;
+            }
             if (!this.env.ContainsTile(r+cameraR, c+cameraC))
             {
                continue;
             }
+            //int val = System.Convert.ToInt32(row[c+cameraC]);
+            int val = System.Convert.ToInt32(row[c+Consts.TILE_RADIUS]);
             Entity tile = this.env.GetTile(r + cameraR, c + cameraC);
             string name = this.envMaterials.idxStrs[val];
             if (name == "Forest" ) {
@@ -494,7 +576,10 @@ public class Environment: MonoBehaviour
          bool flip = false;
 
          string name = this.envMaterials.idxStrs[val];
-         if (name == "Stone" || name == "Sand") {
+         if (r == 0 || c == 0 || r == Consts.MAP_SIZE-1 || c == Consts.MAP_SIZE-1)
+         {
+            name = "Sand4f";
+         } else  if (name == "Stone" || name == "Sand") {
             byte byteRepr = makeByteRepr(
                (val == this.vals[r - 1, c - 1]) ? 1 : 0,
                (val == this.vals[r - 1, c])     ? 1 : 0,
@@ -562,17 +647,13 @@ public class Environment: MonoBehaviour
       for(int r=0; r<sz; r++) {
         for(int c=0; c<sz; c++) {
             int val = System.Convert.ToInt32(this.vals[R+r, C+c]);
-
-            //stone
-            //cube.transform.position = new Vector3(R+r, 0, C+c);
-            //cube.transform.SetParent(chunk.GetTransform());
             cubes[flatIdx] = this.mapBlock(r, c, R+r, C+c, val);
             flatIdx++;
 
         }
       }
       Entity terrain = combineMeshes(cubes, this.cubeMatl, R, C);
-      Chunk chunk = new Chunk(terrain, R, C);
+      Chunk chunk = new Chunk(this.env, terrain, R, C);
       this.env.SetChunk(chunk, R/sz, C/sz);
  
       for (int r = 0; r < sz; r++)
@@ -599,7 +680,6 @@ public class Environment: MonoBehaviour
     Entity combineMeshes(Tuple<Mesh, Matrix4x4>[] ents, Material mat, int R, int C) {
       CombineInstance[] combine = new CombineInstance[ents.Length];
 
-
       int i = 0;
       while (i < ents.Length)
       {
@@ -616,6 +696,7 @@ public class Environment: MonoBehaviour
 
       Mesh mesh = new Mesh();
       mesh.CombineMeshes(combine, true, true);
+      mesh.bounds.SetMinMax(new Vector3(0, 0, 0), new Vector3(Consts.CHUNK_SIZE, 2, Consts.CHUNK_SIZE));
 
       /*
       Transform transform = obj.GetTransform();
@@ -630,19 +711,30 @@ public class Environment: MonoBehaviour
       renderer.materials = materials;
       */
 
+      //Parent entity
+      //Entity chunk = this.entityManager.CreateEntity(this.containerArchetype);
+      //this.entityManager.SetName(chunk, "Chunk-R"+R.ToString()+"-C"+C.ToString());
+
       float3 translation = transform.position;
       translation = new float3(R, 0, C);
-      Entity chunk = this.entityManager.CreateEntity(this.chunkArchetype);
-      this.entityManager.SetName(chunk, "Chunk-R"+R.ToString()+"-C"+C.ToString());
-      this.entityManager.AddComponentData(chunk, new Translation      { Value = translation} );
-      this.entityManager.AddSharedComponentData(chunk, new RenderMesh {mesh = mesh, material = mat} );
-      return chunk;
+
+      Entity terrain = this.entityManager.CreateEntity(this.chunkArchetype);
+      this.entityManager.AddComponentData(terrain, new Translation       { Value = translation} );
+      this.entityManager.AddComponentData(terrain, new RenderBounds      { Value = mesh.bounds.ToAABB()} );
+      this.entityManager.AddSharedComponentData(terrain, new RenderMesh  {mesh = mesh, material = mat, subMesh=0} );
+
+      Entity overlays = this.entityManager.CreateEntity(this.chunkArchetype);
+      this.entityManager.AddComponentData(overlays, new Translation      { Value = translation} );
+      this.entityManager.AddComponentData(overlays, new RenderBounds     { Value = mesh.bounds.ToAABB()} );
+      this.entityManager.AddSharedComponentData(overlays, new RenderMesh {mesh = mesh, material = this.overlayMatl, subMesh=1} );
+
+
+      return terrain;
 
     }
     public void initTerrain(Dictionary<string, object> packet)
    {
       List<object> map = (List<object>) packet["map"];
-
       if (this.vals == null)
       {
          this.vals = new int[Consts.MAP_SIZE, Consts.MAP_SIZE];
@@ -669,6 +761,7 @@ public class Environment: MonoBehaviour
 
     void Update()
     {
+
      if (this.vals != null && unloadedChunks.Count != 0){
          this.loadNextChunk();
       }
@@ -677,32 +770,30 @@ public class Environment: MonoBehaviour
       int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE);
       int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE);
 
-      for (int r = 0; r<Consts.CHUNKS; r++)
+      //Activate inactive chunks in view
+      HashSet<Tuple<int, int>> activeChunks = new HashSet<Tuple<int, int>>();
+      for (int r = cameraR - Consts.CHUNK_RADIUS; r < cameraR + Consts.CHUNK_RADIUS; r++)
       {
-      for (int c = 0; c<Consts.CHUNKS; c++)
+         for (int c = cameraC - Consts.CHUNK_RADIUS; c < cameraC + Consts.CHUNK_RADIUS; c++)
          {
             if (!this.env.ContainsChunk(r, c))
             {
                continue;
             }
-            Chunk chunk = this.env.GetChunk(r, c);
-            if (Math.Abs(cameraR - r) <= Consts.CHUNK_RADIUS && Math.Abs(cameraC - c) <= Consts.CHUNK_RADIUS)
-            {
-               //if(!chunk.GetIsActive()) {
-               chunk.SetActive(this.entityManager, true);
-               //}
-            }
-            else
-            {
-
-               chunk.SetActive(this.entityManager, false);
-            }
-
-            //if (chunk.GetIsActive())
-            //{
-            //}
+            Tuple<int, int> key = Tuple.Create(r, c);
+            this.env.SetActive(this.entityManager, key, true);
+            activeChunks.Add(key);
          }
       }
+
+      //Deactivate active chunks outside view
+      foreach (Tuple<int, int> key in this.env.activeChunks.ToList())
+         {
+            if(!activeChunks.Contains(key))
+            {
+               this.env.SetActive(this.entityManager, key, false);
+            }
+         }
 
       //Debug.Log("Updating terrain: " + tick.ToString());
       tick++;
@@ -718,6 +809,8 @@ public class Environment: MonoBehaviour
          {
             this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
          }
+         this.overlayMatl.SetVector("_PanParams", new Vector4(cameraR*Consts.CHUNK_SIZE, cameraC*Consts.CHUNK_SIZE, this.overlayR, this.overlayC));
+         this.overlayMatl.SetVector("_SizeParams", new Vector4(Consts.TILE_RADIUS, 0, 0, 0));
       }
     }
 

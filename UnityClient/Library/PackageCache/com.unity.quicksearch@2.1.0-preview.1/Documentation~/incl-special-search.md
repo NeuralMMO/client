@@ -1,2 +1,0 @@
-> [!NOTE]
-> This is a [special search](special-searches.md). You must use its search token to execute it. You cannot make it an [active Search Provider](search-filters.md#persistent-search-filters), or combine it with other Search Providers.
