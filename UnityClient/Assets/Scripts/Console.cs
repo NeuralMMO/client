@@ -93,6 +93,13 @@ public class Console : MonoBehaviour
 		}
       return true;
    }
+
+	public string consumeCommand()
+   {
+		string command = this.cmd;
+		this.cmd = "";
+		return command;
+   }
 	
 	void SubmitText(string txt)
 	{

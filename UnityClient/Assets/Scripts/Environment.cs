@@ -68,12 +68,14 @@ public class Env
 {
    private Dictionary<Tuple<int, int>, Chunk> chunks;
    public  HashSet<Tuple<int, int>> activeChunks;
+   public  HashSet<Tuple<int, int>> inactiveResources;
 
    public Env()
    {
-      this.chunks       = new Dictionary<Tuple<int, int>, Chunk>();
-      this.activeChunks = new HashSet<Tuple<int, int>>();
-   }
+      this.chunks            = new Dictionary<Tuple<int, int>, Chunk>();
+      this.activeChunks      = new HashSet<Tuple<int, int>>();
+      this.inactiveResources = new HashSet<Tuple<int, int>>();
+        }
 
    public Chunk GetChunk(int chunkR, int chunkC)
    {
@@ -189,6 +191,7 @@ public class EnvMaterials : MonoBehaviour
     public void AddBlock(string name, float rotation, int idx=-1) {
          GameObject prefab = Resources.Load("Prefabs/Tiles/" + name) as GameObject;
          GameObject obj = Instantiate(prefab) as GameObject;
+         obj.SetActive(false);
          obj.transform.eulerAngles = new Vector3(0, rotation, 0);
          if (!this.strObjs.ContainsKey(name))
          {
@@ -263,7 +266,7 @@ public class Environment: MonoBehaviour
     Queue<Tuple<int, int>> unloadedChunks = new Queue<Tuple<int, int>>();
 
     public int tick = 0;
-    string cmd = "";
+    public bool cmd = false;
 
     Shader shader;
 
@@ -289,12 +292,15 @@ public class Environment: MonoBehaviour
       this.root         = GameObject.Find("Environment/Terrain");
       this.resources    = GameObject.Find("Client/Environment/Terrain/Resources");
       this.cubeMatl     = Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
-      this.values       = new Texture2D(2*Consts.TILE_RADIUS, 2*Consts.TILE_RADIUS);
+      //this.values       = new Texture2D(2*Consts.TILE_RADIUS, 2*Consts.TILE_RADIUS);
+      this.values = new Texture2D(Consts.MAP_SIZE, Consts.MAP_SIZE);
       this.cubePrefab   = Resources.Load("Prefabs/Cube") as GameObject;
       this.forestPrefab = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Reed") as GameObject;
       this.console      = GameObject.Find("Console").GetComponent<Console>();
       this.shader       = Shader.Find("Standard");
       this.cameraAnchor = GameObject.Find("CameraAnchor");
+      this.overlayMatl  = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
+      this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
 
       this.envMaterials = new EnvMaterials();
 
@@ -357,23 +363,17 @@ public class Environment: MonoBehaviour
 
     public void UpdateMap(Dictionary<string, object> packet) {
       GameObject root  = GameObject.Find("Environment");
-      List<object> map = (List<object>) packet["map"];
-      this.overlays    = (Dictionary<string, object>) packet["overlay"];
-      this.overlayMatl = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
-      this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
-      List<object> overlayPos = (List<object>) packet["pos"];
-
-      string cmd = this.console.cmd;
-      this.cmd = cmd;
-      if (this.overlays.ContainsKey(cmd))
+      //this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
+      if (packet.ContainsKey("overlay"))
       {
+         Debug.Log("Setting overlay pixel values");
          int count = 0;
-         List<object> values = (List<object>) this.overlays[cmd];
-         Color[] pixels = new Color[2*2*Consts.TILE_RADIUS*Consts.TILE_RADIUS];
-         for (int r = 0; r < 2*Consts.TILE_RADIUS; r++)
+         List<object> values = (List<object>)packet["overlay"];
+         Color[] pixels = new Color[Consts.MAP_SIZE * Consts.MAP_SIZE];
+         for (int r = 0; r < Consts.MAP_SIZE; r++)
          {
             List<object> row = (List<object>)values[r];
-            for (int c = 0; c < 2*Consts.TILE_RADIUS; c++)
+            for (int c = 0; c < Consts.MAP_SIZE; c++)
             {
                List<object> col = (List<object>)row[c];
                Color value = new Color();
@@ -388,41 +388,45 @@ public class Environment: MonoBehaviour
         }
         this.values.SetPixels(pixels);
         this.values.Apply(false);
+        this.cmd = true;
       }
 
-      int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
-      int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
-
-      this.overlayR = System.Convert.ToInt32(overlayPos[0]);
-      this.overlayC = System.Convert.ToInt32(overlayPos[1]);
-
-      for (int r=-Consts.TILE_RADIUS; r<Consts.TILE_RADIUS; r++) {
-         if (r + cameraR < 0 || r + cameraR >= Consts.MAP_SIZE)
+      //Parse inactive resource set
+      HashSet<Tuple<int, int>> resourceSet = new HashSet<Tuple<int, int>>();
+      List<object> resource = (List<object>) packet["resource"];
+      for(int i=0; i<resource.Count; i++)
+      {
+         List<object> pos = (List<object>)resource[i];
+         int r = System.Convert.ToInt32(pos[0]);
+         int c = System.Convert.ToInt32(pos[1]);
+         if (!this.env.ContainsTile(r, c))
          {
             continue;
          }
-         //List<object> row = (List<object>) map[r+cameraR];
-         List<object> row = (List<object>) map[r+Consts.TILE_RADIUS];
-         for (int c=-Consts.TILE_RADIUS; c<Consts.TILE_RADIUS; c++) {
-            if (c + cameraC < 0 || c + cameraC >= Consts.MAP_SIZE)
-            {
-               continue;
-            }
-            if (!this.env.ContainsTile(r+cameraR, c+cameraC))
-            {
-               continue;
-            }
-            //int val = System.Convert.ToInt32(row[c+cameraC]);
-            int val = System.Convert.ToInt32(row[c+Consts.TILE_RADIUS]);
-            Entity tile = this.env.GetTile(r + cameraR, c + cameraC);
-            string name = this.envMaterials.idxStrs[val];
-            if (name == "Forest" ) {
-               this.entityManager.SetEnabled(tile, true);
-            } else if (name == "Scrub") {
-               this.entityManager.SetEnabled(tile, false);
-            }
+         Entity tile = this.env.GetTile(r, c);
+         Tuple<int, int> posTup = Tuple.Create<int, int>(r, c);
+         resourceSet.Add(posTup);
+      }
+
+      //Activate resources
+      foreach (Tuple<int, int> pos in this.env.inactiveResources.ToList())
+      {
+         if (!resourceSet.Contains(pos))
+         {
+            Entity tile = this.env.GetTile(pos.Item1, pos.Item2);
+            this.entityManager.SetEnabled(tile, true);
+            this.env.inactiveResources.Remove(pos);
          }
       }
+
+      //Inactivate resources
+      foreach (Tuple<int, int> pos in resourceSet.ToList())
+         if (!this.env.inactiveResources.Contains(pos))
+         {
+            Entity tile = this.env.GetTile(pos.Item1, pos.Item2);
+            this.entityManager.SetEnabled(tile, false);
+            this.env.inactiveResources.Add(pos);
+         }
     }
 
    byte makeByteRepr(
@@ -643,7 +647,7 @@ public class Environment: MonoBehaviour
       C = C * sz;
 
       int flatIdx = 0;
-      Tuple<Mesh, Matrix4x4>[] cubes = new Tuple<Mesh, Matrix4x4>[256];
+      Tuple<Mesh, Matrix4x4>[] cubes = new Tuple<Mesh, Matrix4x4>[Consts.CHUNK_SIZE*Consts.CHUNK_SIZE];
       for(int r=0; r<sz; r++) {
         for(int c=0; c<sz; c++) {
             int val = System.Convert.ToInt32(this.vals[R+r, C+c]);
@@ -667,7 +671,8 @@ public class Environment: MonoBehaviour
             if (name == "Forest" || name == "Scrub") { 
                this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
                this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
-               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.9f, 0.2f, 0.9f)} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.9f, 0.4f, 0.9f)} );
+               this.entityManager.AddComponentData(entity, new RenderBounds     { Value = scrubMesh.bounds.ToAABB()} );
                this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = scrubMesh, material = scrubMaterial} );
 
                chunk.SetTile(R + r, C + c, entity);
@@ -695,6 +700,7 @@ public class Environment: MonoBehaviour
 
 
       Mesh mesh = new Mesh();
+      mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
       mesh.CombineMeshes(combine, true, true);
       mesh.bounds.SetMinMax(new Vector3(0, 0, 0), new Vector3(Consts.CHUNK_SIZE, 2, Consts.CHUNK_SIZE));
 
@@ -728,10 +734,9 @@ public class Environment: MonoBehaviour
       this.entityManager.AddComponentData(overlays, new RenderBounds     { Value = mesh.bounds.ToAABB()} );
       this.entityManager.AddSharedComponentData(overlays, new RenderMesh {mesh = mesh, material = this.overlayMatl, subMesh=1} );
 
-
       return terrain;
-
     }
+
     public void initTerrain(Dictionary<string, object> packet)
    {
       List<object> map = (List<object>) packet["map"];
@@ -766,7 +771,6 @@ public class Environment: MonoBehaviour
          this.loadNextChunk();
       }
 
-
       int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE);
       int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE);
 
@@ -786,6 +790,7 @@ public class Environment: MonoBehaviour
          }
       }
 
+      /*
       //Deactivate active chunks outside view
       foreach (Tuple<int, int> key in this.env.activeChunks.ToList())
          {
@@ -794,6 +799,7 @@ public class Environment: MonoBehaviour
                this.env.SetActive(this.entityManager, key, false);
             }
          }
+      */
 
       //Debug.Log("Updating terrain: " + tick.ToString());
       tick++;
@@ -801,13 +807,11 @@ public class Environment: MonoBehaviour
       //plane.GetComponent<MeshRenderer>().material.SetTexture("_Overlay", this.testMatl);
       if (this.overlayMatl)
       {
-         string cmd = this.cmd;
-         if (this.overlays.ContainsKey(cmd))
+         if (this.cmd)
          {
+            Debug.Log("Setting overlay texture");
             this.overlayMatl.SetTexture("_Overlay", this.values);
-         } else if (cmd == "env")
-         {
-            this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
+            this.cmd = false;
          }
          this.overlayMatl.SetVector("_PanParams", new Vector4(cameraR*Consts.CHUNK_SIZE, cameraC*Consts.CHUNK_SIZE, this.overlayR, this.overlayC));
          this.overlayMatl.SetVector("_SizeParams", new Vector4(Consts.TILE_RADIUS, 0, 0, 0));

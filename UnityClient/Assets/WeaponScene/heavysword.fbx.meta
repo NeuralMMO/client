@@ -1,0 +1,180 @@
+fileFormatVersion: 2
+guid: 8cee8662847d45d409ea9412812d6694
+timeCreated: 1506852637
+licenseType: Store
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Cube
+    100004: Plane
+    100006: Cylinder
+    100008: Cylinder.001
+    100010: Cylinder.002
+    100012: Cube.001
+    100014: Cylinder.003
+    100016: Core
+    100018: Handle
+    100020: HandlePart
+    100022: Loop
+    100024: Loop.001
+    100026: Loop.002
+    100028: Sword
+    100030: Floor
+    100032: Stand
+    100034: Wall
+    100036: Blade
+    100038: Empty
+    100040: HeavySword
+    100042: StandEmp
+    400000: //RootNode
+    400002: Cube
+    400004: Plane
+    400006: Cylinder
+    400008: Cylinder.001
+    400010: Cylinder.002
+    400012: Cube.001
+    400014: Cylinder.003
+    400016: Core
+    400018: Handle
+    400020: HandlePart
+    400022: Loop
+    400024: Loop.001
+    400026: Loop.002
+    400028: Sword
+    400030: Floor
+    400032: Stand
+    400034: Wall
+    400036: Blade
+    400038: Empty
+    400040: HeavySword
+    400042: StandEmp
+    2300000: //RootNode
+    2300002: Cube
+    2300004: Plane
+    2300006: Cylinder
+    2300008: Cylinder.001
+    2300010: Cylinder.002
+    2300012: Cube.001
+    2300014: Cylinder.003
+    2300016: Core
+    2300018: Handle
+    2300020: HandlePart
+    2300022: Loop
+    2300024: Loop.001
+    2300026: Loop.002
+    2300028: Sword
+    2300030: Floor
+    2300032: Stand
+    2300034: Wall
+    2300036: Blade
+    2300038: HeavySword
+    3300000: //RootNode
+    3300002: Cube
+    3300004: Plane
+    3300006: Cylinder
+    3300008: Cylinder.001
+    3300010: Cylinder.002
+    3300012: Cube.001
+    3300014: Cylinder.003
+    3300016: Core
+    3300018: Handle
+    3300020: HandlePart
+    3300022: Loop
+    3300024: Loop.001
+    3300026: Loop.002
+    3300028: Sword
+    3300030: Floor
+    3300032: Stand
+    3300034: Wall
+    3300036: Blade
+    3300038: HeavySword
+    4300000: Cube
+    4300002: Plane
+    4300004: Cylinder.002
+    4300006: Cylinder.001
+    4300008: Cylinder
+    4300010: Cylinder.003
+    4300012: Cube.001
+    4300014: Handle
+    4300016: HandlePart
+    4300018: Core
+    4300020: Loop.002
+    4300022: Loop.001
+    4300024: Loop
+    4300026: Sword
+    4300028: Stand
+    4300030: Wall
+    4300032: Floor
+    4300034: HeavySword
+    4300036: Blade
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

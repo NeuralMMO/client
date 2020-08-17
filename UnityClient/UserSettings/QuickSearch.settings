@@ -16,7 +16,7 @@ filters = {
 	asset = true
 }
 scopes = {
-	"last_search.AB59B443" = ""
+	"last_search.AB59B443" = "quality"
 }
 providers = {
 	asset = {
@@ -47,6 +47,16 @@ providers = {
 	log = {
 		active = false
 		priority = 210
+		defaultAction = null
+	}
+	store = {
+		active = true
+		priority = 100
+		defaultAction = null
+	}
+	res = {
+		active = true
+		priority = 100
 		defaultAction = null
 	}
 }

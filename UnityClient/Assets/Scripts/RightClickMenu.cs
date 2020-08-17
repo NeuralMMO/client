@@ -5,8 +5,8 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
 {
    delegate void triggerFunc(PointerEventData data);
 
-   public Player playerCache; 
-   public Player player; 
+   public Character characterCache; 
+   public Character character; 
 
    RightClickButton examine;
    RightClickButton follow;
@@ -54,11 +54,11 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
    {
       this.gameObject.SetActive(false);
 
-      if (this.playerCache == null) {
+      if (this.characterCache == null) {
          return; 
       }
 
-      this.target.transform.SetParent(this.playerCache.transform);
+      this.target.transform.SetParent(this.characterCache.transform);
       this.target.transform.localPosition = new Vector3(0,0,0);
       this.camera.distance = this.camera.distanceMin;
       Debug.Log("Following");
@@ -68,21 +68,21 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
    {
       this.gameObject.SetActive(false);
 
-      if (this.playerCache == null) {
+      if (this.characterCache == null) {
          return; 
       }
 
-      this.player = this.playerCache;
+      this.character = this.characterCache;
       Debug.Log("Examining");
    }
 
-   public void UpdateSelf(UI ui, Player player) {
-      this.examine.UpdateSelf("Examine: " + player.name);
-      this.follow.UpdateSelf("Follow: " + player.name);
+   public void UpdateSelf(UI ui, Character character) {
+      this.examine.UpdateSelf("Examine: " + character.name);
+      this.follow.UpdateSelf("Follow: " + character.name);
       this.transform.position = Input.mousePosition + new Vector3(-20, 20, 0);
 
       this.gameObject.SetActive(true);
-      this.playerCache = player;
+      this.characterCache = character;
    }
 
    public void OnPointerExit(PointerEventData eventData)

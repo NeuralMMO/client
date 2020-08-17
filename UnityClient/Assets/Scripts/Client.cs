@@ -17,7 +17,6 @@ public class Client : MonoBehaviour
    // Start is called before the first frame update
    void Start()
    {
-         Debug.Log("yeet");
       this.ui            = GameObject.Find("UI").GetComponent<UI>();
       this.comms         = GameObject.Find("WebSocket").GetComponent<Comms>();
       this.environment   = GameObject.Find("Environment").GetComponent<Environment>();
@@ -48,7 +47,7 @@ public class Client : MonoBehaviour
       }
 
       this.environment.UpdateMap(packet);
-      this.playerManager.UpdatePlayers(packet);
-      this.ui.UpdateFPS(this.deltaTime);
+      this.playerManager.UpdateEntities(packet);
+      this.ui.UpdateUI(packet, this.deltaTime);
    }
 }

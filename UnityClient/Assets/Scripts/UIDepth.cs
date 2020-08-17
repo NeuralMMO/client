@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Deprecated: Code integrated directly into Overheads
 public class UIDepth: MonoBehaviour
 {
     public float depth;

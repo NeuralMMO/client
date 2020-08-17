@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScreenSpaceCanvas : MonoBehaviour
 {
-    List<UIDepth> panels = new List<UIDepth>();
+    List<Overheads> panels = new List<Overheads>();
 
     void Start()
     {
@@ -17,8 +17,8 @@ public class ScreenSpaceCanvas : MonoBehaviour
         this.Sort(); 
     }
 
-    public void AddToCanvas(GameObject obj) {
-        panels.Add(obj.GetComponent<UIDepth>());
+    public void AddToCanvas(Overheads overheads) {
+       panels.Add(overheads);
     }
 
     void Sort() {

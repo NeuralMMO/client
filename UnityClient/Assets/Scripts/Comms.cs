@@ -13,6 +13,7 @@ public class Comms: MonoBehaviour
    public Dictionary<string, object> packet;
 
 	GameObject cameraAnchor;
+	Console console;
 	int numPackets = 0;
 	Thread thread;
 	string reply;
@@ -58,6 +59,7 @@ public class Comms: MonoBehaviour
 	IEnumerator Start ()
 	{
       this.cameraAnchor = GameObject.Find("CameraAnchor");
+      this.console      = GameObject.Find("Console").GetComponent<Console>();
 		while (true) {
 			//m_IsConnected does not become false upon server crash
 			//However, w.error will become non-null
@@ -79,9 +81,10 @@ public class Comms: MonoBehaviour
 				this.numPackets++;
 
 				//Message camera pos back to server
-				int r = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
-				int c = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
-				string msg = "Recieved packet " + numPackets.ToString() + " from Server;" + r.ToString() + " " + c.ToString();
+				int r = (int)Math.Floor(this.cameraAnchor.transform.position.x);
+				int c = (int)Math.Floor(this.cameraAnchor.transform.position.z);
+				string cmd = this.console.consumeCommand();
+				string msg = "Recieved packet " + numPackets.ToString() + " from Server;" + r.ToString() + " " + c.ToString() + " " + cmd;
 				w.SendString(msg);
 				Debug.Log(msg);
 			}

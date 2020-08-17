@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: WaterProDaytime
-  m_Shader: {fileID: 4800000, guid: 1cac2e0bcc34e4b3cbb4bd85982eba83, type: 3}
+  m_Shader: {fileID: 4800000, guid: 9dccc8e8f0da4494991c26ef59019551, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -61,7 +61,7 @@ Material:
     - _ReflDistort: 1
     - _RefrDistort: 0.57
     - _Shininess: 200
-    - _WaveScale: 0.055
+    - _WaveScale: 0.02
     m_Colors:
     - WaveSpeed: {r: 4, g: 2, b: -4, a: -2}
     - _AnimationDirection: {r: 1, g: 1, b: 1, a: 1}

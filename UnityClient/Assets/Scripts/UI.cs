@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using MonoBehaviorExtension;
+using System;
 
 public class UI: UnityModule {
    Transform canvas;
-   Player player;
+   Character character;
 
    GameObject fps;
-
+   TMP_Text wilderness;
    GameObject menu;
 
    void SetText(GameObject obj, string text) {
@@ -19,16 +20,17 @@ public class UI: UnityModule {
 
    void Awake()
    {
-      this.canvas = this.Get("Canvas");
-      this.menu   = GetObject(this.canvas, "RightClickMenu");
+      this.canvas     = this.Get("Canvas");
+      this.menu       = GetObject(this.canvas, "RightClickMenu");
+      this.wilderness = GetObject(this.canvas, "Wilderness").GetComponent<TMP_Text>();
 
       this.fps    = GetObject(this.canvas, "Panel/FPS");
    }
 
    void Update()
    {
-      Player player = this.menu.GetComponent<RightClickMenu>().player;
-      this.UpdateOverlay(player);
+      Character character = this.menu.GetComponent<RightClickMenu>().character;
+      this.UpdateOverlay(character);
       this.UpdateRightClickMenu();
    }
 
@@ -45,27 +47,41 @@ public class UI: UnityModule {
       }
 
       //Assumes nothing else has collision geometry
-      GameObject playerObj = hit.transform.gameObject; 
-      this.player = playerObj.GetComponent<Player>();
+      GameObject playerObj = hit.transform.gameObject;
+      this.character = playerObj.GetComponent<Player>();
+      if (character == null)
+      {
+         character = playerObj.GetComponent<NonPlayer>();
+      }
 
-      if (player != null) {
-         this.menu.GetComponent<RightClickMenu>().UpdateSelf(this, player);
+      if (character != null) {
+         this.menu.GetComponent<RightClickMenu>().UpdateSelf(this, character);
       }
    }
 
-   public void UpdateFPS(float time) {
+   public void UpdateUI(Dictionary<string, object> packet, float time) {
       string fps = "FPS: " + (1f / time).ToString("0.0");
       this.SetText(this.fps, fps);
+
+      int wildernessLevel  = Convert.ToInt32(UnpackList(new List<string> { "wilderness" }, packet));
+      if (wildernessLevel == -1)
+      {
+         this.wilderness.text = "Safe";
+      } else
+      {
+
+         this.wilderness.text = wildernessLevel.ToString();
+      }
    }
 
-   public void UpdateOverlay(Player player) {
-      Player.UpdateStaticUI();
+   public void UpdateOverlay(Character character) {
+      Character.UpdateStaticUI();
  
-      if (player == null) {
+      if (character == null) {
          return;
       }
 
-      player.UpdateUI();
+      character.UpdateUI();
 
    }
 }

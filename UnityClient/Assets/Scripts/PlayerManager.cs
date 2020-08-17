@@ -3,10 +3,28 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using MonoBehaviorExtension;
+using System.Security.Policy;
+using Unity.Entities;
+
+public class EntityGroup
+{
+   public Dictionary<int, GameObject> entities;
+   public HashSet<int> IDs;
+   public HashSet<int> newIDs;
+      
+   public EntityGroup()
+   {
+      this.entities = new Dictionary<int, GameObject>();
+      this.IDs = new HashSet<int>();
+      this.newIDs = new HashSet<int>();
+   }
+
+}
 
 public class PlayerManager : UnityModule
 {
-   private Dictionary<int, GameObject> players = new Dictionary<int, GameObject>();
+   public EntityGroup players;
+   public EntityGroup npcs;
 
    public GameObject anchor;
    public Camera camera;
@@ -16,9 +34,6 @@ public class PlayerManager : UnityModule
    GameObject root;
    GameObject cameraAnchor;
 
-   HashSet<int> idens;
-   HashSet<int> newEnts;
-
    void Start() {
       this.camera = Camera.main;
 
@@ -27,19 +42,81 @@ public class PlayerManager : UnityModule
       this.root         = GameObject.Find("Client/Environment/Players");
       this.cameraAnchor = GameObject.Find("CameraAnchor");
 
-      this.idens   = new HashSet<int>();
-      this.newEnts = new HashSet<int>();
+      this.players = new EntityGroup();
+      this.npcs    = new EntityGroup();
    }
 
-   public void UpdatePlayers(Dictionary<string, object> packet) {
-      Dictionary<string, object> ents = Unpack("ent", packet) as Dictionary<string, object>;
+   public void UpdateEntities(Dictionary<string, object> packet) {
+      Dictionary<string, object> p = Unpack("player", packet) as Dictionary<string, object>;
+      this.UpdateGroup(this.players, p, true);
 
-      this.Init(ents);
-      this.Step(ents);
-      this.Cull(ents);
+      Dictionary<string, object> n = Unpack("npc", packet) as Dictionary<string, object>;
+      this.UpdateGroup(this.npcs, n, false);
+  }
 
-      this.idens.Clear();
-      this.newEnts.Clear();
+   public void UpdateGroup(EntityGroup group, Dictionary<string, object> entities, bool isPlayer)
+   {
+      //Initialize entities
+      foreach (KeyValuePair<string, object> ent in entities) {
+         int id = Convert.ToInt32(ent.Key);
+         if (group.entities.ContainsKey(id)) {
+            continue;
+         }
+
+         GameObject entityObject = GameObject.Instantiate(this.prefab) as GameObject;
+         entityObject.transform.SetParent(root.transform, true);
+         if (isPlayer)
+         {
+            Player entity = entityObject.AddComponent<Player>();
+            entity.Init(group.entities, id, ent.Value);
+         } else
+         {
+            NonPlayer entity = entityObject.AddComponent<NonPlayer>();
+            entity.Init(group.entities, id, ent.Value);
+         }
+
+         group.entities.Add(id, entityObject);
+         group.newIDs.Add(id);
+      }
+
+      //Step entities
+      foreach (KeyValuePair<string, object> ent in entities) {
+         int id = Convert.ToInt32(ent.Key);
+         group.IDs.Add(id);
+         if (isPlayer) {
+            Player entity = group.entities[id].GetComponent<Player>();
+            entity.UpdatePlayer(group.entities, ent.Value);
+         } else
+         {
+            NonPlayer entity = group.entities[id].GetComponent<NonPlayer>();
+            entity.UpdatePlayer(group.entities, ent.Value);
+ 
+         }
+
+      }
+
+      foreach (int id in group.entities.Keys.ToList()) {
+         if (group.IDs.Contains(id)) {
+            continue;
+         }
+
+         if (this.anchor.transform.parent == group.entities[id].transform) {
+            this.anchor.transform.parent = null;
+         }
+
+         if (isPlayer)
+         {
+            group.entities[id].GetComponent<Player>().Delete();
+         } else
+         {
+            group.entities[id].GetComponent<NonPlayer>().Delete();
+         }
+         GameObject.Destroy(group.entities[id]);
+         group.entities.Remove(id);
+      }
+
+      group.IDs.Clear();
+      group.newIDs.Clear();
    }
 
    bool inRenderDist(Player player)
@@ -55,61 +132,6 @@ public class PlayerManager : UnityModule
             return false;
          }
          return true;
-   }
-
-   void Init(Dictionary<string, object> ents){
-      foreach (KeyValuePair<string, object> ent in ents) {
-         int id = Convert.ToInt32(ent.Key);
-         if (players.ContainsKey(id)) {
-
-            continue;
-         }
-
-         GameObject playerObj   = GameObject.Instantiate(this.prefab) as GameObject;
-         Player playerComponent = playerObj.AddComponent<Player>();
-
-         playerObj.transform.SetParent(root.transform, true);
-         Player player = playerObj.GetComponent<Player>();
-         player.Init(this.players, id, ent.Value);
-
-         if (!inRenderDist(player))
-         {
-            Destroy(player);
-            Destroy(playerObj);
-         }
-
-         players.Add(id, playerObj);
-         newEnts.Add(id);
-      }
-   }
-
-   void Step(Dictionary<string, object> ents){
-      foreach (KeyValuePair<string, object> ent in ents) {
-         int id = Convert.ToInt32(ent.Key);
-         Player player = players[id].GetComponent<Player>();
-         if (inRenderDist(player))
-         {
-            idens.Add(id);
-         }
-
-         player.UpdatePlayer(this.players, ent.Value);
-      }
-   }
-
-   void Cull(Dictionary<string, object> ents){
-      foreach (int id in this.players.Keys.ToList()) {
-         if (idens.Contains(id)) {
-            continue;
-         }
-
-         if (this.anchor.transform.parent == players[id].transform) {
-            this.anchor.transform.parent = null;
-         }
-
-         players[id].GetComponent<Player>().Delete();
-         GameObject.Destroy(players[id]);
-         players.Remove(id);
-      }
    }
 
 }
