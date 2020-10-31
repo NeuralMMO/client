@@ -130,7 +130,6 @@ MonoBehaviour:
   resources: {fileID: 0}
   depth: 0
   foo: {x: 0, y: 0, z: 0}
-  wilderness: {fileID: 0}
 --- !u!114 &2383460751275953840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,6 +1101,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Food
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208697977624468105, guid: ace05221bc8ee37e987beba5ceb853c1,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6417700265635149710, guid: ace05221bc8ee37e987beba5ceb853c1,
         type: 3}

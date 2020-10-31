@@ -15,7 +15,8 @@ public struct Matrix4x4Component : IComponentData
 
 public class Chunk
 {
-   public bool active = true;
+   public bool active          = true;
+   public bool resourcesActive = true;
    private Tuple<int, int> key;
    private Dictionary<Tuple<int, int>, Entity> tiles;
    public Entity terrain;
@@ -50,7 +51,12 @@ public class Chunk
    public void SetActive(EntityManager manager, bool active)
    {
       this.active = active;
-      manager.SetEnabled(this.terrain, active); 
+      manager.SetEnabled(this.terrain, active);
+      this.SetResourcesActive(manager, active);
+   }
+   public void SetResourcesActive(EntityManager manager, bool active)
+   {
+      this.resourcesActive = active;
       foreach(Entity e in this.tiles.Values)
       {
          manager.SetEnabled(e, active); 
@@ -68,6 +74,7 @@ public class Env
 {
    private Dictionary<Tuple<int, int>, Chunk> chunks;
    public  HashSet<Tuple<int, int>> activeChunks;
+   public  bool resourcesActive = true;
    public  HashSet<Tuple<int, int>> inactiveResources;
 
    public Env()
@@ -75,7 +82,7 @@ public class Env
       this.chunks            = new Dictionary<Tuple<int, int>, Chunk>();
       this.activeChunks      = new HashSet<Tuple<int, int>>();
       this.inactiveResources = new HashSet<Tuple<int, int>>();
-        }
+   }
 
    public Chunk GetChunk(int chunkR, int chunkC)
    {
@@ -105,14 +112,14 @@ public class Env
  
    public Entity GetTile(int tileR, int tileC)
    {
-      int chunkR = (int) Math.Floor((float) tileR / Consts.CHUNK_SIZE);
-      int chunkC = (int) Math.Floor((float) tileC / Consts.CHUNK_SIZE);
+      int chunkR = (int) Math.Floor((float) tileR / Consts.CHUNK_SIZE());
+      int chunkC = (int) Math.Floor((float) tileC / Consts.CHUNK_SIZE());
 
       return this.GetChunk(chunkR, chunkC).GetTile(tileR, tileC);
    }
    public bool ContainsTile(int tileR, int tileC) {
-      int chunkR = (int) Math.Floor((float) tileR / Consts.CHUNK_SIZE);
-      int chunkC = (int) Math.Floor((float) tileC / Consts.CHUNK_SIZE);
+      int chunkR = (int) Math.Floor((float) tileR / Consts.CHUNK_SIZE());
+      int chunkC = (int) Math.Floor((float) tileC / Consts.CHUNK_SIZE());
 
       if (!this.ContainsChunk(chunkR, chunkC))
       {
@@ -125,7 +132,6 @@ public class Env
       Tuple<int, int> key = Tuple.Create(r, c);
       this.SetActive(manager, key, active);
   }
-
    public void SetActive(EntityManager manager, Tuple<int, int> key, bool active)
    {
       Chunk chunk = this.GetChunk(key);
@@ -145,6 +151,21 @@ public class Env
 
       chunk.SetActive(manager, active);
    }
+
+   public void SetResourcesActive(EntityManager manager, bool active)
+   {
+
+      //Check if already in desired state
+      foreach (Tuple<int, int> key in this.chunks.Keys)
+      {
+         Chunk chunk = this.GetChunk(key);
+         if (chunk.resourcesActive == active)
+         {
+            continue;
+         }
+         chunk.SetResourcesActive(manager, active);
+      }
+   }
  
    public void UpdateActive(Tuple<int, int> key, bool active)
    {
@@ -158,7 +179,6 @@ public class Env
       }
    }
       
- 
 }
 
 public class EnvMaterials : MonoBehaviour
@@ -241,6 +261,7 @@ public class Environment: MonoBehaviour
     //public static Dictionary<int, Texture2D> tiles   = new Dictionary<int, Texture2D>();
     GameObject root;
     GameObject cameraAnchor;
+    GameObject orbitCamera;
     public Env env = new Env();
     public int[,] vals;
     public Texture2D values;
@@ -248,6 +269,7 @@ public class Environment: MonoBehaviour
     Dictionary<byte, Tile> meshHash;
     int overlayR;
     int overlayC;
+    bool init = false;
 
 
     public EnvMaterials envMaterials;
@@ -273,6 +295,10 @@ public class Environment: MonoBehaviour
     GameObject cubePrefab;
     GameObject forestPrefab;
     GameObject resources;
+    GameObject water;
+    GameObject lava;
+    GameObject sword;
+    GameObject light;
     Console    console;
 
     bool first = true;
@@ -286,24 +312,41 @@ public class Environment: MonoBehaviour
    Material scrubMaterial;
    Mesh scrubMesh;
 
-
-    void OnEnable()
-    {
+   public void initTerrain(Dictionary<string, object> packet)
+   {
       this.root         = GameObject.Find("Environment/Terrain");
       this.resources    = GameObject.Find("Client/Environment/Terrain/Resources");
       this.cubeMatl     = Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
       //this.values       = new Texture2D(2*Consts.TILE_RADIUS, 2*Consts.TILE_RADIUS);
-      this.values = new Texture2D(Consts.MAP_SIZE, Consts.MAP_SIZE);
+      this.values       = new Texture2D(Consts.MAP_SIZE, Consts.MAP_SIZE);
       this.cubePrefab   = Resources.Load("Prefabs/Cube") as GameObject;
       this.forestPrefab = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Reed") as GameObject;
       this.console      = GameObject.Find("Console").GetComponent<Console>();
       this.shader       = Shader.Find("Standard");
       this.cameraAnchor = GameObject.Find("CameraAnchor");
+      this.orbitCamera  = GameObject.Find("CameraAnchor/OrbitCamera");
       this.overlayMatl  = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
       this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
 
-      this.envMaterials = new EnvMaterials();
+      this.water = GameObject.Find("Client/Environment/Water");
+      this.lava  = GameObject.Find("Client/Environment/LavaCutout");
+      this.sword = GameObject.Find("HeavySword");
+      this.light = GameObject.Find("Client/Light");
 
+      Consts.MAP_SIZE  = System.Convert.ToInt32(packet["size"]);
+      Consts.BORDER    = System.Convert.ToInt32(packet["border"]);
+
+      float sz = Consts.MAP_SIZE - 2 * Consts.BORDER;
+
+      this.water.transform.localScale      = new Vector3(0.1f*sz, 1, 0.1f*sz);
+      this.water.transform.position        = new Vector3(Consts.MAP_SIZE / 2f - 0.5f, -0.06f, Consts.MAP_SIZE / 2f - 0.5f);
+      this.lava.transform.localScale       = new Vector3(28.416334661354583f*sz, 1, 28.416334661354583f*sz);
+      this.lava.transform.position         = new Vector3(Consts.MAP_SIZE / 2f - 0.5f, -0.6f, Consts.MAP_SIZE / 2f - 0.5f);
+      this.cameraAnchor.transform.position = new Vector3(Consts.MAP_SIZE / 2f, 0f, Consts.MAP_SIZE / 2f);
+      this.sword.transform.position        = new Vector3(Consts.MAP_SIZE / 2f, 6f, Consts.MAP_SIZE / 2f);
+      this.light.transform.position        = new Vector3(Consts.MAP_SIZE / 2f, 0f, Consts.MAP_SIZE / 2f);
+
+      this.envMaterials = new EnvMaterials();
       this.entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
       this.scrubArchetype = this.entityManager.CreateArchetype(
          typeof(Translation),
@@ -319,6 +362,7 @@ public class Environment: MonoBehaviour
          typeof(RenderMesh),
          typeof(RenderBounds),
          typeof(LocalToWorld)
+
       );
 
       this.containerArchetype = this.entityManager.CreateArchetype(
@@ -331,14 +375,14 @@ public class Environment: MonoBehaviour
       this.scrubMaterial = forest.GetComponent<MeshRenderer>().material;
       this.scrubMesh = forest.GetComponent<MeshFilter>().sharedMesh;
 
-      int R = Consts.CHUNKS / 2;
+      int R = Consts.CHUNKS() / 2;
       int x = 0;
       int y = 0;
       int temp = 0;
       int dx = 0;
       int dy = -1;
       //for (int i = 0; i < (Consts.CHUNKS+1)*(Consts.CHUNKS+1); i++)
-      for (int i = 0; i < Consts.CHUNKS*Consts.CHUNKS; i++)
+      for (int i = 0; i < Consts.CHUNKS()*Consts.CHUNKS(); i++)
       {
          //Debug.Log(y.ToString() + ", " + x.ToString());
          if (-R <= x && x <= R && -R <= y && y <= R)
@@ -359,10 +403,25 @@ public class Environment: MonoBehaviour
 
       this.makeMeshHash();
 
+      List<object> map = (List<object>) packet["map"];
+      if (this.vals == null)
+      {
+         this.vals = new int[Consts.MAP_SIZE, Consts.MAP_SIZE];
+         Debug.Log("Setting val map");
+         for(int r=0; r<Consts.MAP_SIZE; r++) {
+           List<object> row = (List<object>) map[r];
+           for(int c=0; c<Consts.MAP_SIZE; c++) {
+               this.vals[r, c] = System.Convert.ToInt32(row[c]);
+           }
+         }
+      }
+      this.init = true;
    }
 
-    public void UpdateMap(Dictionary<string, object> packet) {
-      GameObject root  = GameObject.Find("Environment");
+
+   public void UpdateMap(Dictionary<string, object> packet)
+   {
+      GameObject root = GameObject.Find("Environment");
       //this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
       if (packet.ContainsKey("overlay"))
       {
@@ -385,16 +444,16 @@ public class Environment: MonoBehaviour
                pixels[count] = value;
                count++;
             }
-        }
-        this.values.SetPixels(pixels);
-        this.values.Apply(false);
-        this.cmd = true;
+         }
+         this.values.SetPixels(pixels);
+         this.values.Apply(false);
+         this.cmd = true;
       }
 
       //Parse inactive resource set
       HashSet<Tuple<int, int>> resourceSet = new HashSet<Tuple<int, int>>();
-      List<object> resource = (List<object>) packet["resource"];
-      for(int i=0; i<resource.Count; i++)
+      List<object> resource = (List<object>)packet["resource"];
+      for (int i = 0; i < resource.Count; i++)
       {
          List<object> pos = (List<object>)resource[i];
          int r = System.Convert.ToInt32(pos[0]);
@@ -421,13 +480,15 @@ public class Environment: MonoBehaviour
 
       //Inactivate resources
       foreach (Tuple<int, int> pos in resourceSet.ToList())
+      {
          if (!this.env.inactiveResources.Contains(pos))
          {
             Entity tile = this.env.GetTile(pos.Item1, pos.Item2);
             this.entityManager.SetEnabled(tile, false);
             this.env.inactiveResources.Add(pos);
          }
-    }
+      }
+   }
 
    byte makeByteRepr(
            int r0c0, int r0c1, int r0c2,
@@ -647,7 +708,7 @@ public class Environment: MonoBehaviour
       C = C * sz;
 
       int flatIdx = 0;
-      Tuple<Mesh, Matrix4x4>[] cubes = new Tuple<Mesh, Matrix4x4>[Consts.CHUNK_SIZE*Consts.CHUNK_SIZE];
+      Tuple<Mesh, Matrix4x4>[] cubes = new Tuple<Mesh, Matrix4x4>[Consts.CHUNK_SIZE()*Consts.CHUNK_SIZE()];
       for(int r=0; r<sz; r++) {
         for(int c=0; c<sz; c++) {
             int val = System.Convert.ToInt32(this.vals[R+r, C+c]);
@@ -702,7 +763,7 @@ public class Environment: MonoBehaviour
       Mesh mesh = new Mesh();
       mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
       mesh.CombineMeshes(combine, true, true);
-      mesh.bounds.SetMinMax(new Vector3(0, 0, 0), new Vector3(Consts.CHUNK_SIZE, 2, Consts.CHUNK_SIZE));
+      mesh.bounds.SetMinMax(new Vector3(0, 0, 0), new Vector3(Consts.CHUNK_SIZE(), 2, Consts.CHUNK_SIZE()));
 
       /*
       Transform transform = obj.GetTransform();
@@ -737,22 +798,6 @@ public class Environment: MonoBehaviour
       return terrain;
     }
 
-    public void initTerrain(Dictionary<string, object> packet)
-   {
-      List<object> map = (List<object>) packet["map"];
-      if (this.vals == null)
-      {
-         this.vals = new int[Consts.MAP_SIZE, Consts.MAP_SIZE];
-         Debug.Log("Setting val map");
-         for(int r=0; r<Consts.MAP_SIZE; r++) {
-           List<object> row = (List<object>) map[r];
-           for(int c=0; c<Consts.MAP_SIZE; c++) {
-               this.vals[r, c] = System.Convert.ToInt32(row[c]);
-           }
-         }
-      }
-   }
-
     public void loadNextChunk()
    {
       Tuple<int, int> pos = unloadedChunks.Dequeue();
@@ -761,18 +806,22 @@ public class Environment: MonoBehaviour
       int c = pos.Item2;
 
       //Debug.Log(r.ToString() + ", " + c.ToString());
-      makeChunk(this.root, Consts.CHUNK_SIZE, r, c);
+      makeChunk(this.root, Consts.CHUNK_SIZE(), r, c);
    }
 
     void Update()
     {
+     if (!init)
+      {
+         return;
+      }
 
      if (this.vals != null && unloadedChunks.Count != 0){
          this.loadNextChunk();
       }
 
-      int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE);
-      int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE);
+      int cameraR = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE());
+      int cameraC = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE());
 
       //Activate inactive chunks in view
       HashSet<Tuple<int, int>> activeChunks = new HashSet<Tuple<int, int>>();
@@ -790,8 +839,8 @@ public class Environment: MonoBehaviour
          }
       }
 
-      /*
       //Deactivate active chunks outside view
+      /*
       foreach (Tuple<int, int> key in this.env.activeChunks.ToList())
          {
             if(!activeChunks.Contains(key))
@@ -800,6 +849,9 @@ public class Environment: MonoBehaviour
             }
          }
       */
+
+      bool activateResources = this.orbitCamera.transform.position.y < Consts.LOW_DETAIL_HEIGHT;
+      this.env.SetResourcesActive(this.entityManager, activateResources);
 
       //Debug.Log("Updating terrain: " + tick.ToString());
       tick++;
@@ -813,8 +865,8 @@ public class Environment: MonoBehaviour
             this.overlayMatl.SetTexture("_Overlay", this.values);
             this.cmd = false;
          }
-         this.overlayMatl.SetVector("_PanParams", new Vector4(cameraR*Consts.CHUNK_SIZE, cameraC*Consts.CHUNK_SIZE, this.overlayR, this.overlayC));
-         this.overlayMatl.SetVector("_SizeParams", new Vector4(Consts.TILE_RADIUS, 0, 0, 0));
+         this.overlayMatl.SetVector("_PanParams", new Vector4(cameraR*Consts.CHUNK_SIZE(), cameraC*Consts.CHUNK_SIZE(), this.overlayR, this.overlayC));
+         this.overlayMatl.SetVector("_SizeParams", new Vector4(Consts.TILE_RADIUS(), 0, 0, 0));
       }
     }
 

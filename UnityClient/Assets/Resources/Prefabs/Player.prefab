@@ -30,7 +30,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4797214606416926537}
+  - {fileID: 27915463974394808}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -58,7 +58,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.2, y: 1.2, z: 1.2}
+  m_Size: {x: 0.75, y: 1.2, z: 0.75}
   m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!23 &1246760990785558930
 MeshRenderer:
@@ -75,6 +75,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -99,6 +100,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &7031616685466838242
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -166,11 +168,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8103347534796608476, guid: 130add90ce7b09182a352034856e0efe,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8103347534796608476, guid: 130add90ce7b09182a352034856e0efe,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 130add90ce7b09182a352034856e0efe, type: 3}
---- !u!4 &4797214606416926537 stripped
+--- !u!4 &27915463974394808 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 2523831472700142507, guid: 130add90ce7b09182a352034856e0efe,
+  m_CorrespondingSourceObject: {fileID: 7058969008298196826, guid: 130add90ce7b09182a352034856e0efe,
     type: 3}
   m_PrefabInstance: {fileID: 7031616685466838242}
   m_PrefabAsset: {fileID: 0}

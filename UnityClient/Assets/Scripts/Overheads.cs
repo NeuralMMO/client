@@ -21,12 +21,12 @@ public class Overheads : UnityModule
    public float offset = 1f;
 
    public GameObject prefab;
+   GameObject cameraAnchor;
 
    public TMP_Text[] TMPComponents;
    public TMP_Text playerName;
    public TMP_Text damage;
    public TMP_Text freeze;
-   public Vector3 worldPos;
    public Vector3 damageOrig;
 
    private MeshRenderer selfRenderer;
@@ -40,12 +40,13 @@ public class Overheads : UnityModule
 
    protected virtual void Awake()
    {
-       this.camera    = Camera.main;
-       this.resources = this.GetComponentInChildren<NonPlayerResources>();
-       this.canvas    = GameObject.Find("Overlay").GetComponent<Canvas>();
+       this.camera       = Camera.main;
+       this.cameraAnchor = GameObject.Find("CameraAnchor");
+       this.resources    = this.GetComponentInChildren<NonPlayerResources>();
+       this.canvas       = GameObject.Find("Overlay").GetComponent<Canvas>();
 
        this.canvasGroup = this.GetComponent<CanvasGroup>();
-       this.canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(this);
+       //this.canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(this);
        this.transform.position = new Vector3(-100, -100, 0); //Render off screen
        this.transform.SetParent(this.canvas.transform);
 
@@ -58,11 +59,19 @@ public class Overheads : UnityModule
        this.damageOrig  = this.damage.transform.localPosition;
        this.damage.text = "Damage";
    }
-
    public void Update() {
-      Vector3 pos = player.transform.position;
-      float offset = this.player.transform.localScale.x;
-      worldPos          = new Vector3(pos.x, pos.y + offset, pos.z);
+      Vector3 playerPos = player.transform.position;
+      Vector3 worldPos  = new Vector3(playerPos.x, playerPos.y + this.player.transform.localScale.x, playerPos.z);
+      Vector3 anchor    = this.cameraAnchor.transform.position;
+      Vector3 cameraPos = this.camera.transform.position;
+
+      this.depth        = - new Vector3(worldPos.x - anchor.x, cameraPos.y, worldPos.z - anchor.z).magnitude;
+      this.canvasGroup.alpha = 1 - Mathf.Clamp((-this.depth - 0) / 32 - 1, 0, 1);
+
+      if (this.canvasGroup.alpha == 0) {
+         return;
+      }
+
       Vector3 screenPos = this.camera.WorldToScreenPoint(worldPos);
       this.transform.position = new Vector3(screenPos.x, screenPos.y, 0);
       this.foo = screenPos;
@@ -71,9 +80,6 @@ public class Overheads : UnityModule
       Vector3 targ = orig + new Vector3(0, 2.0f, 0);
       this.damage.transform.localPosition = Vector3.Lerp(orig, targ, Client.tickFrac);
       this.damage.alpha = 2*(1 - Client.tickFrac);
-
-      this.depth  = -(worldPos - Camera.main.transform.position).magnitude;
-      this.canvasGroup.alpha = 1 - Mathf.Clamp(-this.depth / 300- 1, 0, 1);
    }
 
    //Every tick
@@ -105,6 +111,7 @@ public class Overheads : UnityModule
 
       this.playerName.color = color;
       this.playerName.text  = "<color=#00bbbb>(Lvl " + player.level + ") </color>" + name;
+
   }
 }
 

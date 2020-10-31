@@ -12,6 +12,11 @@ public class Character: UnityModule
    public int r = 0;
    public int c = 0;
 
+   public Vector3    attackPos;
+   public Quaternion attackRot;
+   public Quaternion attackTarg;
+   public float      attackDelta;
+
    public GameObject target;
    public GameObject attack;
    public Vector3 forward;
@@ -89,7 +94,6 @@ public class Character: UnityModule
    {
       this.UpdatePos(true);
       this.UpdateAttack();
-      this.overheads.UpdateOverheads(this);
    }
 
    public void UpdatePos(bool smooth)
@@ -120,7 +124,11 @@ public class Character: UnityModule
          return;
       }
 
-      this.attack.transform.position = Vector3.Lerp(this.transform.position, this.target.transform.position, Client.tickFrac) + 3 * Vector3.up / 4;
+      //this.attack.transform.position = Vector3.Lerp(this.transform.position, this.target.transform.position, Client.tickFrac) + 3 * Vector3.up / 4;
+      //this.attack.transform.position = Vector3.Lerp(this.attackPos, this.target.transform.position, Client.tickFrac);
+
+      //this.attack.transform.rotation = Quaternion.LookRotation(this.target.transform.position - this.attack.transform.position);
+      this.attack.transform.rotation = Quaternion.RotateTowards(this.attackRot, this.attackTarg, this.attackDelta * Client.tickFrac);
    }
 
    public void UpdatePlayer(Dictionary<int, GameObject> players, object ent)
@@ -153,6 +161,7 @@ public class Character: UnityModule
       int damage = Convert.ToInt32(UnpackList(new List<string> { "damage" }, hist));
 
       this.overheads.UpdateDamage(damage);
+      this.overheads.UpdateOverheads(this);
 
       //Handle attacks
       if (!hist.ContainsKey("attack"))
@@ -172,11 +181,14 @@ public class Character: UnityModule
       }
 
       this.target = players[targs];
-      UnityEngine.Object prefab = Resources.Load("Prefabs/" + style + "Attack") as GameObject;
-      this.attack = GameObject.Instantiate(prefab) as GameObject;
-      //this.attack.transform.SetParent(this.transform);
-      //this.attack.transform.localPosition = 3*Vector3.up/4;
-      this.attack.transform.position = this.transform.position + 3 * Vector3.up / 4;
+
+      GameObject prefab = Resources.Load("Prefabs/" + style) as GameObject;
+      this.attackPos    = this.transform.position + (this.transform.localScale.x * 3 * Vector3.up / 4) - 2*this.transform.forward;
+      this.attackTarg   = Quaternion.LookRotation(this.target.transform.position + (this.target.transform.localScale.x * 3 * Vector3.up / 4) - this.attackPos);
+
+      this.attackRot    = Quaternion.LookRotation(-this.transform.forward);
+      this.attackDelta  = Quaternion.Angle(this.attackRot, attackTarg);
+      this.attack       = GameObject.Instantiate(prefab, this.attackPos, this.attackRot);
    }
 
    public void Delete()
@@ -206,5 +218,4 @@ public class Character: UnityModule
       }
       return new Color32(r, g, b, a);
    }
-
 }

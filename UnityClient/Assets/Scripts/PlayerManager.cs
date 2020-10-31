@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using MonoBehaviorExtension;
-using System.Security.Policy;
-using Unity.Entities;
 
 public class EntityGroup
 {
@@ -121,13 +119,13 @@ public class PlayerManager : UnityModule
 
    bool inRenderDist(Player player)
    {
-         int r = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
-         int c = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE) * Consts.CHUNK_SIZE;
-         if(player.r < r - Consts.TILE_RADIUS || player.r > r + Consts.TILE_RADIUS)
+         int r = (int) Math.Floor(this.cameraAnchor.transform.position.x / Consts.CHUNK_SIZE()) * Consts.CHUNK_SIZE();
+         int c = (int) Math.Floor(this.cameraAnchor.transform.position.z / Consts.CHUNK_SIZE()) * Consts.CHUNK_SIZE();
+         if(player.r < r - Consts.TILE_RADIUS() || player.r > r + Consts.TILE_RADIUS())
          {
             return false;
          }
-         if(player.c < c - Consts.TILE_RADIUS || player.c > c + Consts.TILE_RADIUS)
+         if(player.c < c - Consts.TILE_RADIUS() || player.c > c + Consts.TILE_RADIUS())
          {
             return false;
          }
