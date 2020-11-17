@@ -317,8 +317,6 @@ public class Environment: MonoBehaviour
       this.root         = GameObject.Find("Environment/Terrain");
       this.resources    = GameObject.Find("Client/Environment/Terrain/Resources");
       this.cubeMatl     = Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
-      //this.values       = new Texture2D(2*Consts.TILE_RADIUS, 2*Consts.TILE_RADIUS);
-      this.values       = new Texture2D(Consts.MAP_SIZE, Consts.MAP_SIZE);
       this.cubePrefab   = Resources.Load("Prefabs/Cube") as GameObject;
       this.forestPrefab = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Reed") as GameObject;
       this.console      = GameObject.Find("Console").GetComponent<Console>();
@@ -337,6 +335,8 @@ public class Environment: MonoBehaviour
       Consts.BORDER    = System.Convert.ToInt32(packet["border"]);
 
       float sz = Consts.MAP_SIZE - 2 * Consts.BORDER;
+
+      this.values       = new Texture2D(Consts.MAP_SIZE, Consts.MAP_SIZE);
 
       this.water.transform.localScale      = new Vector3(0.1f*sz, 1, 0.1f*sz);
       this.water.transform.position        = new Vector3(Consts.MAP_SIZE / 2f - 0.5f, -0.06f, Consts.MAP_SIZE / 2f - 0.5f);
