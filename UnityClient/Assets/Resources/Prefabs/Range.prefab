@@ -97,12 +97,12 @@ PrefabInstance:
     - target: {fileID: 198043706725917692, guid: 5c860473f6aec0742861a2be958fbc70,
         type: 3}
       propertyPath: InitialModule.startSizeZ.scalar
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198043706725917692, guid: 5c860473f6aec0742861a2be958fbc70,
         type: 3}
       propertyPath: InitialModule.startSizeY.scalar
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198043706725917692, guid: 5c860473f6aec0742861a2be958fbc70,
         type: 3}
@@ -127,7 +127,7 @@ PrefabInstance:
     - target: {fileID: 198043706725917692, guid: 5c860473f6aec0742861a2be958fbc70,
         type: 3}
       propertyPath: InitialModule.startSpeed.scalar
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 198043706725917692, guid: 5c860473f6aec0742861a2be958fbc70,
         type: 3}

@@ -14,15 +14,16 @@ public class Character: UnityModule
 
    public Vector3    attackPos;
    public Quaternion attackRot;
-   public Quaternion attackTarg;
-   public float      attackDelta;
 
    public GameObject target;
    public GameObject attack;
    public Vector3 forward;
+   public Vector3 up;
 
    public int rOld = 0;
    public int cOld = 0;
+   public bool alive = true;
+
 
    public string name;
    public int level = 1;
@@ -92,7 +93,11 @@ public class Character: UnityModule
 
    void Update()
    {
-      this.UpdatePos(true);
+      if (this.alive) {
+         this.UpdatePos(true);
+      } else {
+         this.DeathAnimation();
+      }
       this.UpdateAttack();
    }
 
@@ -117,6 +122,12 @@ public class Character: UnityModule
       this.transform.forward = Vector3.RotateTowards(this.forward, orig - targ, (float)Math.PI * Client.tickFrac, 0f);
    }
 
+   public void DeathAnimation()
+   {
+      this.transform.GetChild(0).transform.up = Vector3.RotateTowards(this.up, this.transform.right, (float)Math.PI/2f * Client.tickFrac, 0f);
+   }
+
+
    public void UpdateAttack()
    {
       if (this.attack == null || this.target == null)
@@ -128,14 +139,21 @@ public class Character: UnityModule
       //this.attack.transform.position = Vector3.Lerp(this.attackPos, this.target.transform.position, Client.tickFrac);
 
       //this.attack.transform.rotation = Quaternion.LookRotation(this.target.transform.position - this.attack.transform.position);
-      this.attack.transform.rotation = Quaternion.RotateTowards(this.attackRot, this.attackTarg, this.attackDelta * Client.tickFrac);
+      //this.attack.transform.rotation = Quaternion.RotateTowards(this.attackRot, this.attackTarg, this.attackDelta * Client.tickFrac);
+
+      //this.attackTarg   = Quaternion.LookRotation(this.target.transform.position + (this.target.transform.localScale.x * 3 * Vector3.up / 4) - this.attackPos);
+      //this.attackRot    = this.attackTarg;
+      this.attack.transform.rotation = this.AttackRotation();
    }
 
    public void UpdatePlayer(Dictionary<int, GameObject> players, object ent)
    {
-      this.orig = this.transform.position;
+      this.orig    = this.transform.position;
       this.forward = this.transform.forward;
-      this.start = Time.time;
+      this.up      = this.transform.up;
+      this.start   = Time.time;
+
+      this.alive = Convert.ToBoolean(Unpack("alive", ent));
 
       //Position
       object entBase = Unpack("base", ent);
@@ -183,12 +201,18 @@ public class Character: UnityModule
       this.target = players[targs];
 
       GameObject prefab = Resources.Load("Prefabs/" + style) as GameObject;
-      this.attackPos    = this.transform.position + (this.transform.localScale.x * 3 * Vector3.up / 4) - 2*this.transform.forward;
-      this.attackTarg   = Quaternion.LookRotation(this.target.transform.position + (this.target.transform.localScale.x * 3 * Vector3.up / 4) - this.attackPos);
 
-      this.attackRot    = Quaternion.LookRotation(-this.transform.forward);
-      this.attackDelta  = Quaternion.Angle(this.attackRot, attackTarg);
-      this.attack       = GameObject.Instantiate(prefab, this.attackPos, this.attackRot);
+      this.attackPos    = this.transform.position + (
+            this.transform.localScale.x * 6 * Vector3.up / 4);
+      this.attack       = GameObject.Instantiate(
+            prefab, this.attackPos, this.AttackRotation());
+   }
+
+   
+   public Quaternion AttackRotation() {
+      return Quaternion.LookRotation(
+            this.target.transform.position + (
+            this.target.transform.localScale.x * 3 * Vector3.up / 4) - this.attackPos);
    }
 
    public void Delete()
