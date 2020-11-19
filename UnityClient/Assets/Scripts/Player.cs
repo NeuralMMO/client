@@ -12,17 +12,16 @@ public class Player : Character
       this.skills = this.gameObject.AddComponent<PlayerSkills>();
    }
 
-   public void Init(Dictionary<int, GameObject> players, int iden, object packet)
-   {
+   public void Init(Dictionary<int, GameObject> players,
+            Dictionary<int, GameObject> npcs, int iden, object packet) {
       GameObject prefab = Resources.Load("Prefabs/Overheads") as GameObject;
-      this.overheads = Instantiate(prefab).GetComponent<PlayerOverheads>();
-
-      base.Init(players, iden, packet);
+      this.overheads    = Instantiate(prefab).GetComponent<PlayerOverheads>();
+      base.Init(players, npcs, iden, packet);
    }
 
 
-   public void UpdatePlayer(Dictionary<int, GameObject> players, object ent)
-   {
+   public void UpdatePlayer(Dictionary<int, GameObject> players,
+         Dictionary<int, GameObject> npcs, object ent) {
       //Resources
       object resources = Unpack("resource", ent);
       this.resources.UpdateResources(resources);
@@ -30,6 +29,6 @@ public class Player : Character
       object status = Unpack("status", ent);
       ((PlayerOverheads) this.overheads).UpdateStatus(status);
 
-      base.UpdatePlayer(players, ent);
+      base.UpdatePlayer(players, npcs, ent);
    }
 }

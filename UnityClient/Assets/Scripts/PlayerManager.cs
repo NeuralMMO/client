@@ -66,11 +66,11 @@ public class PlayerManager : UnityModule
          if (isPlayer)
          {
             Player entity = entityObject.AddComponent<Player>();
-            entity.Init(group.entities, id, ent.Value);
+            entity.Init(this.players.entities, this.npcs.entities, id, ent.Value);
          } else
          {
             NonPlayer entity = entityObject.AddComponent<NonPlayer>();
-            entity.Init(group.entities, id, ent.Value);
+            entity.Init(this.players.entities, this.npcs.entities, id, ent.Value);
          }
 
          group.entities.Add(id, entityObject);
@@ -83,12 +83,11 @@ public class PlayerManager : UnityModule
          group.IDs.Add(id);
          if (isPlayer) {
             Player entity = group.entities[id].GetComponent<Player>();
-            entity.UpdatePlayer(group.entities, ent.Value);
+            entity.UpdatePlayer(this.players.entities, this.npcs.entities, ent.Value);
          } else
          {
             NonPlayer entity = group.entities[id].GetComponent<NonPlayer>();
-            entity.UpdatePlayer(group.entities, ent.Value);
- 
+            entity.UpdatePlayer(this.players.entities, this.npcs.entities, ent.Value);
          }
 
       }

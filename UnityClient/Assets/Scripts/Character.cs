@@ -53,8 +53,8 @@ public class Character: UnityModule
       this.overheads.player = this;
    }
 
-   public void Init(Dictionary<int, GameObject> players, int iden, object packet)
-   {
+   public void Init(Dictionary<int, GameObject> players,
+         Dictionary<int, GameObject> npcs, int iden, object packet) {
       this.orig = this.transform.position;
       this.start = Time.time;
       this.id = iden;
@@ -70,7 +70,7 @@ public class Character: UnityModule
       this.NNObj(ball, rod_bottom, rod_top);
       this.Overheads(name, ball);
 
-      this.UpdatePlayer(players, packet);
+      this.UpdatePlayer(players, npcs, packet);
       this.UpdatePos(false);
    }
 
@@ -146,8 +146,8 @@ public class Character: UnityModule
       this.attack.transform.rotation = this.AttackRotation();
    }
 
-   public void UpdatePlayer(Dictionary<int, GameObject> players, object ent)
-   {
+   public void UpdatePlayer(Dictionary<int, GameObject> players,
+         Dictionary<int, GameObject> npcs, object ent) {
       this.orig    = this.transform.position;
       this.forward = this.transform.forward;
       this.up      = this.transform.up;
@@ -193,12 +193,14 @@ public class Character: UnityModule
       int targs = Convert.ToInt32(targ);
 
       //Handle targets
-      if (!players.ContainsKey(targs))
+      if (players.ContainsKey(targs))
       {
+         this.target = players[targs];
+      } else if (npcs.ContainsKey(targs)) {
+         this.target = npcs[targs];
+      } else {
          return;
       }
-
-      this.target = players[targs];
 
       GameObject prefab = Resources.Load("Prefabs/" + style) as GameObject;
 
