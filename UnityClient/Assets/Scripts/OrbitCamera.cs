@@ -78,6 +78,8 @@ public class OrbitCamera: MonoBehaviour {
         Quaternion rotation = Quaternion.Euler(y, x, 0);
 
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel")*scrollSpeed, distanceMin, distanceMax);
+        this.camera.nearClipPlane = distance / 25;
+        
         this.scrollSpeed = distance;
 
         RaycastHit hit;
