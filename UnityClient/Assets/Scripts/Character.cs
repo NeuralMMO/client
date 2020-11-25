@@ -93,11 +93,10 @@ public class Character: UnityModule
 
    void Update()
    {
-      if (this.alive) {
-         this.UpdatePos(true);
-      } else {
+      if (!this.alive) {
          this.DeathAnimation();
-      }
+      } 
+      this.UpdatePos(true);
       this.UpdateAttack();
    }
 
