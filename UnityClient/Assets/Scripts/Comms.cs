@@ -10,7 +10,7 @@ public class Comms: MonoBehaviour
 	public int NetworkSpeed = 5;
 	public string ip = "localhost";
 	public string port = "8080";
-   public Dictionary<string, object> packet;
+    public Dictionary<string, object> packet;
 
 	GameObject cameraAnchor;
 	Console console;
@@ -18,6 +18,12 @@ public class Comms: MonoBehaviour
 	Thread thread;
 	string reply;
 	public bool newConnection;
+
+	Material overlayMatl;
+
+	Material  cubeMatl;
+	Texture2D flatTex;
+	Texture2D fullTex;
 
 	void Unpack() {
         this.packet = MiniJSON.Json.Deserialize(this.reply) as Dictionary<string,object>;
@@ -50,17 +56,23 @@ public class Comms: MonoBehaviour
 				continue;
 			}
 		}
-      this.newConnection = true;
-      Debug.Log("Connected");
-      //this.w.SendString("START");
-      yield break;
+       this.newConnection = true;
+       Debug.Log("Connected");
+       //this.w.SendString("START");
+       yield break;
 	}
 
 	IEnumerator Start ()
 	{
-      this.cameraAnchor = GameObject.Find("CameraAnchor");
-      this.console      = GameObject.Find("Console").GetComponent<Console>();
-		while (true) {
+	   this.overlayMatl = Resources.Load("Prefabs/Tiles/OverlayMaterial") as Material;
+	   this.cubeMatl 	= Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
+	   this.flatTex  	= Resources.Load("Prefabs/Tiles/FlatTiles") as Texture2D;
+	   this.fullTex  	= Resources.Load("Prefabs/Tiles/GimpTiles") as Texture2D;
+
+       this.cameraAnchor = GameObject.Find("CameraAnchor");
+       this.console      = GameObject.Find("Console").GetComponent<Console>();
+
+ 	   while (true) {
 			//m_IsConnected does not become false upon server crash
 			//However, w.error will become non-null
 			if (this.w == null || !this.w.m_IsConnected || w.error != null) {
@@ -84,6 +96,22 @@ public class Comms: MonoBehaviour
 				int r = (int)Math.Floor(this.cameraAnchor.transform.position.x);
 				int c = (int)Math.Floor(this.cameraAnchor.transform.position.z);
 				string cmd = this.console.consumeCommand();
+
+				//Todo: find a better place to put cmd options
+				if (String.Equals(cmd, "env")) {
+    			  	this.overlayMatl.SetTexture("_Overlay", Texture2D.blackTexture);
+				} else if (String.Equals(cmd, "hifi")) {
+					this.cubeMatl.SetTexture("_MainTex", this.fullTex);
+					this.cubeMatl.SetTexture("_OcclusionMap", null);
+				} else if (String.Equals(cmd, "lofi")) {
+					this.cubeMatl.SetTexture("_MainTex", this.flatTex);
+					this.cubeMatl.SetTexture("_OcclusionMap", null);
+				} else if (String.Equals(cmd, "medfi")) {
+					this.cubeMatl.SetTexture("_MainTex", this.flatTex);
+					this.cubeMatl.SetTexture("_OcclusionMap", this.fullTex);
+					this.cubeMatl.SetFloat("_OcclusionStrength", 0.75f);
+				}
+	
 				string msg = "Recieved packet " + numPackets.ToString() + " from Server;" + r.ToString() + " " + c.ToString() + " " + cmd;
 				w.SendString(msg);
 				Debug.Log(msg);

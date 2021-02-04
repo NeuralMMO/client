@@ -209,10 +209,12 @@ public class EnvMaterials : MonoBehaviour
     }
    }
     public void AddBlock(string name, float rotation, int idx=-1) {
+         Debug.Log(name);
          GameObject prefab = Resources.Load("Prefabs/Tiles/" + name) as GameObject;
          GameObject obj = Instantiate(prefab) as GameObject;
          obj.SetActive(false);
          obj.transform.eulerAngles = new Vector3(0, rotation, 0);
+         obj.transform.position    = new Vector3(0, -3f, 0);
          if (!this.strObjs.ContainsKey(name))
          {
             this.strObjs.Add(name, obj);
@@ -328,7 +330,7 @@ public class Environment: MonoBehaviour
 
       this.water = GameObject.Find("Client/Environment/Water");
       this.lava  = GameObject.Find("Client/Environment/LavaCutout");
-      this.sword = GameObject.Find("HeavySword");
+      //this.sword = GameObject.Find("HeavySword");
       this.light = GameObject.Find("Client/Light");
 
       Consts.MAP_SIZE  = System.Convert.ToInt32(packet["size"]);
@@ -343,7 +345,7 @@ public class Environment: MonoBehaviour
       this.lava.transform.localScale       = new Vector3(28.416334661354583f*sz, 1, 28.416334661354583f*sz);
       this.lava.transform.position         = new Vector3(Consts.MAP_SIZE / 2f - 0.5f, -0.6f, Consts.MAP_SIZE / 2f - 0.5f);
       this.cameraAnchor.transform.position = new Vector3(Consts.MAP_SIZE / 2f, 0f, Consts.MAP_SIZE / 2f);
-      this.sword.transform.position        = new Vector3(Consts.MAP_SIZE / 2f, 6f, Consts.MAP_SIZE / 2f);
+      //this.sword.transform.position        = new Vector3(Consts.MAP_SIZE / 2f, 6f, Consts.MAP_SIZE / 2f);
       this.light.transform.position        = new Vector3(Consts.MAP_SIZE / 2f, 0f, Consts.MAP_SIZE / 2f);
 
       this.envMaterials = new EnvMaterials();
@@ -372,6 +374,7 @@ public class Environment: MonoBehaviour
       ); ;
 
       this.forest = Instantiate(this.forestPrefab) as GameObject;
+      this.forest.transform.position = new Vector3(0f, -3f, 0f);
       this.scrubMaterial = forest.GetComponent<MeshRenderer>().material;
       this.scrubMesh = forest.GetComponent<MeshFilter>().sharedMesh;
 
@@ -851,6 +854,7 @@ public class Environment: MonoBehaviour
       */
 
       bool activateResources = this.orbitCamera.transform.position.y < Consts.LOW_DETAIL_HEIGHT;
+      //activateResources = true;
       this.env.SetResourcesActive(this.entityManager, activateResources);
 
       //Debug.Log("Updating terrain: " + tick.ToString());

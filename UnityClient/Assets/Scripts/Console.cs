@@ -17,7 +17,7 @@ public class Console : MonoBehaviour
    // Start is called before the first frame update
    void Start()
    {
-      this.prompt     = GameObject.Find("Console/Container/Prompt").GetComponent<InputField>();
+        this.prompt     = GameObject.Find("Console/Container/Prompt").GetComponent<InputField>();
 		this.console    = GameObject.Find("Console");
 		this.container  = GameObject.Find("Console/Container");
 		this.scrollRect = GameObject.Find("Console/Container/Scroll View").GetComponent<ScrollRect>();
