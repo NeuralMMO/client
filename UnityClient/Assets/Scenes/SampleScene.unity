@@ -387,12 +387,12 @@ PrefabInstance:
     - target: {fileID: 7546916208742305903, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: m_Name
-      value: OrbitCameraOrig
+      value: OrbitCamera
       objectReference: {fileID: 0}
     - target: {fileID: 7546916208742305903, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09dca024cc9a1a9f29faaf156044d9cf, type: 3}
@@ -1079,7 +1079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &151366182
 Transform:
   m_ObjectHideFlags: 0
@@ -3219,7 +3219,7 @@ PrefabInstance:
     - target: {fileID: 4869938103823764420, guid: e4d7f77b0476d602dbda1ac573c410e8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6651779569711099614, guid: e4d7f77b0476d602dbda1ac573c410e8,
         type: 3}
@@ -3844,12 +3844,12 @@ PrefabInstance:
     - target: {fileID: 7546916208742305903, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: m_Name
-      value: OrbitCamera
+      value: IsoCamera
       objectReference: {fileID: 0}
     - target: {fileID: 7546916208742305903, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09dca024cc9a1a9f29faaf156044d9cf, type: 3}
@@ -5938,17 +5938,17 @@ PrefabInstance:
     - target: {fileID: 1061017031837609402, guid: 1b08f86167aec2d78935fd143783ea28,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1061017031837609402, guid: 1b08f86167aec2d78935fd143783ea28,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1061017031837609402, guid: 1b08f86167aec2d78935fd143783ea28,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8649642814167195532, guid: 1b08f86167aec2d78935fd143783ea28,
         type: 3}
