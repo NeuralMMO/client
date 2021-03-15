@@ -200,6 +200,16 @@ public class EnvMaterials : MonoBehaviour
     this.AddBlock("Scrub", 0, 3);
     this.AddBlock("Forest", 0, 4);
     this.idxStrs.Add(5, "Stone");
+    this.AddBlock("Slag", 0, 6);
+    this.AddBlock("Ore", 0, 7);
+    this.AddBlock("Stump", 0, 8);
+    this.AddBlock("Tree", 0, 9);
+    this.AddBlock("Fragment", 0, 10);
+    this.AddBlock("Crystal", 0, 11);
+    this.AddBlock("Weeds", 0, 12);
+    this.AddBlock("Herb", 0, 13);
+    this.AddBlock("Ocean", 0, 14);
+    this.AddBlock("Fish", 0, 15);
 
     string matKeys = "0a 1a 2a 2b 2c 3a 3b 3c 4a 4b 4c 4d 4e 4f";
     foreach(string key in matKeys.Split(' '))
@@ -296,6 +306,12 @@ public class Environment: MonoBehaviour
 
     GameObject cubePrefab;
     GameObject forestPrefab;
+    GameObject stonePrefab;
+    GameObject treePrefab;
+    GameObject orePrefab;
+    GameObject crystalPrefab;
+    GameObject herbPrefab;
+    GameObject fishPrefab;
     GameObject resources;
     GameObject water;
     GameObject lava;
@@ -311,8 +327,45 @@ public class Environment: MonoBehaviour
     MeshRenderer renderer;
 
    GameObject forest;
+   GameObject stone;
+   GameObject ore;
+   GameObject tree;
+   GameObject crystal;
+   GameObject herb;
+   GameObject fish;
+
    Material scrubMaterial;
    Mesh scrubMesh;
+
+   Material slagMaterial;
+   Mesh slagMesh;
+
+   Material oreMaterial;
+   Mesh oreMesh;
+
+   Material stumpMaterial;
+   Mesh stumpMesh;
+
+   Material treeMaterial;
+   Mesh treeMesh;
+
+   Material fragmentMaterial;
+   Mesh fragmentMesh;
+
+   Material crystalMaterial;
+   Mesh crystalMesh;
+
+   Material weedsMaterial;
+   Mesh weedsMesh;
+
+   Material herbMaterial;
+   Mesh herbMesh;
+
+   Material oceanMaterial;
+   Mesh oceanMesh;
+
+   Material fishMaterial;
+   Mesh fishMesh;
 
    public void initTerrain(Dictionary<string, object> packet)
    {
@@ -320,7 +373,13 @@ public class Environment: MonoBehaviour
       this.resources    = GameObject.Find("Client/Environment/Terrain/Resources");
       this.cubeMatl     = Resources.Load("Prefabs/Tiles/CubeMatl") as Material;
       this.cubePrefab   = Resources.Load("Prefabs/Cube") as GameObject;
-      this.forestPrefab = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Reed") as GameObject;
+      this.forestPrefab = Resources.Load("TitanForge Assets/Low Poly Herbalism Pack/Prefabs/Plants/Forest") as GameObject;
+      this.stonePrefab  = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/RockGrey1") as GameObject;
+      this.treePrefab   = Resources.Load("LowPoly Style/Free Rocks and Plants/Prefabs/Tree1") as GameObject;
+      this.orePrefab    = Resources.Load("TitanForge Assets/Low Poly Mining Pack/Prefabs/Rocks/Ore") as GameObject;
+      this.crystalPrefab= Resources.Load("TitanForge Assets/Low Poly Mining Pack/Prefabs/Gemstones/Crystal") as GameObject;
+      this.herbPrefab   = Resources.Load("TitanForge Assets/Low Poly Herbalism Pack/Prefabs/Plants/Herb") as GameObject;
+      this.fishPrefab   = Resources.Load("Prefabs/Tiles/Fishy") as GameObject;
       this.console      = GameObject.Find("Console").GetComponent<Console>();
       this.shader       = Shader.Find("Standard");
       this.cameraAnchor = GameObject.Find("CameraAnchor");
@@ -375,8 +434,57 @@ public class Environment: MonoBehaviour
 
       this.forest = Instantiate(this.forestPrefab) as GameObject;
       this.forest.transform.position = new Vector3(0f, -3f, 0f);
+
+      this.stone  = Instantiate(this.stonePrefab) as GameObject;
+      this.stone.transform.position = new Vector3(0f, -3f, 0f);
+
+      this.tree   = Instantiate(this.treePrefab) as GameObject;
+      this.tree.transform.position = new Vector3(0f, -3f, 0f);
+
+      this.ore    = Instantiate(this.orePrefab) as GameObject;
+      this.ore.transform.position = new Vector3(0f, -3f, 0f);
+
+      this.crystal= Instantiate(this.crystalPrefab) as GameObject;
+      this.crystal.transform.position = new Vector3(0f, -3f, 0f);
+
+      this.herb   = Instantiate(this.herbPrefab) as GameObject;
+      this.herb.transform.position = new Vector3(0f, -3f, 0f);
+
+      this.fish   = Instantiate(this.fishPrefab) as GameObject;
+      this.fish.transform.position = new Vector3(0f, -3f, 0f);
+ 
       this.scrubMaterial = forest.GetComponent<MeshRenderer>().material;
       this.scrubMesh = forest.GetComponent<MeshFilter>().sharedMesh;
+
+      this.slagMaterial = ore.GetComponent<MeshRenderer>().material;
+      this.slagMesh = ore.GetComponent<MeshFilter>().sharedMesh;
+
+      this.oreMaterial = ore.GetComponent<MeshRenderer>().material;
+      this.oreMesh = ore.GetComponent<MeshFilter>().sharedMesh;
+
+      this.stumpMaterial = tree.GetComponent<MeshRenderer>().material;
+      this.stumpMesh = tree.GetComponent<MeshFilter>().sharedMesh;
+
+      this.treeMaterial = tree.GetComponent<MeshRenderer>().material;
+      this.treeMesh = tree.GetComponent<MeshFilter>().sharedMesh;
+
+      this.fragmentMaterial = crystal.GetComponent<MeshRenderer>().material;
+      this.fragmentMesh = crystal.GetComponent<MeshFilter>().sharedMesh;
+
+      this.crystalMaterial = crystal.GetComponent<MeshRenderer>().material;
+      this.crystalMesh = crystal.GetComponent<MeshFilter>().sharedMesh;
+
+      this.weedsMaterial   = herb.GetComponent<MeshRenderer>().material;
+      this.weedsMesh   = herb.GetComponent<MeshFilter>().sharedMesh;
+
+      this.herbMaterial   = herb.GetComponent<MeshRenderer>().material;
+      this.herbMesh   = herb.GetComponent<MeshFilter>().sharedMesh;
+
+      this.oceanMaterial   = fish.GetComponent<MeshRenderer>().material;
+      this.oceanMesh   = fish.GetComponent<MeshFilter>().sharedMesh;
+
+      this.fishMaterial   = fish.GetComponent<MeshRenderer>().material;
+      this.fishMesh   = fish.GetComponent<MeshFilter>().sharedMesh;
 
       int R = Consts.CHUNKS() / 2;
       int x = 0;
@@ -644,10 +752,15 @@ public class Environment: MonoBehaviour
          bool flip = false;
 
          string name = this.envMaterials.idxStrs[val];
+         if (name == "Ocean" || name == "Fish"){
+            name = "Sand";
+            val = 1;
+         }
          if (r == 0 || c == 0 || r == Consts.MAP_SIZE-1 || c == Consts.MAP_SIZE-1)
          {
             name = "Sand4f";
-         } else  if (name == "Stone" || name == "Sand") {
+         //} else  if (name == "Stone" || name == "Sand" || name == "Ocean" || name == "Fish") {
+         } else  if (name == "Stone") {
             byte byteRepr = makeByteRepr(
                (val == this.vals[r - 1, c - 1]) ? 1 : 0,
                (val == this.vals[r - 1, c])     ? 1 : 0,
@@ -657,6 +770,22 @@ public class Environment: MonoBehaviour
                (val == this.vals[r + 1, c - 1]) ? 1 : 0,
                (val == this.vals[r + 1, c])     ? 1 : 0,
                (val == this.vals[r + 1, c + 1]) ? 1 : 0);
+
+            Tile tile = this.meshHash[byteRepr];
+            rot = tile.rot;
+            flip = tile.flip;
+            string suffix = tile.name;
+            name += suffix;
+         } else  if (name == "Sand") {
+            byte byteRepr = makeByteRepr(
+               (this.vals[r - 1, c - 1] == 0 || this.vals[r - 1, c - 1] == 1 || this.vals[r - 1, c - 1] == 14 || this.vals[r - 1, c - 1] == 15) ? 1 : 0,
+               (this.vals[r - 1, c] == 0 || this.vals[r - 1, c] == 1 || this.vals[r - 1, c] == 14 || this.vals[r - 1, c] == 15) ? 1 : 0,
+               (this.vals[r - 1, c + 1] == 0 || this.vals[r - 1, c + 1] == 1 || this.vals[r - 1, c + 1] == 14 || this.vals[r - 1, c + 1] == 15) ? 1 : 0,
+               (this.vals[r, c - 1] == 0 || this.vals[r, c - 1] == 1 || this.vals[r, c - 1] == 14 || this.vals[r, c - 1] == 15) ? 1 : 0,
+               (this.vals[r, c + 1] == 0 || this.vals[r, c + 1] == 1 || this.vals[r, c + 1] == 14 || this.vals[r, c + 1] == 15) ? 1 : 0,
+               (this.vals[r + 1, c - 1] == 0 || this.vals[r + 1, c - 1] == 1 || this.vals[r + 1, c - 1] == 14 || this.vals[r + 1, c - 1] == 15) ? 1 : 0,
+               (this.vals[r + 1, c] == 0 || this.vals[r + 1, c] == 1 || this.vals[r + 1, c] == 14 || this.vals[r + 1, c] == 15) ? 1 : 0,
+               (this.vals[r + 1, c + 1] == 0 || this.vals[r + 1, c + 1] == 1 || this.vals[r + 1, c + 1] == 14 || this.vals[r + 1, c + 1] == 15) ? 1 : 0);
 
             Tile tile = this.meshHash[byteRepr];
             rot = tile.rot;
@@ -735,9 +864,49 @@ public class Environment: MonoBehaviour
             if (name == "Forest" || name == "Scrub") { 
                this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
                this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
-               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.9f, 0.4f, 0.9f)} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(1.1f, 0.5f, 1.1f)} );
                this.entityManager.AddComponentData(entity, new RenderBounds     { Value = scrubMesh.bounds.ToAABB()} );
                this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = scrubMesh, material = scrubMaterial} );
+
+               chunk.SetTile(R + r, C + c, entity);
+            } else if (name == "Ore" || name == "Slag") {
+               this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
+               this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.5f, 0.5f, 0.5f)} );
+               this.entityManager.AddComponentData(entity, new RenderBounds     { Value = oreMesh.bounds.ToAABB()} );
+               this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = oreMesh, material = oreMaterial} );
+
+               chunk.SetTile(R + r, C + c, entity);
+            } else if (name == "Stump" || name == "Tree") {
+               this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
+               this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.2f, 0.25f, 0.2f)} );
+               this.entityManager.AddComponentData(entity, new RenderBounds     { Value = treeMesh.bounds.ToAABB()} );
+               this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = treeMesh, material = treeMaterial} );
+
+               chunk.SetTile(R + r, C + c, entity);
+            } else if (name == "Fragment" || name == "Crystal") {
+               this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
+               this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(2f, 2f, 2f)} );
+               this.entityManager.AddComponentData(entity, new RenderBounds     { Value = crystalMesh.bounds.ToAABB()} );
+               this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = crystalMesh, material = crystalMaterial} );
+
+               chunk.SetTile(R + r, C + c, entity);
+            } else if (name == "Weeds" || name == "Herb") {
+               this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, 0, C + c) } );
+               this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(1f, 1f, 1f)} );
+               this.entityManager.AddComponentData(entity, new RenderBounds     { Value = herbMesh.bounds.ToAABB()} );
+               this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = herbMesh, material = herbMaterial} );
+
+               chunk.SetTile(R + r, C + c, entity);
+            } else if (name == "Ocean" || name == "Fish") {
+               this.entityManager.AddComponentData(entity, new Translation      { Value = new float3(R + r, -0.065f, C + c) } );
+               this.entityManager.AddComponentData(entity, new Rotation         { Value = quaternion.Euler(new float3(0, UnityEngine.Random.Range(0, 360), 0))} );
+               this.entityManager.AddComponentData(entity, new NonUniformScale  { Value = new float3(0.5f, 0.5f, 0.5f)} );
+               this.entityManager.AddComponentData(entity, new RenderBounds     { Value = fishMesh.bounds.ToAABB()} );
+               this.entityManager.AddSharedComponentData(entity, new RenderMesh {mesh = fishMesh, material = fishMaterial} );
 
                chunk.SetTile(R + r, C + c, entity);
             }

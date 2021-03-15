@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using MoreMountains.InventoryEngine;
 
 public class RightClickMenu : MonoBehaviour, IPointerExitHandler
 {
@@ -15,6 +16,14 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
    GameObject target;
    UI ui;
 
+   InventoryDisplay ammunitionDisplay;
+   InventoryDisplay consumablesDisplay;
+   InventoryDisplay lootDisplay;
+   InventoryDisplay hatDisplay;
+   InventoryDisplay topDisplay;
+   InventoryDisplay bottomDisplay;
+   InventoryDisplay weaponDisplay;
+
    OrbitCamera camera;
 
    void Start()
@@ -23,6 +32,14 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       GameObject cam    = GameObject.Find("Client/CameraAnchor/OrbitCamera");
       this.target       = GameObject.Find("Client/CameraAnchor");
       this.camera       = cam.GetComponent<OrbitCamera>();
+
+      this.ammunitionDisplay  = GameObject.Find("Client/UI/Canvas/InventoryPanel/Ammunition").GetComponent<InventoryDisplay>();
+      this.consumablesDisplay = GameObject.Find("Client/UI/Canvas/InventoryPanel/Consumables").GetComponent<InventoryDisplay>();
+      this.lootDisplay        = GameObject.Find("Client/UI/Canvas/InventoryPanel/Loot").GetComponent<InventoryDisplay>();
+      this.hatDisplay         = GameObject.Find("Client/UI/Canvas/InventoryPanel/Hat").GetComponent<InventoryDisplay>();
+      this.topDisplay         = GameObject.Find("Client/UI/Canvas/InventoryPanel/Top").GetComponent<InventoryDisplay>();
+      this.bottomDisplay      = GameObject.Find("Client/UI/Canvas/InventoryPanel/Bottom").GetComponent<InventoryDisplay>();
+      this.weaponDisplay      = GameObject.Find("Client/UI/Canvas/InventoryPanel/Weapon").GetComponent<InventoryDisplay>();
 
       this.follow  = this.MakeButton(prefab, this.OnFollow, 0);
       this.examine = this.MakeButton(prefab, this.OnExamine, 1);
@@ -73,6 +90,26 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       }
 
       this.character = this.characterCache;
+
+      if (character.GetType() == typeof(Player)) {
+         this.ammunitionDisplay.TargetInventory  = (this.character as Player).inventory.ammunition;         
+         this.consumablesDisplay.TargetInventory = (this.character as Player).inventory.consumables;         
+         this.lootDisplay.TargetInventory        = (this.character as Player).inventory.loot;         
+         this.hatDisplay.TargetInventory         = (this.character as Player).inventory.hat;         
+         this.topDisplay.TargetInventory         = (this.character as Player).inventory.top;         
+         this.bottomDisplay.TargetInventory      = (this.character as Player).inventory.bottom;         
+         this.weaponDisplay.TargetInventory      = (this.character as Player).inventory.weapon;         
+         //this.inventoryDisplay.TargetInventoryName = "Ammunition";
+
+         this.ammunitionDisplay.SetupInventoryDisplay();
+         this.consumablesDisplay.SetupInventoryDisplay();
+         this.lootDisplay.SetupInventoryDisplay();
+         this.hatDisplay.SetupInventoryDisplay();
+         this.topDisplay.SetupInventoryDisplay();
+         this.bottomDisplay.SetupInventoryDisplay();
+         this.weaponDisplay.SetupInventoryDisplay();
+      }
+
       Debug.Log("Examining");
    }
 

@@ -63,8 +63,8 @@ public class Character: UnityModule
       string name = (string)Unpack("name", basePacket);
 
       Color ball        = hexToColor((string)Unpack("color", basePacket));
-      Color rod_bottom  = hexToColor((string)UnpackList(new List<string> { "loadout", "platelegs", "color" }, packet));
-      Color rod_top     = hexToColor((string)UnpackList(new List<string> { "loadout", "chestplate", "color" }, packet));
+      Color rod_bottom  = hexToColor((string)UnpackList(new List<string> { "equipment", "bottom", "color" }, packet));
+      Color rod_top     = hexToColor((string)UnpackList(new List<string> { "equipment", "top", "color" }, packet));
 
       //OBJ model and overheads
       this.NNObj(ball, rod_bottom, rod_top);

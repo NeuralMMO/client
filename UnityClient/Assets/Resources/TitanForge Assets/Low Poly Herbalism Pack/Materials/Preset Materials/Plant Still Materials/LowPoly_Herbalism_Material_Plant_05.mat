@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LowPoly_Herbalism_Material_Plant_05
+  m_Shader: {fileID: 4800000, guid: 0da8885cef4ad354c84a53e05964d894, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _ColorMask:
+        m_Texture: {fileID: 2800000, guid: 39b33f9ce6982a54782625120b8793b1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureAlbedo:
+        m_Texture: {fileID: 2800000, guid: 71bb9c414357cff48bf97523322b14f0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WindNoise:
+        m_Texture: {fileID: 2800000, guid: 5f40609515dce394499942997a139a37, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Metallic: 0
+    - _Smoothness: 0
+    - _WindDensity: 0.5
+    - _WindSpeed: 1
+    - _WindStrength: 0.5
+    - __dirty: 0
+    m_Colors:
+    - _AlbedoColor: {r: 1, g: 1, b: 1, a: 0}
+    - _FlowerColor: {r: 0.53746885, g: 0.5855322, b: 0.6226415, a: 1}
+    - _FruitColor: {r: 0.48235294, g: 0.27450982, b: 0.39960703, a: 1}
+    - _LeafColor: {r: 0.17164047, g: 0.254717, b: 0.16700785, a: 1}
+    - _SecondaryColor: {r: 0.2264151, g: 0.17903492, b: 0.16126736, a: 1}
+    - _StemColor: {r: 0.28800148, g: 0.3962264, b: 0.2710039, a: 1}
+    - _WoodColor: {r: 0.2924528, g: 0.2717604, b: 0.2717604, a: 1}

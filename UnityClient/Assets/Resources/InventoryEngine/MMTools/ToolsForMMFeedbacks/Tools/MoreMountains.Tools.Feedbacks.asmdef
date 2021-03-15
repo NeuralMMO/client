@@ -1,0 +1,18 @@
+{
+    "name": "MoreMountains.Tools.Feedbacks",
+    "references": [
+        "GUID:4a1cb1490dc4df8409b2580d6b44e75e",
+        "GUID:dad624460036b51448e1b1849358a96a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "MOREMOUNTAINS_FEEDBACKS",
+        "MOREMOUNTAINS_TOOLS"
+    ],
+    "versionDefines": []
+}

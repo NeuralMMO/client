@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 8e19548b79d5a8d44abca3fc15248ea1
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _ColorMask: {fileID: 2800000, guid: 2ab6b1e255f617245b7e1203668a268d, type: 3}
+  - _TextureAlbedo: {fileID: 2800000, guid: bcd74a2ece0b9704aa045c742a8a6e53, type: 3}
+  - _MetallicMask: {fileID: 2800000, guid: bbd3ea7d050076d4899eeb62955fa14c, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
