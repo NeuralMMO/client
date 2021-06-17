@@ -60,6 +60,8 @@ Shader "Unlit/OverlayShader"
                 //Index value from overlay image
                 fixed4 tex = tex2Dlod(_Overlay, float4(pos.z, pos.x, 0, 0));
                 float intensity = max(tex.r, max(tex.g, tex.b));
+                //float gray = 0.75 - pos.y/2;
+                //return fixed4(gray, gray, gray, 1);
                 if (intensity == 0)
                 {
                     return fixed4(0, 0, 0, 0);

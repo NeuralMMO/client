@@ -79,7 +79,7 @@ public class OrbitCamera: MonoBehaviour {
 
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel")*scrollSpeed, distanceMin, distanceMax);
         this.camera.nearClipPlane = distance / 25;
-        //this.camera.nearClipPlane = 20;
+        //this.camera.nearClipPlane = 25;
         
         this.scrollSpeed = distance;
 
