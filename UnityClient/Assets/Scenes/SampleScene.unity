@@ -324,6 +324,11 @@ PrefabInstance:
       propertyPath: distance
       value: 55
       objectReference: {fileID: 0}
+    - target: {fileID: -7958473416404651641, guid: 09dca024cc9a1a9f29faaf156044d9cf,
+        type: 3}
+      propertyPath: demo
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 139450319714533225, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: far clip plane
@@ -3146,6 +3151,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 425175290}
     m_Modifications:
+    - target: {fileID: 1412217446239497817, guid: e4d7f77b0476d602dbda1ac573c410e8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1486734394118719386, guid: e4d7f77b0476d602dbda1ac573c410e8,
         type: 3}
       propertyPath: m_LocalPosition.x

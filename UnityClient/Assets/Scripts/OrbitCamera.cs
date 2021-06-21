@@ -22,6 +22,7 @@ public class OrbitCamera: MonoBehaviour {
     private Rigidbody rigidbody;
 
     public bool click = false;
+    public bool demo  = false;
  
     float x = 0.0f;
     float y = 20.0f;
@@ -33,9 +34,16 @@ public class OrbitCamera: MonoBehaviour {
         origTarget = target;
         this.camera = Camera.main;
         Vector3 angles = transform.eulerAngles;
-        x = angles.y;
-        y = angles.x;
- 
+
+        if (demo){
+           x = angles.y;
+           y = 35.264f;
+           distance = 25f;
+        } else {
+           x = angles.y;
+           y = angles.x;
+        }
+
         rigidbody = GetComponent<Rigidbody>();
  
         // Make the rigid body not change rotation
@@ -75,6 +83,10 @@ public class OrbitCamera: MonoBehaviour {
 
         y = ClampAngle(y, yMinLimit, yMaxLimit);
 
+        if (demo){
+           x += 0.025f;
+        }
+ 
         Quaternion rotation = Quaternion.Euler(y, x, 0);
 
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel")*scrollSpeed, distanceMin, distanceMax);
