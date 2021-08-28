@@ -26,7 +26,7 @@ public class Console : MonoBehaviour
 		this.toggle = "1";
 		this.cmd = "\t";
 
-		this.Activate();
+		//this.Activate();
 	}
 
 	void Activate()

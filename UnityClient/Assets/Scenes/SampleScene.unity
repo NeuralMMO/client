@@ -3877,12 +3877,17 @@ PrefabInstance:
     - target: {fileID: -7958473416404651641, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: distance
-      value: 150
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: -7958473416404651641, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}
       propertyPath: xSpeed
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -7958473416404651641, guid: 09dca024cc9a1a9f29faaf156044d9cf,
+        type: 3}
+      propertyPath: demo
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 139450319714533225, guid: 09dca024cc9a1a9f29faaf156044d9cf,
         type: 3}

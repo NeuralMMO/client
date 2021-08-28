@@ -37,8 +37,8 @@ public class OrbitCamera: MonoBehaviour {
 
         if (demo){
            x = angles.y;
-           y = 35.264f;
-           distance = 25f;
+           y = 45f;
+           distance = 50f;
         } else {
            x = angles.y;
            y = angles.x;
