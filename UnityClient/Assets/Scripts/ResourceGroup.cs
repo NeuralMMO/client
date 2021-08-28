@@ -30,7 +30,7 @@ public class ResourceGroup: UnityModule
       {
          GameObject UIResource = GameObject.Find("UI/Canvas/Panel/" + char.ToUpper(resource.Key[0]) + resource.Key.Substring(1));
          TextMeshProUGUI tm = UIResource.GetComponent<TextMeshProUGUI>();
-         tm.text = resource.Key + ": " + resource.Value.value;
+         tm.text = char.ToUpper(resource.Key[0]) + resource.Key.Substring(1) + ": " + resource.Value.value;
       }
    }
 

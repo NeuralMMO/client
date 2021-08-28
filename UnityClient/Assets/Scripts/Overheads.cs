@@ -66,7 +66,7 @@ public class Overheads : UnityModule
       Vector3 cameraPos = this.camera.transform.position;
 
       this.depth        = - new Vector3(worldPos.x - anchor.x, cameraPos.y, worldPos.z - anchor.z).magnitude;
-      this.canvasGroup.alpha = 1 - Mathf.Clamp((-this.depth - 0) / 32 - 1, 0, 1);
+      this.canvasGroup.alpha = 4 - 4*Mathf.Clamp((-this.depth - 0) / 16 - 1, 0, 1);
 
       if (this.canvasGroup.alpha == 0) {
          return;
