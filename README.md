@@ -1,9 +1,6 @@
-![icon](resource/icon_pixel.png)
 ![env](resource/v1-5_splash.png)
 
-![env]
-
-# ![icon] Neural MMO Client
+# ![icon](resource/icon_pixel.png) Neural MMO Client
 
 [![Discord Chat](https://img.shields.io/discord/657211973435392011.svg)](https://discord.gg/BkMmFUC)
 <a href="https://twitter.com/jsuarez5341?ref_src=twsrc%5Etfw" target="_blank">
