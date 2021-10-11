@@ -83,6 +83,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Overlay: {r: 0.5, g: 0, b: 0, a: 1}
-    - _PanParams: {r: 80, g: 80, b: 0, a: 0}
+    - _PanParams: {r: 20, g: 20, b: 0, a: 0}
     - _SizeParams: {r: 80, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
