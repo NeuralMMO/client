@@ -62,9 +62,16 @@ public class Character: UnityModule
       object basePacket = Unpack("base", packet);
       string name = (string)Unpack("name", basePacket);
 
+      Dictionary<string, object> equipment = UnpackList(new List<string> { "inventory", "equipment"}, packet) as Dictionary<string, object>;
+
+      //foreach(KeyValuePair<string, object> entry in equip)
+      //{
+      //   Debug.Log(entry);
+      //}
+
       Color ball        = hexToColor((string)Unpack("color", basePacket));
-      Color rod_bottom  = hexToColor((string)UnpackList(new List<string> { "equipment", "bottom", "color" }, packet));
-      Color rod_top     = hexToColor((string)UnpackList(new List<string> { "equipment", "top", "color" }, packet));
+      Color rod_bottom  = hexToColor((string)UnpackList(new List<string> { "bottom", "color" }, equipment));
+      Color rod_top     = hexToColor((string)UnpackList(new List<string> { "top", "color" }, equipment));
 
       //OBJ model and overheads
       this.NNObj(ball, rod_bottom, rod_top);
