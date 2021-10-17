@@ -48,10 +48,11 @@ public class Player : Character
 
       //Ammunition
       this.inventory.ammunition.EmptyInventory();
-      items = (List<object>) UnpackList(new List<string> {"inventory", "ammunition"}, ent);
-      foreach (object e in items)
+
+      Dictionary<string, object> ammunition = UnpackList(new List<string> { "inventory", "ammunition"}, ent) as Dictionary<string, object>;
+      foreach(KeyValuePair<string, object> e in ammunition)
       {
-         Dictionary<string, object> item = (Dictionary<string, object>) e;
+         Dictionary<string, object> item = (Dictionary<string, object>) e.Value;
          level   = Convert.ToInt32(Unpack("level", item));
          name    = Unpack("item", item) as string;
          itemObj = Resources.Load("Prefabs/" + name) as BaseItem;
@@ -83,25 +84,25 @@ public class Player : Character
       }
 
       object equipment;
-      equipment = UnpackList(new List<string> {"equipment", "hat"}, ent);
+      equipment = UnpackList(new List<string> {"inventory", "equipment", "hat"}, ent);
       level     = Convert.ToInt32(Unpack("level", equipment));
       itemObj   = Resources.Load("Prefabs/Hat") as BaseItem;
       this.inventory.hat.EmptyInventory();
       this.inventory.hat.AddItem(itemObj, 1);
 
-      equipment = UnpackList(new List<string> {"equipment", "top"}, ent);
+      equipment = UnpackList(new List<string> {"inventory", "equipment", "top"}, ent);
       level     = Convert.ToInt32(Unpack("level", equipment));
       itemObj   = Resources.Load("Prefabs/Top") as BaseItem;
       this.inventory.top.EmptyInventory();
       this.inventory.top.AddItem(itemObj, 1);
 
-      equipment = UnpackList(new List<string> {"equipment", "bottom"}, ent);
+      equipment = UnpackList(new List<string> {"inventory", "equipment", "bottom"}, ent);
       level     = Convert.ToInt32(Unpack("level", equipment));
       itemObj   = Resources.Load("Prefabs/Bottom") as BaseItem;
       this.inventory.bottom.EmptyInventory();
       this.inventory.bottom.AddItem(itemObj, 1);
 
-      equipment = UnpackList(new List<string> {"equipment", "weapon"}, ent);
+      equipment = UnpackList(new List<string> {"inventory", "equipment", "weapon"}, ent);
       level     = Convert.ToInt32(Unpack("level", equipment));
       itemObj   = Resources.Load("Prefabs/Weapon") as BaseItem;
       this.inventory.weapon.EmptyInventory();
