@@ -28,9 +28,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.6000061, z: -0.0800145}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1690580738564138224}
   - {fileID: 1080743101848122445}
-  - {fileID: 6337188389936298922}
+  - {fileID: 1690580738564138224}
   - {fileID: 2184928193577905812}
   - {fileID: 1145108794667655651}
   - {fileID: 5511795023092936078}
@@ -87,7 +86,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5723826949869439860
 MonoBehaviour:
@@ -137,7 +136,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6902748064262027706
 MonoBehaviour:
@@ -169,7 +168,7 @@ GameObject:
   - component: {fileID: 2334629153890063691}
   - component: {fileID: 1470395164694842092}
   m_Layer: 0
-  m_Name: Weapon
+  m_Name: Held
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +186,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1470395164694842092
 MonoBehaviour:
@@ -237,7 +236,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5777513037028594411
 MonoBehaviour:
@@ -253,8 +252,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DrawContentInInspector: 0
   Content:
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   InventoryType: 0
   TargetTransform: {fileID: 0}
@@ -289,7 +286,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5012079723017881109
 MonoBehaviour:
@@ -310,63 +307,6 @@ MonoBehaviour:
   TargetTransform: {fileID: 0}
   Persistent: 0
   ResetThisInventorySaveOnStart: 0
---- !u!1 &7070018494578405815
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6337188389936298922}
-  - component: {fileID: 4968277199490091242}
-  m_Layer: 0
-  m_Name: Loot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6337188389936298922
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7070018494578405815}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4968277199490091242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7070018494578405815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 286d1c3722a3a0749afb21ea8728d132, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DrawContentInInspector: 0
-  Content:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  InventoryType: 0
-  TargetTransform: {fileID: 0}
-  Persistent: 0
-  ResetThisInventorySaveOnStart: 0
 --- !u!1 &7207430643051530396
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +318,7 @@ GameObject:
   - component: {fileID: 1080743101848122445}
   - component: {fileID: 5489106614614345363}
   m_Layer: 0
-  m_Name: Consumables
+  m_Name: Items
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -396,7 +336,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3882696705593955079}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5489106614614345363
 MonoBehaviour:
@@ -412,6 +352,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DrawContentInInspector: 0
   Content:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

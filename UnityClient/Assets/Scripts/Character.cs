@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using MoreMountains.InventoryEngine;
+
 
 public class Character: UnityModule 
 {
@@ -34,6 +36,7 @@ public class Character: UnityModule
    public SkillGroup skills;
    public ResourceGroup resources;
    public Overheads overheads;
+   public NNInventory inventory;
 
    //Load the OBJ shader and materials
    public void NNObj(Color ball, Color rod_bottom, Color rod_top)
@@ -70,12 +73,18 @@ public class Character: UnityModule
       //}
 
       Color ball        = hexToColor((string)Unpack("color", basePacket));
-      Color rod_bottom  = hexToColor((string)UnpackList(new List<string> { "bottom", "color" }, equipment));
-      Color rod_top     = hexToColor((string)UnpackList(new List<string> { "top", "color" }, equipment));
+      //Color rod_bottom  = hexToColor((string)UnpackList(new List<string> { "bottom", "color" }, equipment));
+      //Color rod_top     = hexToColor((string)UnpackList(new List<string> { "top", "color" }, equipment));
+
+      Color rod_bottom = hexToColor("000e0e");
+      Color rod_top    = hexToColor("000e0e");
 
       //OBJ model and overheads
       this.NNObj(ball, rod_bottom, rod_top);
       this.Overheads(name, ball);
+
+      GameObject inventoryPrefab = Resources.Load("Prefabs/Inventory") as GameObject;
+      this.inventory             = Instantiate(inventoryPrefab).GetComponent<NNInventory>();
 
       this.UpdatePlayer(players, npcs, packet);
       this.UpdatePos(false);
@@ -174,6 +183,44 @@ public class Character: UnityModule
       this.skills.UpdateSkills(skills);
       this.level = Convert.ToInt32(Unpack("level", skills));
 
+      //Inventory
+      BaseItem itemObj;
+      int level;
+      string name;
+      this.inventory.items.EmptyInventory();
+      List<object> items = (List<object>) UnpackList(new List<string> {"inventory", "items"}, ent);
+      foreach (object e in items)
+      {
+         Dictionary<string, object> itm = (Dictionary<string, object>) e;
+         level   = Convert.ToInt32(Unpack("level", itm));
+         name    = Unpack("item", itm) as string;
+         itemObj = Resources.Load("Prefabs/" + name) as BaseItem;
+         this.inventory.items.AddItem(itemObj, 1);
+      }
+
+      Dictionary<string, object> equipment = UnpackList(new List<string> {"inventory", "equipment"}, ent) as Dictionary<string, object>;
+      object item;
+
+      //Equipment
+      List<string> item_types = new List<string> {"ammunition", "hat", "top", "bottom", "held"};
+      List<Inventory> item_inv   = new List<Inventory> {this.inventory.ammunition, this.inventory.hat, this.inventory.top, this.inventory.bottom, this.inventory.held};
+      for (int idx=0; idx<5; idx++)
+      {
+         Inventory inv = item_inv[idx];
+         inv.EmptyInventory();
+
+         string item_type = item_types[idx];
+         if (equipment.ContainsKey(item_type)){
+            item    = Unpack(item_type, equipment);
+            level   = Convert.ToInt32(Unpack("level", item));
+            name    = Unpack("item", item) as string;
+            itemObj = Resources.Load("Prefabs/" + name) as BaseItem;
+
+            inv.AddItem(itemObj, 1);
+         }         
+      }
+
+
       //Attack
       if (this.attack != null)
       {
@@ -214,6 +261,7 @@ public class Character: UnityModule
             this.transform.localScale.x * 6 * Vector3.up / 4);
       this.attack       = GameObject.Instantiate(
             prefab, this.attackPos, this.AttackRotation());
+
    }
 
    
