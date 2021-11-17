@@ -5,6 +5,7 @@ using MoreMountains.InventoryEngine;
 public class RightClickMenu : MonoBehaviour, IPointerExitHandler
 {
    delegate void triggerFunc(PointerEventData data);
+   public bool enabled = true;
 
    public Character characterCache; 
    public Character character; 
@@ -42,10 +43,20 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       this.follow  = this.MakeButton(prefab, this.OnFollow, 0);
       this.examine = this.MakeButton(prefab, this.OnExamine, 1);
 
-      this.gameObject.SetActive(false);
+      this.Disable();
       this.bounds = this.GetComponent<RectTransform>();
       this.bounds.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 2*32 + 8);
       this.bounds.ForceUpdateRectTransforms();
+   }
+
+   void Enable(){
+      this.enabled = true;
+      this.gameObject.transform.localScale = new Vector3(1,1,1);
+   }
+
+   void Disable(){
+      this.enabled = false;
+      this.gameObject.transform.localScale = new Vector3(0,0,0);
    }
 
    RightClickButton MakeButton(GameObject prefab, triggerFunc func, int offset) {
@@ -67,7 +78,7 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
  
    public void OnFollow(PointerEventData data)
    {
-      this.gameObject.SetActive(false);
+      this.Disable();
 
       if (this.characterCache == null) {
          return; 
@@ -81,13 +92,14 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
 
    public void OnExamine(PointerEventData data)
    {
-      this.gameObject.SetActive(false);
+      this.Disable();
 
       if (this.characterCache == null) {
          return; 
       }
 
       this.character = this.characterCache;
+      this.UpdateRightClickMenu();
 
       this.itemDisplay.TargetInventory        = this.character.inventory.items;         
       this.ammunitionDisplay.TargetInventory  = this.character.inventory.ammunition;         
@@ -111,12 +123,18 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       this.follow.UpdateSelf("Follow: " + character.name);
       this.transform.position = Input.mousePosition + new Vector3(-20, 20, 0);
 
-      this.gameObject.SetActive(true);
+      this.Enable();
       this.characterCache = character;
+   }
+
+   public void UpdateRightClickMenu(){
+      if (this.character){
+         this.character.UpdateInventory();
+      }
    }
 
    public void OnPointerExit(PointerEventData eventData)
    {
-      this.gameObject.SetActive(false);
+      this.Disable();
    }
 }

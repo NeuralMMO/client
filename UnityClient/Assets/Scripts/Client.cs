@@ -9,6 +9,7 @@ public class Client : MonoBehaviour
    public Comms comms;
    public Environment environment;
    public PlayerManager playerManager;
+   public RightClickMenu rightClickMenu;
 
    public bool first = true;
    float delta = 0.025f;
@@ -17,10 +18,11 @@ public class Client : MonoBehaviour
    // Start is called before the first frame update
    void Start()
    {
-      this.ui            = GameObject.Find("UI").GetComponent<UI>();
-      this.comms         = GameObject.Find("WebSocket").GetComponent<Comms>();
-      this.environment   = GameObject.Find("Environment").GetComponent<Environment>();
-      this.playerManager = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+      this.ui             = GameObject.Find("UI").GetComponent<UI>();
+      this.comms          = GameObject.Find("WebSocket").GetComponent<Comms>();
+      this.environment    = GameObject.Find("Environment").GetComponent<Environment>();
+      this.playerManager  = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+      this.rightClickMenu = GameObject.Find("RightClickMenu").GetComponent<RightClickMenu>();
    }
 
    // Update is called once per frame
@@ -49,5 +51,6 @@ public class Client : MonoBehaviour
       this.environment.UpdateMap(packet);
       this.playerManager.UpdateEntities(packet);
       this.ui.UpdateUI(packet, this.deltaTime);
+      this.rightClickMenu.UpdateRightClickMenu();
    }
 }

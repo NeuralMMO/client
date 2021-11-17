@@ -11,8 +11,11 @@ public class PlayerSkills : SkillGroup
    public Skill range;
    public Skill mage;
    public Skill fishing;
-   public Skill hunting;
-
+   public Skill herbalism;
+   public Skill prospecting;
+   public Skill carving;
+   public Skill alchemy;
+   
    void Awake()
    {
       this.skills = new Dictionary<string, Skill>();
@@ -21,6 +24,9 @@ public class PlayerSkills : SkillGroup
       this.range        = this.AddSkill("range");
       this.mage         = this.AddSkill("mage");
       this.fishing      = this.AddSkill("fishing");
-      this.hunting      = this.AddSkill("hunting");
+      this.herbalism    = this.AddSkill("herbalism");
+      this.prospecting  = this.AddSkill("prospecting");
+      this.carving      = this.AddSkill("carving");
+      this.alchemy      = this.AddSkill("alchemy");
    }
 }

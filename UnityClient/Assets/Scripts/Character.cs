@@ -29,6 +29,9 @@ public class Character: UnityModule
 
    public string name;
    public int level = 1;
+   public int item_level = 0;
+
+   const string ITEM_DESCRIPTION_TEMPLATE = "Melee:\t{0, 3} Attack / {1, -3} Defense\nRange:\t{2, 3} Attack / {3, -3} Defense\nMage:\t\t{4, 3} Attack / {5, -3} Defense\nRestore:\t{6, 3} Resource / {7, -3} Health";
 
    float start;
    Vector3 orig;
@@ -37,6 +40,7 @@ public class Character: UnityModule
    public ResourceGroup resources;
    public Overheads overheads;
    public NNInventory inventory;
+   public object packet;
 
    //Load the OBJ shader and materials
    public void NNObj(Color ball, Color rod_bottom, Color rod_top)
@@ -161,40 +165,45 @@ public class Character: UnityModule
       this.attack.transform.rotation = this.AttackRotation();
    }
 
-   public void UpdatePlayer(Dictionary<int, GameObject> players,
-         Dictionary<int, GameObject> npcs, object ent) {
-      this.orig    = this.transform.position;
-      this.forward = this.transform.forward;
-      this.up      = this.transform.up;
-      this.start   = Time.time;
-
-      this.alive = Convert.ToBoolean(Unpack("alive", ent));
-
-      //Position
-      object entBase = Unpack("base", ent);
-      this.rOld = this.r;
-      this.cOld = this.c;
-
-      this.r = Convert.ToInt32(UnpackList(new List<string> { "r" }, entBase));
-      this.c = Convert.ToInt32(UnpackList(new List<string> { "c" }, entBase));
-
-      //Skills
-      object skills = Unpack("skills", ent);
-      this.skills.UpdateSkills(skills);
-      this.level = Convert.ToInt32(Unpack("level", skills));
-
-      //Inventory
+   public void UpdateInventory()
+   {
+      object ent = this.packet;
+      {
+           
+      }
       BaseItem itemObj;
-      int level;
-      string name;
       this.inventory.items.EmptyInventory();
       List<object> items = (List<object>) UnpackList(new List<string> {"inventory", "items"}, ent);
       foreach (object e in items)
       {
          Dictionary<string, object> itm = (Dictionary<string, object>) e;
-         level   = Convert.ToInt32(Unpack("level", itm));
-         name    = Unpack("item", itm) as string;
-         itemObj = Resources.Load("Prefabs/" + name) as BaseItem;
+
+         string name          = Unpack("item", itm) as string;
+         
+
+         int level            = Convert.ToInt32(Unpack("level", itm));
+         int quantity         = Convert.ToInt32(Unpack("quantity", itm));
+         int melee_attack     = Convert.ToInt32(Unpack("melee_attack", itm));
+         int range_attack     = Convert.ToInt32(Unpack("range_attack", itm));
+         int mage_attack      = Convert.ToInt32(Unpack("mage_attack", itm));
+         int melee_defense    = Convert.ToInt32(Unpack("melee_defense", itm));
+         int range_defense    = Convert.ToInt32(Unpack("range_defense", itm));
+         int mage_defense     = Convert.ToInt32(Unpack("mage_defense", itm));
+
+         int health_restore   = Convert.ToInt32(Unpack("health_restore", itm));
+         int resource_restore = Convert.ToInt32(Unpack("resource_restore", itm));
+
+         itemObj             = Instantiate(Resources.Load("Prefabs/Items/" + name) as BaseItem);;
+
+         itemObj.Quantity    = 1;
+         if (quantity == 1) {
+            itemObj.ItemName = String.Format(itemObj.ItemName, level, "");
+         } else {
+            itemObj.ItemName = String.Format(itemObj.ItemName, level, " x " + quantity);            
+         }
+         itemObj.Description = String.Format(ITEM_DESCRIPTION_TEMPLATE,
+               melee_attack, melee_defense, range_attack, range_defense,
+               mage_attack, mage_defense, resource_restore, health_restore);
          this.inventory.items.AddItem(itemObj, 1);
       }
 
@@ -211,15 +220,40 @@ public class Character: UnityModule
 
          string item_type = item_types[idx];
          if (equipment.ContainsKey(item_type)){
-            item    = Unpack(item_type, equipment);
-            level   = Convert.ToInt32(Unpack("level", item));
-            name    = Unpack("item", item) as string;
-            itemObj = Resources.Load("Prefabs/" + name) as BaseItem;
+            item        = Unpack(item_type, equipment);
+            int level   = Convert.ToInt32(Unpack("level", item));
+            string name = Unpack("item", item) as string;
+            itemObj     = Resources.Load("Prefabs/Items/" + name) as BaseItem;
 
             inv.AddItem(itemObj, 1);
          }         
       }
+   }
 
+   public void UpdatePlayer(Dictionary<int, GameObject> players,
+         Dictionary<int, GameObject> npcs, object ent) {
+      this.packet  = ent;
+      this.orig    = this.transform.position;
+      this.forward = this.transform.forward;
+      this.up      = this.transform.up;
+      this.start   = Time.time;
+
+      this.alive = Convert.ToBoolean(Unpack("alive", ent));
+
+      //Position
+      object entBase  = Unpack("base", ent);
+      this.level      = Convert.ToInt32(Unpack("level", entBase));
+      this.item_level = Convert.ToInt32(Unpack("item_level", entBase));
+
+      this.rOld = this.r;
+      this.cOld = this.c;
+
+      this.r = Convert.ToInt32(UnpackList(new List<string> { "r" }, entBase));
+      this.c = Convert.ToInt32(UnpackList(new List<string> { "c" }, entBase));
+
+      //Skills
+      object skills = Unpack("skills", ent);
+      this.skills.UpdateSkills(skills);
 
       //Attack
       if (this.attack != null)
