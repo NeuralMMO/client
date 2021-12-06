@@ -4325,7 +4325,7 @@ MonoBehaviour:
   m_Text: "Neural MMO Console - Press tab to toggle\n\nControls:\n\t> Left mouse:
     Click agents to examine. Follow is WIP\n\t> Middle mouse: Zoom/rotate\n\t> Right
     mouse: Pan\n\nCommands:\n\t> Local Overlays: env/counts/skills/attention/values\n\t>
-    Global Overlays tileValues/entityValues\n\t> Graphics: hifi (default)/medfi/lofi"
+    Global Overlays tileValues/entityValues\n\t> Graphics: hifi/medfi/lofi (default)"
 --- !u!222 &892883215
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4825,7 +4825,7 @@ PrefabInstance:
     - target: {fileID: 6146539836857377532, guid: 37ea45d9aa85686d7bbdf35df07d948f,
         type: 3}
       propertyPath: m_text
-      value: Neural MMO v1.5.2
+      value: Neural MMO v1.5.3
       objectReference: {fileID: 0}
     - target: {fileID: 6146539836857377532, guid: 37ea45d9aa85686d7bbdf35df07d948f,
         type: 3}
@@ -8223,7 +8223,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 764ca85244fe1b84098c95e706e8bd59, type: 2}
+  - {fileID: 2100000, guid: 792be26f6246d3844b1f02c875875d79, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
