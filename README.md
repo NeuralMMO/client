@@ -8,7 +8,7 @@
        alt="tweet button" title="Follow"></img>
 </a>
 
-This repository contains the Unity3D client for the main [Neural MMO](https://github.com/jsuarez5341/neural-mmo) project. It's written in C# in a manner accessible to researchers and developers who work primarily in Python.
+This repository contains the Unity3D client for the main [Neural MMO](https://github.com/neuralmmo/environment) project. It's written in C# in a manner accessible to researchers and developers who work primarily in Python.
 
 
 **Setup**: Follow the instructions in the [Documentation](https://neuralmmo.github.io>).
