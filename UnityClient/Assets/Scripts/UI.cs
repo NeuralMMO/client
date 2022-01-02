@@ -13,6 +13,7 @@ public class UI: UnityModule {
    GameObject fps;
    TMP_Text wilderness;
    GameObject menu;
+   public List<VisPanel> panels; //list tracking the open visualization panels
 
    void SetText(GameObject obj, string text) {
       obj.GetComponent<TextMeshProUGUI>().text = text;

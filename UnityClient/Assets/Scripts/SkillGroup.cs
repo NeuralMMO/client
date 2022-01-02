@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SkillGroup : UnityModule 
 {
-   protected Dictionary<string, Skill> skills;
+   public Dictionary<string, Skill> skills;
 
    public Skill AddSkill(string name)
    {

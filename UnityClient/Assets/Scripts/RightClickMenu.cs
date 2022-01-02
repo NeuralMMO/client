@@ -10,6 +10,9 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
 
    RightClickButton examine;
    RightClickButton follow;
+   RightClickButton vispanelButton;
+   GameObject vispanel; //vispanel prefab
+   GameObject canvas;
 
    RectTransform bounds;
    GameObject target;
@@ -20,16 +23,20 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
    void Start()
    {
       GameObject prefab = Resources.Load("Prefabs/RightClickButton") as GameObject;
+      this.ui = GameObject.Find("Client/UI").GetComponent<UI>();
+      vispanel = Resources.Load("Prefabs/VisPanel") as GameObject;
       GameObject cam    = GameObject.Find("Client/CameraAnchor/OrbitCamera");
       this.target       = GameObject.Find("Client/CameraAnchor");
+      this.canvas = GameObject.Find("Client/UI/Canvas");
       this.camera       = cam.GetComponent<OrbitCamera>();
 
       this.follow  = this.MakeButton(prefab, this.OnFollow, 0);
       this.examine = this.MakeButton(prefab, this.OnExamine, 1);
+      this.vispanelButton = this.MakeButton(prefab, this.onVisPanel, 2);
 
       this.gameObject.SetActive(false);
       this.bounds = this.GetComponent<RectTransform>();
-      this.bounds.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 2*32 + 8);
+      this.bounds.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 3*32 + 8);
       this.bounds.ForceUpdateRectTransforms();
    }
 
@@ -76,9 +83,21 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       Debug.Log("Examining");
    }
 
+   public void onVisPanel(PointerEventData data){
+       GameObject obj = Instantiate(vispanel) as GameObject;
+       obj.transform.SetParent(this.canvas.transform);
+       obj.transform.localPosition = new Vector3(0,0,0);
+       Debug.Log(obj.activeSelf);
+       obj.SetActive(true);
+       VisPanel vp = obj.GetComponent<VisPanel>();
+       vp.Init(this.characterCache);
+       this.ui.panels.Add(vp);
+   }
+
    public void UpdateSelf(UI ui, Character character) {
       this.examine.UpdateSelf("Examine: " + character.name);
       this.follow.UpdateSelf("Follow: " + character.name);
+      this.vispanelButton.UpdateSelf("Examine stats: " + character.name);
       this.transform.position = Input.mousePosition + new Vector3(-20, 20, 0);
 
       this.gameObject.SetActive(true);
