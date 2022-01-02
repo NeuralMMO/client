@@ -31,12 +31,11 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       this.camera       = cam.GetComponent<OrbitCamera>();
 
       this.follow  = this.MakeButton(prefab, this.OnFollow, 0);
-      this.examine = this.MakeButton(prefab, this.OnExamine, 1);
-      this.vispanelButton = this.MakeButton(prefab, this.onVisPanel, 2);
+      this.vispanelButton = this.MakeButton(prefab, this.onVisPanel, 1);
 
       this.gameObject.SetActive(false);
       this.bounds = this.GetComponent<RectTransform>();
-      this.bounds.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 3*32 + 8);
+      this.bounds.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 2*32 + 8);
       this.bounds.ForceUpdateRectTransforms();
    }
 
@@ -71,18 +70,6 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
       Debug.Log("Following");
    }
 
-   public void OnExamine(PointerEventData data)
-   {
-      this.gameObject.SetActive(false);
-
-      if (this.characterCache == null) {
-         return; 
-      }
-
-      this.character = this.characterCache;
-      Debug.Log("Examining");
-   }
-
    public void onVisPanel(PointerEventData data){
        GameObject obj = Instantiate(vispanel) as GameObject;
        obj.transform.SetParent(this.canvas.transform);
@@ -95,7 +82,6 @@ public class RightClickMenu : MonoBehaviour, IPointerExitHandler
    }
 
    public void UpdateSelf(UI ui, Character character) {
-      this.examine.UpdateSelf("Examine: " + character.name);
       this.follow.UpdateSelf("Follow: " + character.name);
       this.vispanelButton.UpdateSelf("Examine stats: " + character.name);
       this.transform.position = Input.mousePosition + new Vector3(-20, 20, 0);
