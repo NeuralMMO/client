@@ -73,24 +73,6 @@ public class Character: UnityModule
       this.UpdatePlayer(players, npcs, packet);
       this.UpdatePos(false);
    }
-
-   public void UpdateUI()
-   {
-      this.skills.UpdateUI();
-      this.resources.UpdateUI();
-
-      GameObject UIName = GameObject.Find("UI/Canvas/Panel/Name");
-      TextMeshProUGUI uiName = UIName.GetComponent<TextMeshProUGUI>();
-
-      uiName.color = this.overheads.playerName.color;
-      uiName.text = this.overheads.playerName.text;
-   }
-
-   public static void UpdateStaticUI()
-   {
-      PlayerResources.UpdateDeadUI();
-   }
-
    void Update()
    {
       if (!this.alive) {

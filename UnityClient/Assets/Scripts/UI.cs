@@ -13,6 +13,7 @@ public class UI: UnityModule {
    GameObject fps;
    TMP_Text wilderness;
    GameObject menu;
+   public List<VisPanel> panels; //list tracking the open visualization panels
 
    void SetText(GameObject obj, string text) {
       obj.GetComponent<TextMeshProUGUI>().text = text;
@@ -30,7 +31,6 @@ public class UI: UnityModule {
    void Update()
    {
       Character character = this.menu.GetComponent<RightClickMenu>().character;
-      this.UpdateOverlay(character);
       this.UpdateRightClickMenu();
    }
 
@@ -72,16 +72,5 @@ public class UI: UnityModule {
 
          this.wilderness.text = wildernessLevel.ToString();
       }
-   }
-
-   public void UpdateOverlay(Character character) {
-      Character.UpdateStaticUI();
- 
-      if (character == null) {
-         return;
-      }
-
-      character.UpdateUI();
-
    }
 }

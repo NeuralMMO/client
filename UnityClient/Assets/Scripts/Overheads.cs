@@ -110,7 +110,7 @@ public class Overheads : UnityModule
       }
 
       this.playerName.color = color;
-      this.playerName.text  = "<color=#00bbbb>(Lvl " + player.level + ") </color>" + name;
+      this.playerName.text  = "(Lvl " + player.level + ") " + name;
 
   }
 }
