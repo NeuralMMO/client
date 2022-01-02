@@ -31,7 +31,6 @@ public class UI: UnityModule {
    void Update()
    {
       Character character = this.menu.GetComponent<RightClickMenu>().character;
-      this.UpdateOverlay(character);
       this.UpdateRightClickMenu();
    }
 
@@ -73,16 +72,5 @@ public class UI: UnityModule {
 
          this.wilderness.text = wildernessLevel.ToString();
       }
-   }
-
-   public void UpdateOverlay(Character character) {
-      Character.UpdateStaticUI();
- 
-      if (character == null) {
-         return;
-      }
-
-      character.UpdateUI();
-
    }
 }

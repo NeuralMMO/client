@@ -23,14 +23,4 @@ public class SkillGroup : UnityModule
          skill.Value.UpdateSkill(packet);
       }
    }
-
-   public void UpdateUI()
-   {
-      foreach (KeyValuePair<string, Skill> skill in this.skills)
-      {
-         GameObject UISkill = GameObject.Find("UI/Canvas/Panel/" + char.ToUpper(skill.Key[0]) + skill.Key.Substring(1));
-         TextMeshProUGUI tm = UISkill.GetComponent<TextMeshProUGUI>();
-         tm.text = char.ToUpper(skill.Key[0]) + skill.Key.Substring(1) + ": " + skill.Value.level;
-      }
-   }
 }

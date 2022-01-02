@@ -23,23 +23,5 @@ public class ResourceGroup: UnityModule
          resource.Value.UpdateResource(packet);
       }
    }
-
-   public void UpdateUI()
-   {
-      foreach (KeyValuePair<string, Resource> resource in this.resources)
-      {
-         GameObject UIResource = GameObject.Find("UI/Canvas/Panel/" + char.ToUpper(resource.Key[0]) + resource.Key.Substring(1));
-         TextMeshProUGUI tm = UIResource.GetComponent<TextMeshProUGUI>();
-         tm.text = char.ToUpper(resource.Key[0]) + resource.Key.Substring(1) + ": " + resource.Value.value;
-      }
-   }
-
-   public static void UpdateDeadUI()
-   {
-      GameObject UIResource = GameObject.Find("UI/Canvas/Panel/Health");
-      TextMeshProUGUI tm = UIResource.GetComponent<TextMeshProUGUI>();
-      tm.text = "Health: Dead";
-   }
-
 }
 
