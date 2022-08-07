@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d9b44209469b244478c826d3b44489d5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - PlotPointPrefab: {instanceID: 0}
+  - AxisMaterial: {fileID: 2100000, guid: 5a92d08a53a696f41b20d84ea487ab16, type: 2}
+  - AxisFont: {fileID: 12800000, guid: b44e0905eaa40914f9c28834f2843f19, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

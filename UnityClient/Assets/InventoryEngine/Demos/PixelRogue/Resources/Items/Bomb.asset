@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d950f167cc755b943ac753e0fa223c59, type: 3}
+  m_Name: Bomb
+  m_EditorClassIdentifier: 
+  ItemID: Bomb
+  TargetInventoryName: RogueBombInventory
+  Usable: 1
+  Equippable: 0
+  Quantity: 1
+  ItemName: Bomb
+  ShortDescription: Handle with care
+  Description: You can use this bomb to blow stuff up. You can make people explode,
+    walls explode, horses explode, peanut butter explode. Be careful though.
+  CanMoveObject: 1
+  CanSwapObject: 1
+  Icon: {fileID: 21300002, guid: a1fbd1aaf76d0b94e88551b7c406ee2c, type: 3}
+  Prefab: {fileID: 118076, guid: 08c4c98e1efab2c469628f8660223920, type: 2}
+  SpawnShape: 1
+  PrefabDropMinDistance: {x: 2, y: 2, z: 0}
+  PrefabDropMaxDistance: {x: 3, y: 3, z: 0}
+  MaximumStack: 5
+  ItemClass: 0
+  TargetEquipmentInventoryName: Hotbar
+  EquippedSound: {fileID: 0}
+  UsedSound: {fileID: 0}
+  MovedSound: {fileID: 0}
+  DroppedSound: {fileID: 0}
+  UseDefaultSoundsIfNull: 1

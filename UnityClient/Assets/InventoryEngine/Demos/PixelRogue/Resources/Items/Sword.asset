@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4829572fcd2f98479c803ffaf809268, type: 3}
+  m_Name: Sword
+  m_EditorClassIdentifier: 
+  ItemID: Sword
+  TargetInventoryName: RogueMainInventory
+  Usable: 0
+  Equippable: 1
+  Quantity: 1
+  ItemName: Sword
+  ShortDescription: A sharp sword
+  Description: With its long blade and refined hilt, this sword can be used to cut
+    cakes and stuff.
+  CanMoveObject: 1
+  CanSwapObject: 1
+  Icon: {fileID: 21300006, guid: a1fbd1aaf76d0b94e88551b7c406ee2c, type: 3}
+  Prefab: {fileID: 170916, guid: 8e3b87501a6ef0246a7a5e8e2dc5e4f9, type: 2}
+  SpawnShape: 1
+  PrefabDropMinDistance: {x: 2, y: 2, z: 0}
+  PrefabDropMaxDistance: {x: 3, y: 3, z: 0}
+  MaximumStack: 1
+  ItemClass: 2
+  TargetEquipmentInventoryName: RogueWeaponInventory
+  EquippedSound: {fileID: 0}
+  UsedSound: {fileID: 0}
+  MovedSound: {fileID: 0}
+  DroppedSound: {fileID: 0}
+  UseDefaultSoundsIfNull: 1
+  WeaponSprite: {fileID: 21300008, guid: 678058abcbfe36f42902c11d9e5f64fc, type: 3}
