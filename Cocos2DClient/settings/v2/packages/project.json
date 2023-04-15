@@ -1,0 +1,20 @@
+{
+  "general": {
+    "designResolution": {
+      "width": 1920,
+      "height": 1080,
+      "fitHeight": false,
+      "fitWidth": false
+    }
+  },
+  "layer": [
+    {
+      "name": "MAP",
+      "value": 32768
+    },
+    {
+      "name": "WORLD",
+      "value": 16384
+    }
+  ]
+}

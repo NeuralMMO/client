@@ -1,0 +1,22 @@
+{
+  "game": {
+    "name": "UNKNOW GAME",
+    "app_id": "UNKNOW",
+    "c_id": "0"
+  },
+  "appConfigMaps": [
+    {
+      "app_id": "UNKNOW",
+      "config_id": "4cf58a"
+    }
+  ],
+  "configs": [
+    {
+      "app_id": "UNKNOW",
+      "config_id": "4cf58a",
+      "config_name": "Default",
+      "config_remarks": "",
+      "services": []
+    }
+  ]
+}
