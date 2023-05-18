@@ -327,7 +327,7 @@ export class Main extends Component {
     public async onDemoClick(): Promise<void> {
         // Retrieve file from server
         try {
-            const response = await fetch("https://raw.githubusercontent.com/NeuralMMO/client/main/replays/replay_seed_5249.json");
+            const response = await fetch("https://raw.githubusercontent.com/NeuralMMO/client/2.0/replays/replay_seed_5249.json");
             const text = await response.text();
             const file = new File([text], "serverFile.json", {type: "application/json"});
             
