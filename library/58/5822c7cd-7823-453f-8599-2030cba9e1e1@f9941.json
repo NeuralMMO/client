@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "main_bar_blue",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 128,
+      "height": 128
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 128,
+      "height": 128
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "5822c7cd-7823-453f-8599-2030cba9e1e1@6c48a",
+    "packable": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "warrior",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 18,
+      "width": 54,
+      "height": 36
+    },
+    "offset": {
+      "x": 0,
+      "y": -9
+    },
+    "originalSize": {
+      "width": 54,
+      "height": 54
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "8e3ac005-3efc-44cb-bcf5-c2e2e12f6765@6c48a",
+    "packable": true
+  }
+}

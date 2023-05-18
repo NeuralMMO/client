@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Main_btn_pause",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 20
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 16,
+      "height": 20
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "9047eb1d-15ba-445b-a157-1040bef4293f@6c48a",
+    "packable": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Main_pic_head2",
+    "atlas": "",
+    "rect": {
+      "x": 7,
+      "y": 4,
+      "width": 55,
+      "height": 60
+    },
+    "offset": {
+      "x": 2.5,
+      "y": -2
+    },
+    "originalSize": {
+      "width": 64,
+      "height": 64
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "f33039ac-bd29-4767-8d27-0937ef87140a@6c48a",
+    "packable": true
+  }
+}

@@ -1,6 +1,0 @@
-﻿All music files included in this asset are © Uniform Motion and for demo purposes only, you can't reuse them. 
-You can't redistribute the code or any of the content of the asset.
-
-The names Inventory Engine, More Mountains and Reuno Corp are © More Mountains.
-
-Apart from that, feel free to use all code and visual assets included in the asset in your games.

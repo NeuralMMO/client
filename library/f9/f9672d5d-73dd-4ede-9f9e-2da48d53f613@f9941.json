@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "main_panel_9",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 50,
+      "height": 50
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 50,
+      "height": 50
+    },
+    "rotated": false,
+    "capInsets": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "texture": "f9672d5d-73dd-4ede-9f9e-2da48d53f613@6c48a",
+    "packable": true
+  }
+}

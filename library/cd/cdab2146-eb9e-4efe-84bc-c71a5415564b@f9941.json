@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "main_btn_market",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 32,
+      "height": 32
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 32,
+      "height": 32
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "cdab2146-eb9e-4efe-84bc-c71a5415564b@6c48a",
+    "packable": true
+  }
+}

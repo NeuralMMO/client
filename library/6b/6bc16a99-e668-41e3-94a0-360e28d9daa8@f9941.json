@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "base_poison",
+    "atlas": "",
+    "rect": {
+      "x": 1,
+      "y": 384,
+      "width": 254,
+      "height": 128
+    },
+    "offset": {
+      "x": 0,
+      "y": -192
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "6bc16a99-e668-41e3-94a0-360e28d9daa8@6c48a",
+    "packable": true
+  }
+}

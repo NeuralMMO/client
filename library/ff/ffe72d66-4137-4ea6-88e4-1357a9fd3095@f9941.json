@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Main_btn_minus",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 30,
+      "height": 30
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 30,
+      "height": 30
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "ffe72d66-4137-4ea6-88e4-1357a9fd3095@6c48a",
+    "packable": true
+  }
+}

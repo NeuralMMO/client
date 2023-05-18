@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "melee",
+    "atlas": "",
+    "rect": {
+      "x": 71,
+      "y": 229,
+      "width": 111,
+      "height": 56
+    },
+    "offset": {
+      "x": -1.5,
+      "y": -1
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "7966cd04-3551-41d7-b898-e1dbc2544e1a@6c48a",
+    "packable": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_item_Sword",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 176,
+      "height": 176
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 176,
+      "height": 176
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "1b763225-5494-4101-92c2-6464f2126369@6c48a",
+    "packable": true
+  }
+}

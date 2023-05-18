@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Main_pic_drop",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 23,
+      "height": 13
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 23,
+      "height": 13
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "73e3dcd1-103e-4f68-9e9c-717910c30b1b@6c48a",
+    "packable": true
+  }
+}

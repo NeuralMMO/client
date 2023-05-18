@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "2002",
+    "atlas": "",
+    "rect": {
+      "x": 105,
+      "y": 270,
+      "width": 77,
+      "height": 91
+    },
+    "offset": {
+      "x": 15.5,
+      "y": -59.5
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "be5a805c-11af-4298-af7a-77eb7a368f26@6c48a",
+    "packable": true
+  }
+}

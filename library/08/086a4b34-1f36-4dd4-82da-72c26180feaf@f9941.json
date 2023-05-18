@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "juese_06",
+    "atlas": "",
+    "rect": {
+      "x": 88,
+      "y": 398,
+      "width": 79,
+      "height": 114
+    },
+    "offset": {
+      "x": -0.5,
+      "y": -199
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "086a4b34-1f36-4dd4-82da-72c26180feaf@6c48a",
+    "packable": true
+  }
+}

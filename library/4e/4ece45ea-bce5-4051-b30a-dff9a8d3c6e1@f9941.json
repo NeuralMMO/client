@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_item_Poultice",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 176,
+      "height": 176
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 176,
+      "height": 176
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "4ece45ea-bce5-4051-b30a-dff9a8d3c6e1@6c48a",
+    "packable": true
+  }
+}

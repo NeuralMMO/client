@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "mage",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 4,
+      "width": 54,
+      "height": 50
+    },
+    "offset": {
+      "x": 0,
+      "y": -2
+    },
+    "originalSize": {
+      "width": 54,
+      "height": 54
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "21d0f5ae-5486-4664-9c5d-1ccc723eab69@6c48a",
+    "packable": true
+  }
+}

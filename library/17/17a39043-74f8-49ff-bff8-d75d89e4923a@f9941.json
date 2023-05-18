@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_item_Chisel",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 176,
+      "height": 176
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 176,
+      "height": 176
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "17a39043-74f8-49ff-bff8-d75d89e4923a@6c48a",
+    "packable": true
+  }
+}

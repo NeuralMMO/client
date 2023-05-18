@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_item_Rod",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 176,
+      "height": 176
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 176,
+      "height": 176
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "412c9169-313f-4c66-8740-6b990c93a6b0@6c48a",
+    "packable": true
+  }
+}

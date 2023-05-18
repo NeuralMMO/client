@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "pawn_11_b",
+    "atlas": "",
+    "rect": {
+      "x": 88,
+      "y": 343,
+      "width": 79,
+      "height": 114
+    },
+    "offset": {
+      "x": -0.5,
+      "y": -144
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "90a29498-29fa-44ea-b2fd-43aa14e79b19@6c48a",
+    "packable": true
+  }
+}

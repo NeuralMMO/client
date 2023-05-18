@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "freeze",
+    "atlas": "",
+    "rect": {
+      "x": 48,
+      "y": 291,
+      "width": 167,
+      "height": 211
+    },
+    "offset": {
+      "x": 3.5,
+      "y": -140.5
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "bf99a937-7cbf-463b-b178-b6407d312efe@6c48a",
+    "packable": true
+  }
+}

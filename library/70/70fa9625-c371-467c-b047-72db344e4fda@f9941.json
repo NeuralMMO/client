@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "2004",
+    "atlas": "",
+    "rect": {
+      "x": 105,
+      "y": 270,
+      "width": 77,
+      "height": 91
+    },
+    "offset": {
+      "x": 15.5,
+      "y": -59.5
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 512
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "70fa9625-c371-467c-b047-72db344e4fda@6c48a",
+    "packable": true
+  }
+}

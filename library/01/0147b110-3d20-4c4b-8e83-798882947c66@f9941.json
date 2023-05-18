@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_item_Arcane",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 176,
+      "height": 176
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 176,
+      "height": 176
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "0147b110-3d20-4c4b-8e83-798882947c66@6c48a",
+    "packable": true
+  }
+}

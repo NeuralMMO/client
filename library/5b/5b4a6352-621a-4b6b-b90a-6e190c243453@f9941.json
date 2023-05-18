@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "main_pic_circle",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 24,
+      "height": 24
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 24,
+      "height": 24
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "5b4a6352-621a-4b6b-b90a-6e190c243453@6c48a",
+    "packable": true
+  }
+}
