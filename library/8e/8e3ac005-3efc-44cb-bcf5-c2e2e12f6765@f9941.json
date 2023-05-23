@@ -5,17 +5,17 @@
     "atlas": "",
     "rect": {
       "x": 0,
-      "y": 18,
-      "width": 54,
-      "height": 36
+      "y": 0,
+      "width": 526,
+      "height": 374
     },
     "offset": {
       "x": 0,
-      "y": -9
+      "y": 0
     },
     "originalSize": {
-      "width": 54,
-      "height": 54
+      "width": 526,
+      "height": 374
     },
     "rotated": false,
     "capInsets": [
