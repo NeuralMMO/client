@@ -1,5 +1,8 @@
 {
   "general": {
     "start_scene": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99"
+  },
+  "preview": {
+    "simulator_resolution": 4
   }
 }

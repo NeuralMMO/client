@@ -8523,7 +8523,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items": {
-    "time": 1684809171354.5488,
+    "time": 1685931812259.9412,
     "uuid": "561c051e-5e55-4126-8d11-916090cc6073",
     "missing": false
   },
@@ -8548,12 +8548,12 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\scene\\Game.scene": {
-    "time": 1684808387325.1572,
+    "time": 1685932023738.0137,
     "uuid": "9cc1b3ad-cdfb-4f32-9060-bc75f1e61b22",
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\scene\\Main.scene": {
-    "time": 1684808387327.1582,
+    "time": 1685931595341.4094,
     "uuid": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
     "missing": false
   },
@@ -8838,7 +8838,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\character\\Pawn": {
-    "time": 1684808387195.3364,
+    "time": 1685931812259.9412,
     "uuid": "439eda04-a0d4-4972-8517-a32a1da914ea",
     "missing": false
   },
@@ -8928,7 +8928,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Bottom.png": {
-    "time": 1684808387215.3367,
+    "time": 1685930081722.495,
     "uuid": "0d18736e-680b-4e66-9729-013f62d45b86",
     "missing": false
   },
@@ -8950,11 +8950,6 @@
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Gold.png": {
     "time": 1684809155287.5046,
     "uuid": "cdd7df1d-7b5f-4d16-a10d-90a9ee809afd",
-    "missing": false
-  },
-  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Hat.png": {
-    "time": 1684808387219.337,
-    "uuid": "bf8f4e90-4f0f-4725-8bd8-15f02007fb13",
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Pickaxe.png": {
@@ -8998,13 +8993,8 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Top.png": {
-    "time": 1684808387225.3362,
+    "time": 1685930083819.897,
     "uuid": "0851bafd-f55c-4772-8a52-37eb57aa84d5",
-    "missing": false
-  },
-  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Wand.png": {
-    "time": 1684808387226.337,
-    "uuid": "d59354b3-3a9a-46f4-a195-51ca23746b89",
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\map\\ground": {
@@ -10493,7 +10483,7 @@
     "time": 1684808387213.3386
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Bottom.png.meta": {
-    "time": 1684808387215.3367
+    "time": 1685931033684.5264
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Arcane.png.meta": {
     "time": 1684809314734.8142
@@ -10512,9 +10502,6 @@
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Gold.png.meta": {
     "time": 1684809314736.8145
-  },
-  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Hat.png.meta": {
-    "time": 1684808387219.337
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Poultice.png.meta": {
     "time": 1684809314797.3733
@@ -10547,10 +10534,7 @@
     "time": 1684808387266.8613
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Top.png.meta": {
-    "time": 1684808387225.3362
-  },
-  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Wand.png.meta": {
-    "time": 1684808387226.337
+    "time": 1685931033676.525
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\skills\\mage.png.meta": {
     "time": 1684808387266.8613
@@ -10910,7 +10894,7 @@
     "time": 1684808387173.3367
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\character\\Pawn\\pawn_03_b.png.meta": {
-    "time": 1684808387174.3372
+    "time": 1685931812365.9434
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\character\\Pawn\\pawn_04_a.png.meta": {
     "time": 1684808387175.337
