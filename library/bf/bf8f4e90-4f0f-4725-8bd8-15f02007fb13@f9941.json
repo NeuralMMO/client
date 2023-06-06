@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "icon_item_Hat",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 704,
+      "height": 704
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 704,
+      "height": 704
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "bf8f4e90-4f0f-4725-8bd8-15f02007fb13@6c48a",
+    "packable": true
+  }
+}

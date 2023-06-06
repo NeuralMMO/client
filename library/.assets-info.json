@@ -507,7 +507,7 @@
   "C:\\Users\\seals\\Downloads\\neural-mmo-cocos2d-master\\neural-mmo-master\\assets\\resources\\items\\icon_item_Hat.png": {
     "time": 1681509042503.2014,
     "uuid": "bf8f4e90-4f0f-4725-8bd8-15f02007fb13",
-    "missing": false
+    "missing": true
   },
   "C:\\Users\\seals\\Downloads\\neural-mmo-cocos2d-master\\neural-mmo-master\\assets\\resources\\items\\icon_item_Pickaxe.png": {
     "time": 1681509042550.3008,
@@ -557,7 +557,7 @@
   "C:\\Users\\seals\\Downloads\\neural-mmo-cocos2d-master\\neural-mmo-master\\assets\\resources\\items\\icon_item_Wand.png": {
     "time": 1681509043084.027,
     "uuid": "d59354b3-3a9a-46f4-a195-51ca23746b89",
-    "missing": false
+    "missing": true
   },
   "C:\\Users\\seals\\Downloads\\neural-mmo-cocos2d-master\\neural-mmo-master\\assets\\resources\\map\\ground": {
     "time": 1681509043402.2754,
@@ -3318,7 +3318,7 @@
   "C:\\Users\\seals\\Desktop\\Work\\nmmo-client\\Cocos2DClient\\assets\\resources\\items\\icon_item_Hat.png": {
     "time": 1681529746672.845,
     "uuid": "bf8f4e90-4f0f-4725-8bd8-15f02007fb13",
-    "missing": false
+    "missing": true
   },
   "C:\\Users\\seals\\Desktop\\Work\\nmmo-client\\Cocos2DClient\\assets\\resources\\items\\icon_item_Pickaxe.png": {
     "time": 1681529746674.8447,
@@ -3368,7 +3368,7 @@
   "C:\\Users\\seals\\Desktop\\Work\\nmmo-client\\Cocos2DClient\\assets\\resources\\items\\icon_item_Wand.png": {
     "time": 1681529746694.2397,
     "uuid": "d59354b3-3a9a-46f4-a195-51ca23746b89",
-    "missing": false
+    "missing": true
   },
   "C:\\Users\\seals\\Desktop\\Work\\nmmo-client\\Cocos2DClient\\assets\\resources\\map\\ground": {
     "time": 1681535103678.23,
@@ -6139,7 +6139,7 @@
   "C:\\Users\\seals\\Desktop\\Work\\client\\assets\\resources\\items\\icon_item_Hat.png": {
     "time": 1681529746672.845,
     "uuid": "bf8f4e90-4f0f-4725-8bd8-15f02007fb13",
-    "missing": false
+    "missing": true
   },
   "C:\\Users\\seals\\Desktop\\Work\\client\\assets\\resources\\items\\icon_item_Pickaxe.png": {
     "time": 1681529746674.8447,
@@ -6189,7 +6189,7 @@
   "C:\\Users\\seals\\Desktop\\Work\\client\\assets\\resources\\items\\icon_item_Wand.png": {
     "time": 1681529746694.2397,
     "uuid": "d59354b3-3a9a-46f4-a195-51ca23746b89",
-    "missing": false
+    "missing": true
   },
   "C:\\Users\\seals\\Desktop\\Work\\client\\assets\\resources\\map\\ground": {
     "time": 1681535103678.23,
@@ -8523,7 +8523,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items": {
-    "time": 1685931812259.9412,
+    "time": 1686008381100.3904,
     "uuid": "561c051e-5e55-4126-8d11-916090cc6073",
     "missing": false
   },
@@ -8548,7 +8548,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\scene\\Game.scene": {
-    "time": 1685932023738.0137,
+    "time": 1686008664032.723,
     "uuid": "9cc1b3ad-cdfb-4f32-9060-bc75f1e61b22",
     "missing": false
   },
@@ -8728,7 +8728,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\prefab\\ui\\HeadInfo.prefab": {
-    "time": 1684808387146.9185,
+    "time": 1686017055409.5327,
     "uuid": "c0d02654-3794-43d5-a034-97c366e45f80",
     "missing": false
   },
@@ -8768,7 +8768,7 @@
     "missing": false
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\prefab\\ui\\UIMarket.prefab": {
-    "time": 1684808387156.3374,
+    "time": 1686009166977.2107,
     "uuid": "e2a271cf-01f0-4898-989d-bca8e1a7af6c",
     "missing": false
   },
@@ -11246,5 +11246,21 @@
   },
   "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\skills\\melee\\8005.png.meta": {
     "time": 1684808387297.655
+  },
+  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Hat.png.meta": {
+    "time": 1686008600698.199
+  },
+  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Wand.png.meta": {
+    "time": 1686008555103.5818
+  },
+  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Wand.png": {
+    "time": 1685930077760.4312,
+    "uuid": "d59354b3-3a9a-46f4-a195-51ca23746b89",
+    "missing": false
+  },
+  "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\items\\icon_item_Hat.png": {
+    "time": 1685930079594.1582,
+    "uuid": "bf8f4e90-4f0f-4725-8bd8-15f02007fb13",
+    "missing": false
   }
 }
