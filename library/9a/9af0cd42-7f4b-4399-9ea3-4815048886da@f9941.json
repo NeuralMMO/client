@@ -1,17 +1,17 @@
 {
   "__type__": "cc.SpriteFrame",
   "content": {
-    "name": "pawn_13_b",
+    "name": "pawn_13_a",
     "atlas": "",
     "rect": {
-      "x": 88,
-      "y": 343,
+      "x": 89,
+      "y": 334,
       "width": 79,
-      "height": 114
+      "height": 127
     },
     "offset": {
-      "x": -0.5,
-      "y": -144
+      "x": 0.5,
+      "y": -141.5
     },
     "originalSize": {
       "width": 256,

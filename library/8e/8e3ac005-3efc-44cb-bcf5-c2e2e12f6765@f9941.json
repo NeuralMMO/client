@@ -4,18 +4,18 @@
     "name": "warrior",
     "atlas": "",
     "rect": {
-      "x": 0,
-      "y": 0,
-      "width": 526,
-      "height": 374
+      "x": 338,
+      "y": 1198,
+      "width": 386,
+      "height": 370
     },
     "offset": {
-      "x": 0,
-      "y": 0
+      "x": 19,
+      "y": -359
     },
     "originalSize": {
-      "width": 526,
-      "height": 374
+      "width": 1024,
+      "height": 2048
     },
     "rotated": false,
     "capInsets": [

@@ -4,14 +4,14 @@
     "name": "prop_8_1",
     "atlas": "",
     "rect": {
-      "x": 86,
-      "y": 376,
-      "width": 87,
-      "height": 98
+      "x": 0,
+      "y": 336,
+      "width": 256,
+      "height": 176
     },
     "offset": {
-      "x": 1.5,
-      "y": -169
+      "x": 0,
+      "y": -168
     },
     "originalSize": {
       "width": 256,

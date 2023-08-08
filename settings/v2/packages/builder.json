@@ -1,8 +1,8 @@
 {
   "splash-setting": {
-    "url": "C:\\Users\\seals\\Desktop\\Work\\client\\assets\\resources\\character\\Pawn\\pawn_03_b.png",
-    "displayRatio": 0.4,
-    "totalTime": 0,
+    "url": "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\ui\\loading.png",
+    "displayRatio": 0.2,
+    "totalTime": 1,
     "clearColor": {
       "x": 0.023529411764705882,
       "y": 0.10196078431372549,

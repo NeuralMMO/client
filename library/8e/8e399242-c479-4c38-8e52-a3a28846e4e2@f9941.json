@@ -5,13 +5,13 @@
     "atlas": "",
     "rect": {
       "x": 45,
-      "y": 365,
-      "width": 189,
-      "height": 117
+      "y": 376,
+      "width": 182,
+      "height": 125
     },
     "offset": {
-      "x": 11.5,
-      "y": -167.5
+      "x": 8,
+      "y": -182.5
     },
     "originalSize": {
       "width": 256,

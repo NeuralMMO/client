@@ -4,14 +4,14 @@
     "name": "pawn_10_b",
     "atlas": "",
     "rect": {
-      "x": 88,
-      "y": 343,
+      "x": 89,
+      "y": 334,
       "width": 79,
-      "height": 114
+      "height": 127
     },
     "offset": {
-      "x": -0.5,
-      "y": -144
+      "x": 0.5,
+      "y": -141.5
     },
     "originalSize": {
       "width": 256,

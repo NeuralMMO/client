@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "TXT_CharacterBorn",
+    "atlas": "",
+    "rect": {
+      "x": 34,
+      "y": 33,
+      "width": 189,
+      "height": 222
+    },
+    "offset": {
+      "x": 0.5,
+      "y": -16
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 256
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "cc62fb20-489b-4425-8043-97edd490010c@6c48a",
+    "packable": true
+  }
+}

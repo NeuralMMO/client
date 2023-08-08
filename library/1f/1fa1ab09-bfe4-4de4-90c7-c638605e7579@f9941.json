@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "TXT_TileConsumeRadial",
+    "atlas": "",
+    "rect": {
+      "x": 8,
+      "y": 68,
+      "width": 241,
+      "height": 122
+    },
+    "offset": {
+      "x": 0.5,
+      "y": -1
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 256
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "1fa1ab09-bfe4-4de4-90c7-c638605e7579@6c48a",
+    "packable": true
+  }
+}

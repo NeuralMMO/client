@@ -4,18 +4,18 @@
     "name": "mage",
     "atlas": "",
     "rect": {
-      "x": 0,
-      "y": 0,
-      "width": 552,
-      "height": 525
+      "x": 246,
+      "y": 1182,
+      "width": 532,
+      "height": 444
     },
     "offset": {
       "x": 0,
-      "y": 0
+      "y": -380
     },
     "originalSize": {
-      "width": 552,
-      "height": 525
+      "width": 1024,
+      "height": 2048
     },
     "rotated": false,
     "capInsets": [

@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Character_Eye",
+    "atlas": "",
+    "rect": {
+      "x": 378,
+      "y": 1464,
+      "width": 113,
+      "height": 114
+    },
+    "offset": {
+      "x": -77.5,
+      "y": -497
+    },
+    "originalSize": {
+      "width": 1024,
+      "height": 2048
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "eceb748e-8cf0-46d6-8371-320caee56f60@6c48a",
+    "packable": true
+  }
+}

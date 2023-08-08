@@ -129,8 +129,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 256,
-      "height": 512
+      "width": 260,
+      "height": 516
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -204,7 +204,7 @@
     "_left": 0,
     "_right": 0,
     "_top": 0,
-    "_bottom": 0,
+    "_bottom": -2,
     "_horizontalCenter": 0,
     "_verticalCenter": 0,
     "_isAbsLeft": true,
@@ -310,7 +310,7 @@
         "__expectedType__": "cc.SpriteFrame"
       }
     ],
-    "tileType": 3,
+    "tileType": 4,
     "resourceType": 11,
     "_id": ""
   },
@@ -329,7 +329,7 @@
     "__prefab": {
       "__id__": 15
     },
-    "priority": 20.6,
+    "priority": 20.1,
     "_id": ""
   },
   {

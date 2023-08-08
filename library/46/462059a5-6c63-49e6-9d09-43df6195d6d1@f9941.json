@@ -5,23 +5,23 @@
     "atlas": "",
     "rect": {
       "x": 0,
-      "y": 229,
-      "width": 256,
-      "height": 283
+      "y": 915,
+      "width": 1024,
+      "height": 1133
     },
     "offset": {
       "x": 0,
-      "y": -114.5
+      "y": -457.5
     },
     "originalSize": {
-      "width": 256,
-      "height": 512
+      "width": 1024,
+      "height": 2048
     },
     "rotated": false,
     "capInsets": [
+      10,
       0,
-      0,
-      0,
+      10,
       0
     ],
     "texture": "462059a5-6c63-49e6-9d09-43df6195d6d1@6c48a",

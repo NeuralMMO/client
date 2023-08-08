@@ -4,24 +4,24 @@
     "name": "archer",
     "atlas": "",
     "rect": {
-      "x": 0,
-      "y": 0,
-      "width": 190,
-      "height": 119
+      "x": 324,
+      "y": 1311,
+      "width": 412,
+      "height": 492
     },
     "offset": {
-      "x": 0,
-      "y": 0
+      "x": 18,
+      "y": -533
     },
     "originalSize": {
-      "width": 190,
-      "height": 119
+      "width": 1024,
+      "height": 2048
     },
     "rotated": false,
     "capInsets": [
-      0,
-      0,
-      0,
+      60,
+      93,
+      44,
       0
     ],
     "texture": "4f8f082f-530c-41b7-8192-fc7a91a562b8@6c48a",

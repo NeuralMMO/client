@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "TXT_TileConsumeVertical",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 21,
+      "width": 256,
+      "height": 235
+    },
+    "offset": {
+      "x": 0,
+      "y": -10.5
+    },
+    "originalSize": {
+      "width": 256,
+      "height": 256
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "texture": "694e46cd-2a7f-4fa8-98d3-8b4f5d9bf3ae@6c48a",
+    "packable": true
+  }
+}
