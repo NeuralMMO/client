@@ -1,7 +1,7 @@
 {
   "splash-setting": {
     "url": "C:\\Users\\seals\\Desktop\\client\\assets\\resources\\ui\\loading.png",
-    "displayRatio": 0.2,
+    "displayRatio": 0,
     "totalTime": 1,
     "clearColor": {
       "x": 0.023529411764705882,
