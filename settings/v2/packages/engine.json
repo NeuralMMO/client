@@ -24,7 +24,7 @@
         "_value": true
       },
       "particle": {
-        "_value": false
+        "_value": true
       },
       "physics": {
         "_value": false,
@@ -97,6 +97,7 @@
       "audio",
       "base",
       "gfx-webgl",
+      "particle",
       "particle-2d",
       "profiler",
       "tween",
