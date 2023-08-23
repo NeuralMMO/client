@@ -1247,6 +1247,222 @@
         },
         "time": "8-7-2023 17:40",
         "dirty": false
+      },
+      "1692752730962": {
+        "id": "1692752730962",
+        "progress": 1,
+        "state": "success",
+        "message": "8-22-2023 17:06 Build success in 47327 ms!",
+        "options": {
+          "name": "NeuralMMO",
+          "platform": "web-mobile",
+          "buildPath": "project://",
+          "debug": false,
+          "md5Cache": false,
+          "sourceMaps": false,
+          "replaceSplashScreen": true,
+          "mainBundleCompressionType": "merge_dep",
+          "mainBundleIsRemote": false,
+          "mergeStartScene": false,
+          "experimentalEraseModules": false,
+          "compressTexture": true,
+          "packAutoAtlas": true,
+          "startScene": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+          "scenes": [
+            {
+              "url": "db://assets/scene/Demo.scene",
+              "uuid": "71cd62f0-b478-4981-9a18-99ae756a6d6a",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Game.scene",
+              "uuid": "9cc1b3ad-cdfb-4f32-9060-bc75f1e61b22",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Main.scene",
+              "uuid": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+              "inBundle": false
+            }
+          ],
+          "outputName": "docs",
+          "packages": {
+            "web-mobile": {
+              "orientation": "auto",
+              "polyfills": {
+                "asyncFunctions": true
+              }
+            },
+            "cocos-service": {
+              "configID": "4cf58a",
+              "services": []
+            }
+          }
+        },
+        "time": "8-22-2023 17:05",
+        "dirty": false
+      },
+      "1692752839001": {
+        "id": "1692752839001",
+        "progress": 1,
+        "state": "success",
+        "message": "8-22-2023 17:07 Build success in 11705 ms!",
+        "options": {
+          "name": "NeuralMMO",
+          "platform": "web-mobile",
+          "buildPath": "project://",
+          "debug": false,
+          "md5Cache": false,
+          "sourceMaps": false,
+          "replaceSplashScreen": true,
+          "mainBundleCompressionType": "merge_dep",
+          "mainBundleIsRemote": false,
+          "mergeStartScene": false,
+          "experimentalEraseModules": false,
+          "compressTexture": true,
+          "packAutoAtlas": true,
+          "startScene": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+          "scenes": [
+            {
+              "url": "db://assets/scene/Demo.scene",
+              "uuid": "71cd62f0-b478-4981-9a18-99ae756a6d6a",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Game.scene",
+              "uuid": "9cc1b3ad-cdfb-4f32-9060-bc75f1e61b22",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Main.scene",
+              "uuid": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+              "inBundle": false
+            }
+          ],
+          "outputName": "docs",
+          "packages": {
+            "web-mobile": {
+              "orientation": "auto",
+              "polyfills": {
+                "asyncFunctions": true
+              }
+            },
+            "cocos-service": {
+              "configID": "4cf58a",
+              "services": []
+            }
+          }
+        },
+        "time": "8-22-2023 17:07",
+        "dirty": false
+      },
+      "1692752955917": {
+        "id": "1692752955917",
+        "progress": 1,
+        "state": "success",
+        "message": "8-22-2023 17:09 Build success in 11754 ms!",
+        "options": {
+          "name": "NeuralMMO",
+          "platform": "web-mobile",
+          "buildPath": "project://",
+          "debug": false,
+          "md5Cache": false,
+          "sourceMaps": false,
+          "replaceSplashScreen": true,
+          "mainBundleCompressionType": "merge_dep",
+          "mainBundleIsRemote": false,
+          "mergeStartScene": false,
+          "experimentalEraseModules": false,
+          "compressTexture": true,
+          "packAutoAtlas": true,
+          "startScene": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+          "scenes": [
+            {
+              "url": "db://assets/scene/Demo.scene",
+              "uuid": "71cd62f0-b478-4981-9a18-99ae756a6d6a",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Game.scene",
+              "uuid": "9cc1b3ad-cdfb-4f32-9060-bc75f1e61b22",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Main.scene",
+              "uuid": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+              "inBundle": false
+            }
+          ],
+          "outputName": "docs",
+          "packages": {
+            "web-mobile": {
+              "orientation": "auto",
+              "polyfills": {
+                "asyncFunctions": true
+              }
+            },
+            "cocos-service": {
+              "configID": "4cf58a",
+              "services": []
+            }
+          }
+        },
+        "time": "8-22-2023 17:09",
+        "dirty": false
+      },
+      "1692753412264": {
+        "id": "1692753412264",
+        "progress": 1,
+        "state": "success",
+        "message": "8-22-2023 17:17 Build success in 12784 ms!",
+        "options": {
+          "name": "NeuralMMO",
+          "platform": "web-mobile",
+          "buildPath": "project://",
+          "debug": false,
+          "md5Cache": false,
+          "sourceMaps": false,
+          "replaceSplashScreen": true,
+          "mainBundleCompressionType": "merge_dep",
+          "mainBundleIsRemote": false,
+          "mergeStartScene": false,
+          "experimentalEraseModules": false,
+          "compressTexture": true,
+          "packAutoAtlas": true,
+          "startScene": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+          "scenes": [
+            {
+              "url": "db://assets/scene/Demo.scene",
+              "uuid": "71cd62f0-b478-4981-9a18-99ae756a6d6a",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Game.scene",
+              "uuid": "9cc1b3ad-cdfb-4f32-9060-bc75f1e61b22",
+              "inBundle": false
+            },
+            {
+              "url": "db://assets/scene/Main.scene",
+              "uuid": "b2ff2fc9-3cca-4e7b-9dff-35a968adcc99",
+              "inBundle": false
+            }
+          ],
+          "outputName": "docs",
+          "packages": {
+            "web-mobile": {
+              "orientation": "auto",
+              "polyfills": {
+                "asyncFunctions": true
+              }
+            },
+            "cocos-service": {
+              "configID": "4cf58a",
+              "services": []
+            }
+          }
+        },
+        "time": "8-22-2023 17:16",
+        "dirty": false
       }
     }
   }
